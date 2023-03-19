@@ -168,7 +168,7 @@ bookingController.get(
   }
 );
 
-bookingController.get('/bookings/options', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
+bookingController.get('/bookings/options-only', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
   try {
     if (!emptyObjSchema.safeParse(req.body).success) {
       return res.status(400).json({
