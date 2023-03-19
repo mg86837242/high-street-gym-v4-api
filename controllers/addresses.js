@@ -7,6 +7,7 @@ import {
   updateAddressById,
   deleteAddressById,
 } from '../models/addresses.js';
+import permit from '../middleware/rbac.js';
 
 const addressController = Router();
 

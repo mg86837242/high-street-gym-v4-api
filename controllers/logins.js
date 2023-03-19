@@ -68,7 +68,7 @@ loginController.get('/users/by-key/:accessKey', async (req, res) => {
 });
 
 loginController.post('/login', async (req, res) => {
-  await fakeDelay(`getBookingList:${req.params.date}`);
+  await fakeDelay(`login:${req.body.email}`);
   try {
     if (!loginSchema.safeParse(req.body).success) {
       return res.status(400).json({

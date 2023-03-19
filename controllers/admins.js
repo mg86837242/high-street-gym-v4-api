@@ -3,6 +3,7 @@ import bcrypt from 'bcryptjs'; // reason to use `bcryptjs`: https://github.com/k
 import pool from '../config/database.js';
 import { emptyObjSchema, idSchema } from '../schemas/index.js';
 import { getAllAdmins, getAdminsById, deleteAdminById } from '../models/admins.js';
+import permit from '../middleware/rbac.js';
 
 const adminController = Router();
 

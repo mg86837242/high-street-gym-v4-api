@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { emptyObjSchema, idSchema } from '../schemas/index.js';
 import { getAllBlogs, getBlogsById, createBlog, updateBlogById, deleteBlogById } from '../models/blogs.js';
+import permit from '../middleware/rbac.js';
 
 const blogController = Router();
 

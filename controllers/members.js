@@ -4,6 +4,7 @@ import pool from '../config/database.js';
 import { emptyObjSchema, idSchema } from '../schemas/index.js';
 import { signupSchema, memberSchema } from '../schemas/members.js';
 import { getAllMembers, getMembersById, deleteMemberById } from '../models/members.js';
+import permit from '../middleware/rbac.js';
 
 const memberController = Router();
 
