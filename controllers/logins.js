@@ -98,13 +98,10 @@ loginController.post('/login', async (req, res) => {
         message: 'Invalid login credentials',
       });
     }
-    // -- If there's a match found, generate an access key and update the key in the match's login row
+    // -- If there's a match found, generate an access key and update the key in the match's login row and session
     const accessKey = uuid4().toString();
     await updateLoginAccessKeyById(match.id, accessKey);
-    // FIX This key is missing when making req to API after logged in (without session store)
     req.session.accessKey = accessKey;
-    console.log('🟢 [' + new Date().toLocaleTimeString() + '] Session id: ' + req.session.id);
-    console.log(req.session);
 
     return res.status(200).json({
       status: 200,
@@ -130,7 +127,7 @@ loginController.post('/logout', async (req, res) => {
       });
     }
 
-    // Get the target login row by `accesskey` and nullify its `accessKey` column
+    // Get the target login row by `accesskey` and nullify its `accessKey` column and session
     const [[{ id }]] = await getLoginsByAccessKey(accessKey);
     await updateLoginAccessKeyById(id, null);
     req.session.destroy();

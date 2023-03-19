@@ -30,11 +30,3 @@ app.listen(constants.PORT, (err) => {
     -- Running on ${process.env.NODE_ENV}`);
   }
 });
-
-// References:
-// -- https://expressjs.com/en/guide/using-middleware.html: Classification of Express middleware
-// -- https://www.section.io/engineering-education/session-management-in-nodejs-using-expressjs-and-express-session/:
-//  Express session middleware tutorial, ignoring the `cookie-parser` part
-// -- https://forum.freecodecamp.org/t/what-is-the-secret-key-in-express-session/354972: Express session secret working
-//  in tandem with environment variables
-// -- https://medium.com/the-node-js-collection/making-your-node-js-work-everywhere-with-environment-variables-2da8cdf6e786

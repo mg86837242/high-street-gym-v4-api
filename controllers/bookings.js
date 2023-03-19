@@ -53,9 +53,6 @@ bookingController.get(
     // permit('Admin'),
   ],
   async (req, res) => {
-    // FIX This key is missing when making req to API after logged in (without session store)
-    console.log('🔵 [' + new Date().toLocaleTimeString() + '] Session id: ' + req.session.id);
-    console.log(req.session);
     await fakeDelay(`getBookingList:${req.params.date}`);
     try {
       // NB `req.params.date` is a string, see: https://reactrouter.com/en/main/start/concepts#route-matches; the data type expected to be used in

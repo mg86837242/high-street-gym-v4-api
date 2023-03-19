@@ -7,8 +7,12 @@ import constants from './constants.js';
 
 export default function (app) {
   // Express CORS middleware – CORS allows to set which frontend URLs are allowed to access APIs
-  // app.use(cors({ origin: `http://localhost:${constants.VITE_PORT}` }));
-  app.use(cors({ origin: true }));
+  app.use(
+    cors({
+      origin: `http://localhost:${constants.VITE_PORT}`,
+      credentials: true,
+    })
+  );
   app.options('*', cors());
 
   // Express session middleware
@@ -23,6 +27,7 @@ export default function (app) {
       secret: constants.SESSION_SECRET,
       resave: false,
       saveUninitialized: false,
+      rolling: true,
       cookie: {
         secure: false,
         httpOnly: true,
@@ -34,3 +39,22 @@ export default function (app) {
   // Built-in middleware – parsing middleware needs to be placed before defining any routes
   app.use(express.json());
 }
+
+// References:
+// -- https://expressjs.com/en/guide/using-middleware.html: Classification of Express middleware
+// -- https://www.section.io/engineering-education/session-management-in-nodejs-using-expressjs-and-express-session/:
+//  Express session middleware tutorial, ignoring the `cookie-parser` part
+// -- https://forum.freecodecamp.org/t/what-is-the-secret-key-in-express-session/354972: Express session secret working
+//  in tandem with environment variables
+// -- https://medium.com/the-node-js-collection/making-your-node-js-work-everywhere-with-environment-variables-2da8cdf6e786
+
+// References for preserving `req.session` after fetching in the frontend
+// -- https://twin.sh/articles/11/react-fix-issue-with-session-changing-after-every-request: Gives the hint that it's
+//  related to something with `credentials` in fetch API
+// -- https://developer.mozilla.org/en-US/docs/Web/API/fetch#syntax: Fetch API's `credentials` option
+// -- https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS/Errors/CORSMissingAllowCredentials: After including the
+//  `credentials: 'include'` option, getting this error in the browser console
+// -- https://github.com/expressjs/cors#configuration-options: CORS option to set `Access-Control-Allow-Credentials`
+//  CORS header to true
+// -- https://stackoverflow.com/questions/63351799/react-fetch-credentials-include-breaks-my-entire-request-and-i-get-an-error:
+//  Different error message, same solution
