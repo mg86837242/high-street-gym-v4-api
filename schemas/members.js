@@ -1,0 +1,87 @@
+import { z } from 'zod';
+
+export const signupSchema = z.object({
+  email: z.string().email().max(45),
+  // NB Max length of password is set to 100 for server-side validation b/c encrypting password results in longer
+  //  password
+  password: z.string().min(8).max(100),
+  // .regex(/^((?=\S*?[A-Z])(?=\S*?[a-z])(?=\S*?[0-9]).{6,})\S$/, {
+  //     message:
+  //     'Password must be 6 characters minimum, with at least 1 uppercase letter, 1 lowercase letter, and 1 number with no spaces',
+  // }),
+  username: z
+    .string()
+    .regex(/^(?=.*[a-zA-Z]{1,})(?=.*[\d]{0,})[a-zA-Z0-9]+$/, {
+      message: 'Username only accepts letters and numbers, and must include at least 1 letter',
+    })
+    .max(45),
+  firstName: z
+    .string()
+    .regex(/^[a-zA-Z]+$/, { message: 'Name only accepts English letters at the moment' })
+    .max(45),
+  lastName: z
+    .string()
+    .regex(/^[a-zA-Z]+$/, { message: 'Name only accepts English letters at the moment' })
+    .max(45),
+  phone: z
+    .string()
+    .regex(/\+?\d{1,4}?[-.\s]?\(?\d{1,3}?\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9}/, {
+      message: 'Invalid phone number format',
+    })
+    .max(45),
+  age: z.number({ message: 'Age only accepts numbers' }).max(10).nullable(),
+  gender: z.enum(['Female', 'Male', 'Prefer not to say', '']).nullable(),
+});
+
+export const memberSchema = z.object({
+  email: z.string().email().max(45),
+  username: z
+    .string()
+    .regex(/^(?=.*[a-zA-Z]{1,})(?=.*[\d]{0,})[a-zA-Z0-9]+$/, {
+      message: 'Username only accepts letters and numbers, and must include at least 1 letter at the moment',
+    })
+    .max(45),
+  password: z.string().max(100),
+  // .regex(/^((?=\S*?[A-Z])(?=\S*?[a-z])(?=\S*?[0-9]).{6,})\S$/, {
+  //     message:
+  //     'Password must be 6 characters minimum, with at least 1 uppercase letter, 1 lowercase letter, and 1 number with no spaces',
+  // }),
+  firstName: z
+    .string()
+    .regex(/^[a-zA-Z]+$/, { message: 'Name only accepts English letters at the moment' })
+    .max(45),
+  lastName: z
+    .string()
+    .regex(/^[a-zA-Z]+$/, { message: 'Name only accepts English letters at the moment' })
+    .max(45),
+  phone: z
+    .string()
+    .regex(/\+?\d{1,4}?[-.\s]?\(?\d{1,3}?\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9}/, {
+      message: 'Invalid phone number format',
+    })
+    .max(45),
+  age: z.number().lte(999).nullable(),
+  gender: z.enum(['Female', 'Male', 'Prefer not to say', '']).nullable(),
+  streetOne: z.string().max(45).nullable(),
+  streetTwo: z.string().max(45).nullable(),
+  suburb: z.string().max(45).nullable(),
+  postcode: z.string().max(10).nullable(),
+  state: z.string().max(45).nullable(),
+  country: z.string().max(45).nullable(),
+});
+
+// NB Based on tests, `optional()` won't let null pass, but will let undefined and empty string pass;
+//  `nullable()` won't let undefined pass, but will let null and empty string pass => PREFERRED;
+//  when `enum()` is involved, both won't accept empty string unless specified within `enum()`
+
+// NB Empty form fields: (1) For fields that are not required but of enum data type, empty string is added as an option
+//  to avoid validation error if the user submits an empty input field, see:
+//  -- https://stackoverflow.com/questions/9177802/when-does-an-input-field-value-equals-null-or-undefined
+//  -- https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#type: by default, the input type `text` is used
+//  (2) `FormData.append()` converts field's value to a string in most cases:
+//  -- https://developer.mozilla.org/en-US/docs/Web/API/FormData/Using_FormData_Objects#creating_a_formdata_object_from_scratch
+//  (3) If its curl tests, field that is not included within the JSON `req.body` is considered as `undefined`
+// console.log('🟢');
+// console.log(z.string().max(45).optional().safeParse(undefined));
+// console.log('🟢');
+// curl -X POST http://localhost:8081/api/members/signup -H "Content-Type:application/json" -d '{"username":"testingmember", "password":"...", "firstName":"Some", "lastName":"Member", "phone":"0123456789", "email":"somemember@gmail.com"}'

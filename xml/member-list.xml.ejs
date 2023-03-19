@@ -1,0 +1,36 @@
+<!DOCTYPE memberList [ <!ELEMENT memberList (member*)>
+<!ELEMENT member (firstName, lastName, phone, email, age, gender, address)>
+<!ELEMENT firstName (#PCDATA)>
+<!ELEMENT lastName (#PCDATA)>
+<!ELEMENT phone (#PCDATA)>
+<!ELEMENT email (#PCDATA)>
+<!ELEMENT age (#PCDATA)>
+<!ELEMENT gender (#PCDATA)>
+<!ELEMENT address (streetOne, streetTwo, suburb, postcode, state, country)>
+<!ELEMENT streetOne (#PCDATA)>
+<!ELEMENT streetTwo (#PCDATA)>
+<!ELEMENT suburb (#PCDATA)>
+<!ELEMENT postcode (#PCDATA)>
+<!ELEMENT state (#PCDATA)>
+<!ELEMENT country (#PCDATA)>
+]>
+<memberList>
+    <% for (const member of members) { %>
+    <member>
+        <firstName><%- member.firstName %></firstName>
+        <lastName><%- member.lastName %></lastName>
+        <phone><%- member.phone %></phone>
+        <email><%- member.email %></email>
+        <age><%- member.age %></age>
+        <gender><%- member.gender %></gender>
+        <address>
+            <streetOne><%- member.address.streetOne %></streetOne>
+            <streetTwo><%- member.address.streetTwo %></streetTwo>
+            <suburb><%- member.address.suburb %></suburb>
+            <postcode><%- member.address.postcode %></postcode>
+            <state><%- member.address.state %></state>
+            <country><%- member.address.country %></country>
+        </address>
+    </member>
+    <% } %>
+</memberList>

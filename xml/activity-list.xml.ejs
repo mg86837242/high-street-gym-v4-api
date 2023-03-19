@@ -1,0 +1,49 @@
+<!DOCTYPE activityList [ <!ELEMENT activityList (activity*)>
+<!ELEMENT activity (name, category, description, intensityLevel, maxPeopleAllowed, requirementOne, requirementTwo, durationMinutes, price, bookings)>
+<!ELEMENT name (#PCDATA)>
+<!ELEMENT category (#PCDATA)>
+<!ELEMENT description (#PCDATA)>
+<!ELEMENT intensityLevel (#PCDATA)>
+<!ELEMENT maxPeopleAllowed (#PCDATA)>
+<!ELEMENT requirementOne (#PCDATA)>
+<!ELEMENT requirementTwo (#PCDATA)>
+<!ELEMENT durationMinutes (#PCDATA)>
+<!ELEMENT price (#PCDATA)>
+<!ELEMENT bookings (booking*)>
+<!ELEMENT booking (dateTime, member, trainer)>
+<!ELEMENT dateTime (#PCDATA)>
+<!ELEMENT member (firstName, lastName)>
+<!ELEMENT trainer (firstName, lastName)>
+<!ELEMENT firstName (#PCDATA)>
+<!ELEMENT lastName (#PCDATA)>
+]>
+<activityList>
+  <% for (const a of activities) { %>
+  <activity>
+    <activityName><%- a.name %></activityName>
+    <activityCategory><%- a.category %></activityCategory>
+    <activityDescription><%- a.description %></activityDescription>
+    <intensityLevel><%- a.intensityLevel %></intensityLevel>
+    <maxPeopleAllowed><%- a.maxPeopleAllowed %></maxPeopleAllowed>
+    <requirementOne><%- a.requirementOne %></requirementOne>
+    <requirementTwo><%- a.requirementTwo %></requirementTwo>
+    <durationMinutes><%- a.durationMinutes %></durationMinutes>
+    <price><%- a.price %></price>
+    <bookings>
+      <% for (const b of a.bookings) { %>
+      <booking>
+        <member>
+          <memberFirstName><%- b.member.firstName %></memberFirstName>
+          <memberLastName><%- b.member.lastName %></memberLastName>
+        </member>
+        <trainer>
+          <trainerFirstName><%- b.trainer.firstName %></trainerFirstName>
+          <trainerLastName><%- b.trainer.lastName %></trainerLastName>
+        </trainer>
+        <dateTime><%- b.dateTime %></dateTime>
+      </booking>
+      <% } %>
+    </bookings>
+  </activity>
+  <% } %>
+</activityList>
