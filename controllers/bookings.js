@@ -46,62 +46,55 @@ bookingController.get('/bookings', async (req, res) => {
   }
 });
 
-bookingController.get(
-  '/bookings/by-date/:date',
-  [
-    // RBAC middleware
-    // permit('Admin'),
-  ],
-  async (req, res) => {
-    await fakeDelay(`getBookingList:${req.params.date}`);
-    try {
-      // NB `req.params.date` is a string, see: https://reactrouter.com/en/main/start/concepts#route-matches; the data type expected to be used in
-      //  the WHERE clause is also a string, however, needs to be formatted like this `YYYY-MM-DD` in the SQL query, this is found out by writing raw
-      //  queries in MySQL Workbench
-      const { date } = req.params;
-      if (!dateSchema.safeParse(date).success) {
-        return res.status(400).json({
-          status: 400,
-          message: dateSchema.safeParse(date).error.issues,
-        });
-      }
-      const [bookingResults] = await getJoinedBookingsByDate(date);
-      // #region un-foldable
-      // NB Bug: query result `bookingResults.dateTime` is in UTC format i/o intended local time format (DATETIME type)
-      //  => Culprit: `mysql2` => Solution: add `dateStrings: true` to the connection option (i.e., `pool.js`), see:
-      //  -- https://dev.mysql.com/doc/refman/8.0/en/datetime.html: MySQL converts `TIMESTAMP` values from the current time zone to UTC for storage,
-      //  and back from UTC to the current time zone for retrieval. (This does not occur for other types such as DATETIME.)
-      //  -- https://github.com/sidorares/node-mysql2/issues/1089
-      //  ---- https://github.com/sidorares/node-mysql2#api-and-configuration: "Check (Node MySQL/`mysql`) API documentation to see all available API
-      //  options."
-      //  ---- https://github.com/mysqljs/mysql#connection-options: `mysql` connection options: "`dateStrings`: Force date types (`TIMESTAMP`,
-      //  `DATETIME`, `DATE`) to be returned as strings rather than inflated into JavaScript Date objects. Can be `true`/`false` or an array of type
-      //  names to keep as strings. (Default: `false`)"
-      // #endregion
-
-      if (!bookingResults.length) {
-        return res.status(404).json({
-          status: 404,
-          message: 'No booking found with the date provided',
-          bookings: bookingResults,
-        });
-      }
-      return res.status(200).json({
-        status: 200,
-        message: 'Booking record successfully retrieved',
-        bookings: bookingResults,
-      });
-    } catch (error) {
-      return res.status(500).json({
-        status: 500,
-        message: 'Database or server error',
-        error,
+bookingController.get('/bookings/by-date/:date', async (req, res) => {
+  await fakeDelay(`getBookingList:${req.params.date}`);
+  try {
+    // NB `req.params.date` is a string, see: https://reactrouter.com/en/main/start/concepts#route-matches; the data type expected to be used in
+    //  the WHERE clause is also a string, however, needs to be formatted like this `YYYY-MM-DD` in the SQL query, this is found out by writing raw
+    //  queries in MySQL Workbench
+    const { date } = req.params;
+    if (!dateSchema.safeParse(date).success) {
+      return res.status(400).json({
+        status: 400,
+        message: dateSchema.safeParse(date).error.issues,
       });
     }
-  }
-);
+    const [bookingResults] = await getJoinedBookingsByDate(date);
+    // #region un-foldable
+    // NB Bug: query result `bookingResults.dateTime` is in UTC format i/o intended local time format (DATETIME type)
+    //  => Culprit: `mysql2` => Solution: add `dateStrings: true` to the connection option (i.e., `pool.js`), see:
+    //  -- https://dev.mysql.com/doc/refman/8.0/en/datetime.html: MySQL converts `TIMESTAMP` values from the current time zone to UTC for storage,
+    //  and back from UTC to the current time zone for retrieval. (This does not occur for other types such as DATETIME.)
+    //  -- https://github.com/sidorares/node-mysql2/issues/1089
+    //  ---- https://github.com/sidorares/node-mysql2#api-and-configuration: "Check (Node MySQL/`mysql`) API documentation to see all available API
+    //  options."
+    //  ---- https://github.com/mysqljs/mysql#connection-options: `mysql` connection options: "`dateStrings`: Force date types (`TIMESTAMP`,
+    //  `DATETIME`, `DATE`) to be returned as strings rather than inflated into JavaScript Date objects. Can be `true`/`false` or an array of type
+    //  names to keep as strings. (Default: `false`)"
+    // #endregion
 
-bookingController.get('/bookings/by-id/:id', async (req, res) => {
+    if (!bookingResults.length) {
+      return res.status(404).json({
+        status: 404,
+        message: 'No booking found with the date provided',
+        bookings: bookingResults,
+      });
+    }
+    return res.status(200).json({
+      status: 200,
+      message: 'Booking record successfully retrieved',
+      bookings: bookingResults,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      status: 500,
+      message: 'Database or server error',
+      error,
+    });
+  }
+});
+
+bookingController.get('/bookings/by-id/:id', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
   try {
     const { id } = req.params;
     if (!idSchema.safeParse(id).success) {
@@ -132,44 +125,50 @@ bookingController.get('/bookings/by-id/:id', async (req, res) => {
   }
 });
 
-bookingController.get('/bookings/booking-and-options-by-id/:id', async (req, res) => {
-  try {
-    const { id } = req.params;
-    if (!idSchema.safeParse(id).success) {
-      return res.status(400).json({
-        status: 400,
-        message: idSchema.safeParse(id).error.issues,
-      });
-    }
-    const [[firstBookingResult]] = await getBookingsById(id);
+bookingController.get(
+  '/bookings/booking-and-options-by-id/:id',
+  permit('Admin', 'Trainer', 'Member'),
+  async (req, res) => {
+    try {
+      const { id } = req.params;
+      if (!idSchema.safeParse(id).success) {
+        return res.status(400).json({
+          status: 400,
+          message: idSchema.safeParse(id).error.issues,
+        });
+      }
+      const [[firstBookingResult]] = await getBookingsById(id);
 
-    if (!firstBookingResult) {
-      return res.status(404).json({
-        status: 404,
-        message: 'No bookings found with the ID provided',
+      if (!firstBookingResult) {
+        return res.status(404).json({
+          status: 404,
+          message: 'No bookings found with the ID provided',
+        });
+      }
+      const [memberResults, trainerResults, activityResults] = Promise.all([
+        getAllMembers(),
+        getAllTrainers(),
+        getAllActivities(),
+      ]);
+      return res.status(200).json({
+        status: 200,
+        message: 'Booking record and options successfully retrieved',
+        booking: firstBookingResult,
+        members: memberResults,
+        trainers: trainerResults,
+        activities: activityResults,
+      });
+    } catch (error) {
+      return res.status(500).json({
+        status: 500,
+        message: 'Database or server error',
+        error,
       });
     }
-    const [memberResults] = await getAllMembers();
-    const [trainerResults] = await getAllTrainers();
-    const [activityResults] = await getAllActivities();
-    return res.status(200).json({
-      status: 200,
-      message: 'Booking record and options successfully retrieved',
-      booking: firstBookingResult,
-      members: memberResults,
-      trainers: trainerResults,
-      activities: activityResults,
-    });
-  } catch (error) {
-    return res.status(500).json({
-      status: 500,
-      message: 'Database or server error',
-      error,
-    });
   }
-});
+);
 
-bookingController.get('/bookings/options', async (req, res) => {
+bookingController.get('/bookings/options', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
   try {
     if (!emptyObjSchema.safeParse(req.body).success) {
       return res.status(400).json({
@@ -178,9 +177,11 @@ bookingController.get('/bookings/options', async (req, res) => {
       });
     }
 
-    const [memberResults] = await getAllMembers();
-    const [trainerResults] = await getAllTrainers();
-    const [activityResults] = await getAllActivities();
+    const [memberResults, trainerResults, activityResults] = Promise.all([
+      getAllMembers(),
+      getAllTrainers(),
+      getAllActivities(),
+    ]);
     return res.status(200).json({
       status: 200,
       message: 'Booking options successfully retrieved',
@@ -198,7 +199,7 @@ bookingController.get('/bookings/options', async (req, res) => {
 });
 
 // Create Booking
-bookingController.post('/bookings', async (req, res) => {
+bookingController.post('/bookings', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
   try {
     if (!bookingSchema.safeParse(req.body).success) {
       return res.status(400).json({
@@ -246,7 +247,7 @@ bookingController.post('/bookings', async (req, res) => {
 });
 
 // Update Booking
-bookingController.patch('/bookings/:id', async (req, res) => {
+bookingController.patch('/bookings/:id', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
   try {
     const { id } = req.params;
     if (!idSchema.safeParse(id).success) {
@@ -306,7 +307,7 @@ bookingController.patch('/bookings/:id', async (req, res) => {
 });
 
 // Delete Booking
-bookingController.delete('/bookings/:id', async (req, res) => {
+bookingController.delete('/bookings/:id', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
   try {
     const { id } = req.params;
     if (!idSchema.safeParse(id).success) {

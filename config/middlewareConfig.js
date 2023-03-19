@@ -9,7 +9,8 @@ export default function (app) {
   // Express CORS middleware – CORS allows to set which frontend URLs are allowed to access APIs
   app.use(
     cors({
-      origin: `http://localhost:${constants.VITE_PORT}`,
+      // origin: `http://localhost:${constants.VITE_PORT}`,
+      origin: `*`,
       credentials: true,
     })
   );

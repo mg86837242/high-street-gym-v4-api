@@ -8,11 +8,12 @@ import {
   deleteActivityById,
   getActivitiesByName,
 } from '../models/activities.js';
+import permit from '../middleware/rbac.js';
 
 const activityController = Router();
 
 // Read Activity
-activityController.get('/activities', async (req, res) => {
+activityController.get('/activities', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
   try {
     if (!emptyObjSchema.safeParse(req.body).success) {
       return res.status(400).json({
@@ -36,7 +37,7 @@ activityController.get('/activities', async (req, res) => {
   }
 });
 
-activityController.get('/activities/:id', async (req, res) => {
+activityController.get('/activities/:id', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
   try {
     const { id } = req.params;
     if (!idSchema.safeParse(id).success) {
@@ -68,7 +69,7 @@ activityController.get('/activities/:id', async (req, res) => {
 });
 
 // Create Activity
-activityController.post('/activities', async (req, res) => {
+activityController.post('/activities', permit('Admin', 'Trainer'), async (req, res) => {
   try {
     const {
       name,
@@ -119,7 +120,7 @@ activityController.post('/activities', async (req, res) => {
 });
 
 // Update Activity
-activityController.patch('/activities/:id', async (req, res) => {
+activityController.patch('/activities/:id', permit('Admin', 'Trainer'), async (req, res) => {
   try {
     const { id } = req.params;
     if (!idSchema.safeParse(id).success) {
@@ -173,7 +174,7 @@ activityController.patch('/activities/:id', async (req, res) => {
 });
 
 // Delete Activity
-activityController.delete('/activities/:id', async (req, res) => {
+activityController.delete('/activities/:id', permit('Admin', 'Trainer'), async (req, res) => {
   try {
     const { id } = req.params;
     if (!idSchema.safeParse(id).success) {

@@ -61,7 +61,7 @@ blogController.get('/blogs/:id', async (req, res) => {
 });
 
 // Create Blog
-blogController.post('/blogs', async (req, res) => {
+blogController.post('/blogs', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
   try {
     const { memberId, title, body } = req.body;
 
@@ -82,7 +82,7 @@ blogController.post('/blogs', async (req, res) => {
 });
 
 // Update Blog
-blogController.patch('/blogs/:id', async (req, res) => {
+blogController.patch('/blogs/:id', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
   try {
     const { id } = req.params;
     if (!idSchema.safeParse(id).success) {
@@ -115,7 +115,7 @@ blogController.patch('/blogs/:id', async (req, res) => {
 });
 
 // Delete Blog
-blogController.delete('/blogs/:id', async (req, res) => {
+blogController.delete('/blogs/:id', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
   try {
     const { id } = req.params;
     if (!idSchema.safeParse(id).success) {

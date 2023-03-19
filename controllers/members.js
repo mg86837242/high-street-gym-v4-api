@@ -8,7 +8,7 @@ import { getAllMembers, getMembersById, deleteMemberById } from '../models/membe
 const memberController = Router();
 
 // Read Member
-memberController.get('/members', async (req, res) => {
+memberController.get('/members', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
   try {
     if (!emptyObjSchema.safeParse(req.body).success) {
       return res.status(400).json({
@@ -32,7 +32,7 @@ memberController.get('/members', async (req, res) => {
   }
 });
 
-memberController.get('/members/:id', async (req, res) => {
+memberController.get('/members/:id', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
   try {
     const { id } = req.params;
     if (!idSchema.safeParse(id).success) {
@@ -64,7 +64,7 @@ memberController.get('/members/:id', async (req, res) => {
 });
 
 // Create Member
-memberController.post('/members/signup', async (req, res) => {
+memberController.post('/members/signup', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
   let conn = null;
   try {
     if (!signupSchema.safeParse(req.body).success) {
@@ -145,7 +145,7 @@ memberController.post('/members/signup', async (req, res) => {
   }
 });
 
-memberController.post('/members', async (req, res) => {
+memberController.post('/members', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
   let conn = null;
   try {
     if (!memberSchema.safeParse(req.body).success) {
@@ -252,7 +252,7 @@ memberController.post('/members', async (req, res) => {
 // PS1 Depending on the business logic, it's possible to update login and address info separately in their respective routers, e.g., GitHub
 // PS2 The logic of React Router calls for the juxtaposed usage of `req.body` and `req.params` in update routes
 // NB If anything, catch 409 i/o 404 within an update operation, see: https://stackoverflow.com/questions/10727699/is-http-404-an-appropriate-response-for-a-put-operation-where-some-linked-resour
-memberController.patch('/members/:id', async (req, res) => {
+memberController.patch('/members/:id', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
   let conn = null;
   try {
     const { id } = req.params;
@@ -366,7 +366,7 @@ memberController.patch('/members/:id', async (req, res) => {
 });
 
 // Delete Member
-memberController.delete('/members/:id', async (req, res) => {
+memberController.delete('/members/:id', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
   try {
     const { id } = req.params;
     if (!idSchema.safeParse(id).success) {

@@ -7,7 +7,7 @@ import { getAllAdmins, getAdminsById, deleteAdminById } from '../models/admins.j
 const adminController = Router();
 
 // Read Admin
-adminController.get('/admins', async (req, res) => {
+adminController.get('/admins', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
   try {
     if (!emptyObjSchema.safeParse(req.body).success) {
       return res.status(400).json({
@@ -31,7 +31,7 @@ adminController.get('/admins', async (req, res) => {
   }
 });
 
-adminController.get('/admins/:id', async (req, res) => {
+adminController.get('/admins/:id', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
   try {
     const { id } = req.params;
     if (!idSchema.safeParse(id).success) {
@@ -63,7 +63,7 @@ adminController.get('/admins/:id', async (req, res) => {
 });
 
 // Create Admin
-adminController.post('/admins', async (req, res) => {
+adminController.post('/admins', permit('Admin'), async (req, res) => {
   let conn = null;
   try {
     const {
@@ -157,7 +157,7 @@ adminController.post('/admins', async (req, res) => {
 });
 
 // Update Admin
-adminController.patch('/admins/:id', async (req, res) => {
+adminController.patch('/admins/:id', permit('Admin'), async (req, res) => {
   let conn = null;
   try {
     const { id } = req.params;
@@ -263,7 +263,7 @@ adminController.patch('/admins/:id', async (req, res) => {
 });
 
 // Delete Admin
-adminController.delete('/admins/:id', async (req, res) => {
+adminController.delete('/admins/:id', permit('Admin'), async (req, res) => {
   try {
     const { id } = req.params;
     if (!idSchema.safeParse(id).success) {

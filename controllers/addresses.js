@@ -11,7 +11,7 @@ import {
 const addressController = Router();
 
 // Read Address
-addressController.get('/addresses', async (req, res) => {
+addressController.get('/addresses', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
   try {
     if (!emptyObjSchema.safeParse(req.body).success) {
       return res.status(400).json({
@@ -35,7 +35,7 @@ addressController.get('/addresses', async (req, res) => {
   }
 });
 
-addressController.get('/addresses/:id', async (req, res) => {
+addressController.get('/addresses/:id', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
   try {
     const { id } = req.params;
     if (!idSchema.safeParse(id).success) {
@@ -66,7 +66,8 @@ addressController.get('/addresses/:id', async (req, res) => {
   }
 });
 
-addressController.post('/addresses', async (req, res) => {
+// Create Address
+addressController.post('/addresses', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
   try {
     const { streetOne, streetTwo, suburb, postcode, state, country } = req.body;
 
@@ -87,7 +88,7 @@ addressController.post('/addresses', async (req, res) => {
 });
 
 // Update Address
-addressController.patch('/addresses/:id', async (req, res) => {
+addressController.patch('/addresses/:id', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
   try {
     const { id } = req.params;
     if (!idSchema.safeParse(id).success) {
@@ -120,7 +121,7 @@ addressController.patch('/addresses/:id', async (req, res) => {
 });
 
 // Delete Address
-addressController.delete('/addresses/:id', async (req, res) => {
+addressController.delete('/addresses/:id', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
   try {
     const { id } = req.params;
     if (!idSchema.safeParse(id).success) {

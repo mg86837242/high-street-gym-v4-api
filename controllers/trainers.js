@@ -7,7 +7,7 @@ import { getAllTrainers, getTrainersById, deleteTrainerById } from '../models/tr
 const trainerController = Router();
 
 // Read Trainer
-trainerController.get('/trainers', async (req, res) => {
+trainerController.get('/trainers', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
   try {
     if (!emptyObjSchema.safeParse(req.body).success) {
       return res.status(400).json({
@@ -31,7 +31,7 @@ trainerController.get('/trainers', async (req, res) => {
   }
 });
 
-trainerController.get('/trainers/:id', async (req, res) => {
+trainerController.get('/trainers/:id', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
   try {
     const { id } = req.params;
     if (!idSchema.safeParse(id).success) {
@@ -63,7 +63,7 @@ trainerController.get('/trainers/:id', async (req, res) => {
 });
 
 // Create Trainer
-trainerController.post('/trainers', async (req, res) => {
+trainerController.post('/trainers', permit('Admin', 'Trainer'), async (req, res) => {
   let conn = null;
   try {
     const {
@@ -161,7 +161,7 @@ trainerController.post('/trainers', async (req, res) => {
 });
 
 // Update Trainer
-trainerController.patch('/trainers/:id', async (req, res) => {
+trainerController.patch('/trainers/:id', permit('Admin', 'Trainer'), async (req, res) => {
   let conn = null;
   try {
     const { id } = req.params;
@@ -271,7 +271,7 @@ trainerController.patch('/trainers/:id', async (req, res) => {
 });
 
 // Delete Trainer
-trainerController.delete('/trainers/:id', async (req, res) => {
+trainerController.delete('/trainers/:id', permit('Admin', 'Trainer'), async (req, res) => {
   try {
     const { id } = req.params;
     if (!idSchema.safeParse(id).success) {
