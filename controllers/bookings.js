@@ -54,7 +54,7 @@ bookingController.get(
   ],
   async (req, res) => {
     // FIX This key is missing when making req to API after logged in (without session store)
-    console.log('🔵 ' + new Date().toLocaleTimeString() + req.session.id);
+    console.log('🔵 [' + new Date().toLocaleTimeString() + '] id: ' + req.session.id);
     console.log(req.session);
     await fakeDelay(`getBookingList:${req.params.date}`);
     try {
