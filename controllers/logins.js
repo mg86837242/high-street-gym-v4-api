@@ -103,7 +103,7 @@ loginController.post('/login', async (req, res) => {
     await updateLoginAccessKeyById(match.id, accessKey);
     // FIX This key is missing when making req to API after logged in (without session store)
     req.session.accessKey = accessKey;
-    console.log('🟢 [' + new Date().toLocaleTimeString() + '] id: ' + req.session.id);
+    console.log('🟢 [' + new Date().toLocaleTimeString() + '] Session id: ' + req.session.id);
     console.log(req.session);
 
     return res.status(200).json({
