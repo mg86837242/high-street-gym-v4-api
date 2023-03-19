@@ -5,7 +5,7 @@
   "main": "server.js",
   "type": "module",
   "scripts": {
-    "api": "nodemon -r dotenv/config server.js",
+    "start": "nodemon -r dotenv/config server.js",
     "format": "prettier --write .",
     "lint": "eslint . --quiet",
     "lint-w": "eslint ."
