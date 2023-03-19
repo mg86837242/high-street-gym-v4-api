@@ -11,15 +11,14 @@ export default function permit(...permittedRoles) {
         });
       }
       const { accessKey } = req.session;
-      const [[firstLoginResults]] = await getLoginsByAccessKey(accessKey);
-      if (!firstLoginResults) {
+      const [[firstLoginResult]] = await getLoginsByAccessKey(accessKey);
+      if (!firstLoginResult) {
         return res.status(401).json({
           status: 401,
           message: 'Unauthorized access key',
         });
       }
-      console.log(firstLoginResults);
-      if (!permittedRoles.includes(firstLoginResults.role)) {
+      if (!permittedRoles.includes(firstLoginResult.role)) {
         return res.status(403).json({
           status: 403,
           message: 'Insufficient privilege',

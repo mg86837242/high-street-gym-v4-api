@@ -27,16 +27,29 @@ loginController.get('/users/by-key/:accessKey', async (req, res) => {
     }
     // Append names to the login row in order to create a `user` obj
     const [[firstLoginResult]] = await getLoginsByAccessKey(accessKey);
+    if (!firstLoginResult) {
+      return res.status(401).json({
+        status: 401,
+        message: 'Unauthorized access key',
+      });
+    }
     let firstName;
     let lastName;
-    if (firstLoginResult.role === 'Member') {
-      [[{ firstName, lastName }]] = await getMembersByLoginId(firstLoginResult.id);
-    }
-    if (firstLoginResult.role === 'Trainer') {
-      [[{ firstName, lastName }]] = await getTrainersByLoginId(firstLoginResult.id);
-    }
-    if (firstLoginResult.role === 'Admin') {
-      [[{ firstName, lastName }]] = await getAdminsByLoginId(firstLoginResult.id);
+    switch (firstLoginResult?.role) {
+      case 'Member':
+        [[{ firstName, lastName }]] = await getMembersByLoginId(firstLoginResult.id);
+        break;
+      case 'Trainer':
+        [[{ firstName, lastName }]] = await getTrainersByLoginId(firstLoginResult.id);
+        break;
+      case 'Admin':
+        [[{ firstName, lastName }]] = await getAdminsByLoginId(firstLoginResult.id);
+        break;
+      default:
+        return res.status(403).json({
+          status: 403,
+          message: 'Insufficient privilege',
+        });
     }
     const user = { ...firstLoginResult, firstName, lastName };
 
@@ -90,7 +103,7 @@ loginController.post('/login', async (req, res) => {
     await updateLoginAccessKeyById(match.id, accessKey);
     // FIX This key is missing when making req to API after logged in (without session store)
     req.session.accessKey = accessKey;
-    console.log('🟢 ' + new Date().toLocaleTimeString());
+    console.log('🟢 ' + new Date().toLocaleTimeString() + req.session.id);
     console.log(req.session);
 
     return res.status(200).json({
