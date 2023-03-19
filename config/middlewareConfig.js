@@ -33,6 +33,7 @@ export default function (app) {
         secure: false,
         httpOnly: true,
         maxAge: 7 * 24 * 60 * 60 * 1_000,
+        sameSite: 'none',
       },
     })
   );

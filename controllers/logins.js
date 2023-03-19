@@ -102,6 +102,8 @@ loginController.post('/login', async (req, res) => {
     const accessKey = uuid4().toString();
     await updateLoginAccessKeyById(match.id, accessKey);
     req.session.accessKey = accessKey;
+    // FIX Delete this print after everything works fine
+    console.log('🟢 [' + new Date().toLocaleTimeString() + '] id: ' + req.session.id);
 
     return res.status(200).json({
       status: 200,
