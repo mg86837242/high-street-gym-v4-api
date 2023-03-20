@@ -101,13 +101,13 @@ addressController.patch('/addresses/:id', permit('Admin', 'Trainer', 'Member'), 
     const { streetOne, streetTwo, suburb, postcode, state, country } = req.body;
 
     const [{ affectedRows }] = await updateAddressById(id, streetOne, streetTwo, suburb, postcode, state, country);
+
     if (!affectedRows) {
       return res.status(404).json({
         status: 404,
         message: 'No addresses found with the ID provided',
       });
     }
-
     return res.status(200).json({
       status: 200,
       message: 'Address successfully updated',

@@ -95,13 +95,13 @@ blogController.patch('/blogs/:id', permit('Admin', 'Trainer', 'Member'), async (
     const { memberId, title, body } = req.body;
 
     const [{ affectedRows }] = await updateBlogById(id, memberId, title, body);
+
     if (!affectedRows) {
       return res.status(404).json({
         status: 404,
         message: 'No blogs found with the ID provided',
       });
     }
-
     return res.status(200).json({
       status: 200,
       message: 'Blog successfully updated',

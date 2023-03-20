@@ -239,13 +239,13 @@ adminController.patch('/admins/:id', permit('Admin'), async (req, res) => {
       `,
       [loginId, firstName, lastName, phone, addressId, id]
     );
+
     if (!affectedRows) {
       return res.status(404).json({
         status: 404,
         message: 'No admin found with the ID provided',
       });
     }
-
     await conn.commit();
     return res.status(200).json({
       status: 200,
@@ -281,7 +281,6 @@ adminController.delete('/admins/:id', permit('Admin'), async (req, res) => {
         message: 'No admin found with the ID provided',
       });
     }
-
     return res.status(200).json({
       status: 200,
       message: 'Admin successfully deleted',

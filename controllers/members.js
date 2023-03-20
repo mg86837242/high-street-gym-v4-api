@@ -230,7 +230,6 @@ memberController.post('/members', permit('Admin', 'Trainer', 'Member'), async (r
       `,
       [loginId, firstName, lastName, phone, addressId, age, gender]
     );
-
     await conn.commit();
     return res.status(200).json({
       status: 200,
@@ -342,13 +341,13 @@ memberController.patch('/members/:id', permit('Admin', 'Trainer', 'Member'), asy
       `,
       [loginId, firstName, lastName, phone, addressId, age, gender, id]
     );
+
     if (!affectedRows) {
       return res.status(404).json({
         status: 404,
         message: 'No member found with the ID provided',
       });
     }
-
     await conn.commit();
     return res.status(200).json({
       status: 200,

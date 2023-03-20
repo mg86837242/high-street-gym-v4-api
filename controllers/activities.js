@@ -184,13 +184,13 @@ activityController.delete('/activities/:id', permit('Admin', 'Trainer'), async (
       });
     }
     const [{ affectedRows }] = await deleteActivityById(id);
+
     if (!affectedRows) {
       return res.status(404).json({
         status: 404,
         message: 'No activities found with the ID provided',
       });
     }
-
     return res.status(200).json({
       status: 200,
       message: 'Activity successfully deleted',
