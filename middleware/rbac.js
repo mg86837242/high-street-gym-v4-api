@@ -1,5 +1,5 @@
 import { getLoginsByAccessKey } from '../models/logins.js';
-// NB With rest parameters, array method `includes` is enabled, i.e., DON'T pass an array as argument when loading this middleware
+// NB With rest parameters, array method `includes` is enabled
 export default function permit(...permittedRoles) {
   return async (req, res, next) => {
     try {

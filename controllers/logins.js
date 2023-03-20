@@ -12,7 +12,6 @@ import {
 import { getMembersByLoginId } from '../models/members.js';
 import { getTrainersByLoginId } from '../models/trainers.js';
 import { getAdminsByLoginId } from '../models/admins.js';
-import fakeDelay from '../var/fakeCache.js';
 
 const loginController = Router();
 
@@ -74,7 +73,6 @@ loginController.get('/users/by-key/:accessKey', async (req, res) => {
 });
 
 loginController.post('/login', async (req, res) => {
-  await fakeDelay(`login:${req.body.email}`);
   try {
     if (!loginSchema.safeParse(req.body).success) {
       return res.status(400).json({
