@@ -8,9 +8,6 @@ module.exports = {
     //  & https://eslint.org/docs/latest/use/configure/language-options#specifying-parser-options
     ecmaVersion: 'latest',
     sourceType: 'module',
-    ecmaFeatures: {
-      jsx: true,
-    },
   },
   // @see: https://www.robinwieruch.de/prettier-eslint/ & https://prettier.io/docs/en/integrating-with-linters.html
   extends: ['airbnb', 'prettier'],
