@@ -10,14 +10,13 @@ export default function (app) {
   app.use(
     cors({
       origin: `http://localhost:${constants.VITE_PORT}`,
-      // origin: `*`,
       credentials: true,
     })
   );
   app.options('*', cors());
 
   // Express session middleware
-  // -- Redis client
+  // -- Redis client (to be implemented)
   // let redisClient = createClient();
   // redisClient.connect().catch(console.error);
   // -- Session config
@@ -33,7 +32,7 @@ export default function (app) {
         secure: false,
         httpOnly: true,
         maxAge: 7 * 24 * 60 * 60 * 1_000,
-        sameSite: 'none',
+        sameSite: 'lax',
       },
     })
   );
