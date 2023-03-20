@@ -13,10 +13,8 @@ module.exports = {
     },
   },
   // @see: https://www.robinwieruch.de/prettier-eslint/ & https://prettier.io/docs/en/integrating-with-linters.html
-  //  & https://react.dev/learn/editor-setup#linting & https://www.npmjs.com/package/eslint-config-react-app
-  //  & https://www.npmjs.com/package/eslint-plugin-react-hooks
-  extends: ['airbnb', 'prettier', 'react-app'],
-  plugins: ['prettier', 'react-hooks'],
+  extends: ['airbnb', 'prettier'],
+  plugins: ['prettier'],
   ignorePatterns: [
     // Unused folders && files
     '**/__*',
@@ -27,9 +25,6 @@ module.exports = {
     'prettier/prettier': 'error',
     'arrow-body-style': 'off',
     'prefer-arrow-callback': 'off',
-    // @see: https://www.npmjs.com/package/eslint-plugin-react-hooks
-    'react-hooks/rules-of-hooks': 'error',
-    'react-hooks/exhaustive-deps': 'error',
     // Band-aid solution to the Vite import resolver issue, @see:
     // https://stackoverflow.com/questions/46208367/how-to-remove-eslint-error-no-unresolved-from-importing-react
     // & https://stackoverflow.com/questions/67316153/facing-problem-while-importing-files-in-nodejs
