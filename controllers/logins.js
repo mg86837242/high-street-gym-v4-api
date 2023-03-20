@@ -56,7 +56,7 @@ loginController.get('/users/by-key/:accessKey', async (req, res) => {
     // TODO Decide if more info is needed to be included in the user obj
     const user = { username, role, firstName, lastName };
 
-    // Refresh the key in the session in case of session getting reset by refresh, closing the tab, etc.
+    // Synchronize the key in the session in case of session getting reset by refresh, closing the tab, etc.
     req.session.accessKey = accessKey;
 
     return res.status(200).json({
