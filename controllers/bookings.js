@@ -145,11 +145,10 @@ bookingController.get(
           message: 'No bookings found with the ID provided',
         });
       }
-      const [memberResults, trainerResults, activityResults] = Promise.all([
-        getAllMembers(),
-        getAllTrainers(),
-        getAllActivities(),
-      ]);
+      const [memberResults] = await getAllMembers();
+      const [trainerResults] = await getAllTrainers();
+      const [activityResults] = await getAllActivities();
+
       return res.status(200).json({
         status: 200,
         message: 'Booking record and options successfully retrieved',
@@ -176,12 +175,10 @@ bookingController.get('/bookings/options-only', permit('Admin', 'Trainer', 'Memb
         message: emptyObjSchema.safeParse(req.body).error.issues,
       });
     }
+    const [memberResults] = await getAllMembers();
+    const [trainerResults] = await getAllTrainers();
+    const [activityResults] = await getAllActivities();
 
-    const [memberResults, trainerResults, activityResults] = Promise.all([
-      getAllMembers(),
-      getAllTrainers(),
-      getAllActivities(),
-    ]);
     return res.status(200).json({
       status: 200,
       message: 'Booking options successfully retrieved',

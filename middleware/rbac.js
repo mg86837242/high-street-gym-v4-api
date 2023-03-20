@@ -3,7 +3,8 @@ import { getLoginsByAccessKey } from '../models/logins.js';
 export default function permit(...permittedRoles) {
   return async (req, res, next) => {
     try {
-      // FIX Delete this print after everything works fine
+      // ??? Session id reset after refresh, making this middleware impossible useless
+      // FIX Delete this console log after everything works fine
       console.log('🔵 [' + new Date().toLocaleTimeString() + '] id: ' + req.session.id);
       if (!req?.session?.accessKey) {
         return res.status(401).json({

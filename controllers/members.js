@@ -65,7 +65,7 @@ memberController.get('/members/:id', permit('Admin', 'Trainer', 'Member'), async
 });
 
 // Create Member
-memberController.post('/members/signup', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
+memberController.post('/members/signup', async (req, res) => {
   let conn = null;
   try {
     if (!signupSchema.safeParse(req.body).success) {
