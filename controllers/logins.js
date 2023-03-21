@@ -26,8 +26,8 @@ loginController.get('/users/by-key/:accessKey', async (req, res) => {
     }
 
     // Get info from the login row
-    const [[{ id, username, role }]] = await getLoginsByAccessKey(accessKey);
-    if (!id) {
+    const [[firstLoginResult]] = await getLoginsByAccessKey(accessKey);
+    if (!firstLoginResult) {
       return res.status(401).json({
         status: 401,
         message: 'Unauthorized access key',
@@ -36,15 +36,15 @@ loginController.get('/users/by-key/:accessKey', async (req, res) => {
     // Get name info from respective child table
     let firstName;
     let lastName;
-    switch (role) {
+    switch (firstLoginResult?.role) {
       case 'Member':
-        [[{ firstName, lastName }]] = await getMembersByLoginId(id);
+        [[{ firstName, lastName }]] = await getMembersByLoginId(firstLoginResult.id);
         break;
       case 'Trainer':
-        [[{ firstName, lastName }]] = await getTrainersByLoginId(id);
+        [[{ firstName, lastName }]] = await getTrainersByLoginId(firstLoginResult.id);
         break;
       case 'Admin':
-        [[{ firstName, lastName }]] = await getAdminsByLoginId(id);
+        [[{ firstName, lastName }]] = await getAdminsByLoginId(firstLoginResult.id);
         break;
       default:
         return res.status(403).json({
@@ -53,10 +53,11 @@ loginController.get('/users/by-key/:accessKey', async (req, res) => {
         });
     }
     // TODO Decide if more info is needed to be included in the user obj
-    const user = { username, role, firstName, lastName };
+    const user = { ...firstLoginResult, firstName, lastName };
 
     // Synchronize the key in the session in case of session getting reset by refresh, closing tab, etc.
     req.session.accessKey = accessKey;
+    console.log(`🔵 [${new Date().toLocaleTimeString()}] : right before sending user obj as res`);
 
     return res.status(200).json({
       status: 200,

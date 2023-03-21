@@ -3,7 +3,7 @@ import { getLoginsByAccessKey } from '../models/logins.js';
 export default function permit(...permittedRoles) {
   return async (req, res, next) => {
     try {
-      // console.log(`🔵 [${new Date().toLocaleTimeString()}] id: ${req.session.id}`);
+      console.log(`🔵 [${new Date().toLocaleTimeString()}] id: ${req.session.id}`);
       if (!req?.session?.accessKey) {
         return res.status(401).json({
           status: 401,
