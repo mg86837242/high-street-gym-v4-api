@@ -59,7 +59,7 @@ loginController.get('/users/by-key/:accessKey', async (req, res) => {
 
     // Synchronize the key in the session in case of session getting reset by refresh, closing tab, etc.
     req.session.accessKey = accessKey;
-    console.log(`🔵 [${new Date().toLocaleTimeString()}] : right before sending user obj as res`);
+    // console.log(`🔵 [${new Date().toLocaleTimeString()}] session id:`);
 
     return res.status(200).json({
       status: 200,
