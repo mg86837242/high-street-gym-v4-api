@@ -34,11 +34,11 @@ loginController.get('/users/by-key/:accessKey', async (req, res) => {
       });
     }
     // Get name info from respective child table
-    let firstName;
-    let lastName;
-    let memberId;
-    let trainerId;
-    let adminId;
+    let firstName = null;
+    let lastName = null;
+    let memberId = null;
+    let trainerId = null;
+    let adminId = null;
     switch (role) {
       case 'Member':
         [[{ id: memberId, firstName, lastName }]] = await getMembersByLoginId(id);
