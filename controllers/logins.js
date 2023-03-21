@@ -26,8 +26,8 @@ loginController.get('/users/by-key/:accessKey', async (req, res) => {
     }
 
     // Get info from the login row
-    const [[firstLoginResult]] = await getLoginsByAccessKey(accessKey);
-    if (!firstLoginResult) {
+    const [[{ id, username, role }]] = await getLoginsByAccessKey(accessKey);
+    if (!id) {
       return res.status(401).json({
         status: 401,
         message: 'Unauthorized access key',
@@ -36,15 +36,15 @@ loginController.get('/users/by-key/:accessKey', async (req, res) => {
     // Get name info from respective child table
     let firstName;
     let lastName;
-    switch (firstLoginResult?.role) {
+    switch (role) {
       case 'Member':
-        [[{ firstName, lastName }]] = await getMembersByLoginId(firstLoginResult.id);
+        [[{ firstName, lastName }]] = await getMembersByLoginId(id);
         break;
       case 'Trainer':
-        [[{ firstName, lastName }]] = await getTrainersByLoginId(firstLoginResult.id);
+        [[{ firstName, lastName }]] = await getTrainersByLoginId(id);
         break;
       case 'Admin':
-        [[{ firstName, lastName }]] = await getAdminsByLoginId(firstLoginResult.id);
+        [[{ firstName, lastName }]] = await getAdminsByLoginId(id);
         break;
       default:
         return res.status(403).json({
@@ -52,8 +52,8 @@ loginController.get('/users/by-key/:accessKey', async (req, res) => {
           message: 'Insufficient privilege',
         });
     }
-    // TODO Decide if more info is needed to be included in the user obj
-    const user = { ...firstLoginResult, firstName, lastName };
+    // TODO Decide if more info is needed (esp. memberId, trainerId, adminId) to be included in the user obj
+    const user = { username, role, firstName, lastName };
 
     // Synchronize the key in the session in case of session getting reset by refresh, closing tab, etc.
     req.session.accessKey = accessKey;
