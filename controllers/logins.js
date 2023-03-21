@@ -17,16 +17,16 @@ const loginController = Router();
 
 loginController.get('/users/by-key/:accessKey', async (req, res) => {
   try {
-    const { accessKey } = req.params;
-    if (!uuidSchema.safeParse(accessKey).success) {
+    const { accessKey: accessKeyInput } = req.params;
+    if (!uuidSchema.safeParse(accessKeyInput).success) {
       return res.status(400).json({
         status: 400,
-        message: uuidSchema.safeParse(accessKey).error.issues,
+        message: uuidSchema.safeParse(accessKeyInput).error.issues,
       });
     }
 
     // Get info from the login row
-    const [[{ id, username, role }]] = await getLoginsByAccessKey(accessKey);
+    const [[{ id, username, role, accessKey }]] = await getLoginsByAccessKey(accessKeyInput);
     if (!id) {
       return res.status(401).json({
         status: 401,
@@ -36,15 +36,18 @@ loginController.get('/users/by-key/:accessKey', async (req, res) => {
     // Get name info from respective child table
     let firstName;
     let lastName;
+    let memberId;
+    let trainerId;
+    let adminId;
     switch (role) {
       case 'Member':
-        [[{ firstName, lastName }]] = await getMembersByLoginId(id);
+        [[{ id: memberId, firstName, lastName }]] = await getMembersByLoginId(id);
         break;
       case 'Trainer':
-        [[{ firstName, lastName }]] = await getTrainersByLoginId(id);
+        [[{ id: trainerId, firstName, lastName }]] = await getTrainersByLoginId(id);
         break;
       case 'Admin':
-        [[{ firstName, lastName }]] = await getAdminsByLoginId(id);
+        [[{ id: adminId, firstName, lastName }]] = await getAdminsByLoginId(id);
         break;
       default:
         return res.status(403).json({
@@ -52,8 +55,7 @@ loginController.get('/users/by-key/:accessKey', async (req, res) => {
           message: 'Insufficient privilege',
         });
     }
-    // TODO Decide if more info is needed (esp. memberId, trainerId, adminId) to be included in the user obj
-    const user = { username, role, firstName, lastName };
+    const user = { username, role, accessKey, memberId, trainerId, adminId, firstName, lastName };
 
     // Synchronize the key in the session in case of session getting reset by refresh, closing tab, etc.
     req.session.accessKey = accessKey;
