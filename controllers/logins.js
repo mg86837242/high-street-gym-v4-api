@@ -33,7 +33,7 @@ loginController.get('/users/by-key/:accessKey', async (req, res) => {
         message: 'Unauthorized access key',
       });
     }
-    // Get name info from respective child table
+    // Get necessary info from respective child table
     let firstName = null;
     let lastName = null;
     let memberId = null;
