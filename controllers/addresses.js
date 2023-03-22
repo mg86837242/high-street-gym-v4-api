@@ -70,9 +70,9 @@ addressController.get('/addresses/:id', permit('Admin', 'Trainer', 'Member'), as
 // Create Address
 addressController.post('/addresses', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
   try {
-    const { streetOne, streetTwo, suburb, postcode, state, country } = req.body;
+    const { lineOne, lineTwo, suburb, postcode, state, country } = req.body;
 
-    const [{ insertId }] = await createAddress(streetOne, streetTwo, suburb, postcode, state, country);
+    const [{ insertId }] = await createAddress(lineOne, lineTwo, suburb, postcode, state, country);
 
     res.status(200).json({
       status: 200,
@@ -98,9 +98,9 @@ addressController.patch('/addresses/:id', permit('Admin', 'Trainer', 'Member'), 
         message: idSchema.safeParse(id).error.issues,
       });
     }
-    const { streetOne, streetTwo, suburb, postcode, state, country } = req.body;
+    const { lineOne, lineTwo, suburb, postcode, state, country } = req.body;
 
-    const [{ affectedRows }] = await updateAddressById(id, streetOne, streetTwo, suburb, postcode, state, country);
+    const [{ affectedRows }] = await updateAddressById(id, lineOne, lineTwo, suburb, postcode, state, country);
 
     if (!affectedRows) {
       return res.status(404).json({

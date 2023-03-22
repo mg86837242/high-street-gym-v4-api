@@ -9,34 +9,34 @@ export function getAddressesById(id) {
   return pool.query('SELECT * FROM Addresses WHERE id = ?', [id]);
 }
 
-export function getAddressesByDetails(streetOne, streetTwo, suburb, postcode, state, country) {
+export function getAddressesByDetails(lineOne, lineTwo, suburb, postcode, state, country) {
   return pool.query(
-    'SELECT * FROM Addresses WHERE streetOne = ? AND streetTwo = ? AND suburb = ? AND postcode = ? AND state = ? AND country = ?',
-    [streetOne, streetTwo, suburb, postcode, state, country]
+    'SELECT * FROM Addresses WHERE lineOne = ? AND lineTwo = ? AND suburb = ? AND postcode = ? AND state = ? AND country = ?',
+    [lineOne, lineTwo, suburb, postcode, state, country]
   );
 }
 
 // Create Address
-export function createAddress(streetOne, streetTwo, suburb, postcode, state, country) {
+export function createAddress(lineOne, lineTwo, suburb, postcode, state, country) {
   return pool.query(
     `
 		INSERT INTO Addresses
-		(streetOne, streetTwo, suburb, postcode, state, country)
+		(lineOne, lineTwo, suburb, postcode, state, country)
 		VALUES (?, ?, ?, ?, ?, ?)
 		`,
-    [streetOne, streetTwo, suburb, postcode, state, country]
+    [lineOne, lineTwo, suburb, postcode, state, country]
   );
 }
 
 // Update Address
-export function updateAddressById(id, streetOne, streetTwo, suburb, postcode, state, country) {
+export function updateAddressById(id, lineOne, lineTwo, suburb, postcode, state, country) {
   return pool.query(
     `
 		UPDATE Addresses
-		SET streetOne = ?, streetTwo = ?, suburb = ?, postcode = ?, state = ?, country = ?
+		SET lineOne = ?, lineTwo = ?, suburb = ?, postcode = ?, state = ?, country = ?
 		WHERE id = ?
 		`,
-    [streetOne, streetTwo, suburb, postcode, state, country, id]
+    [lineOne, lineTwo, suburb, postcode, state, country, id]
   );
 }
 

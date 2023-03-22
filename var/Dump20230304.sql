@@ -58,8 +58,8 @@ DROP TABLE IF EXISTS `addresses`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `addresses` (
   `id` int NOT NULL AUTO_INCREMENT,
-  `streetOne` varchar(45) COLLATE utf8mb3_bin NOT NULL,
-  `streetTwo` varchar(45) COLLATE utf8mb3_bin DEFAULT NULL,
+  `lineOne` varchar(45) COLLATE utf8mb3_bin NOT NULL,
+  `lineTwo` varchar(45) COLLATE utf8mb3_bin DEFAULT NULL,
   `suburb` varchar(45) COLLATE utf8mb3_bin NOT NULL,
   `postcode` int NOT NULL,
   `state` varchar(45) COLLATE utf8mb3_bin NOT NULL,

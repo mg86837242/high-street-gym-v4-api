@@ -6,31 +6,31 @@
 <!ELEMENT email (#PCDATA)>
 <!ELEMENT age (#PCDATA)>
 <!ELEMENT gender (#PCDATA)>
-<!ELEMENT address (streetOne, streetTwo, suburb, postcode, state, country)>
-<!ELEMENT streetOne (#PCDATA)>
-<!ELEMENT streetTwo (#PCDATA)>
+<!ELEMENT address (lineOne, lineTwo, suburb, postcode, state, country)>
+<!ELEMENT lineOne (#PCDATA)>
+<!ELEMENT lineTwo (#PCDATA)>
 <!ELEMENT suburb (#PCDATA)>
 <!ELEMENT postcode (#PCDATA)>
 <!ELEMENT state (#PCDATA)>
 <!ELEMENT country (#PCDATA)>
 ]>
 <memberList>
-    <% for (const member of members) { %>
-    <member>
-        <firstName><%- member.firstName %></firstName>
-        <lastName><%- member.lastName %></lastName>
-        <phone><%- member.phone %></phone>
-        <email><%- member.email %></email>
-        <age><%- member.age %></age>
-        <gender><%- member.gender %></gender>
-        <address>
-            <streetOne><%- member.address.streetOne %></streetOne>
-            <streetTwo><%- member.address.streetTwo %></streetTwo>
-            <suburb><%- member.address.suburb %></suburb>
-            <postcode><%- member.address.postcode %></postcode>
-            <state><%- member.address.state %></state>
-            <country><%- member.address.country %></country>
-        </address>
-    </member>
-    <% } %>
+  <% for (const member of members) { %>
+  <member>
+    <firstName><%- member.firstName %></firstName>
+    <lastName><%- member.lastName %></lastName>
+    <phone><%- member.phone %></phone>
+    <email><%- member.email %></email>
+    <age><%- member.age %></age>
+    <gender><%- member.gender %></gender>
+    <address>
+      <lineOne><%- member.address.lineOne %></lineOne>
+      <lineTwo><%- member.address.lineTwo %></lineTwo>
+      <suburb><%- member.address.suburb %></suburb>
+      <postcode><%- member.address.postcode %></postcode>
+      <state><%- member.address.state %></state>
+      <country><%- member.address.country %></country>
+    </address>
+  </member>
+  <% } %>
 </memberList>

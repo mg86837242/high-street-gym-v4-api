@@ -74,8 +74,8 @@ adminController.post('/admins', permit('Admin'), async (req, res) => {
       firstName,
       lastName,
       phone,
-      streetOne,
-      streetTwo,
+      lineOne,
+      lineTwo,
       suburb,
       postcode,
       state,
@@ -108,10 +108,10 @@ adminController.post('/admins', permit('Admin'), async (req, res) => {
 
     // Find if there's existing address row – referring to the parent table `Addresses`
     let addressId = null;
-    if (streetOne && suburb && postcode && state && country) {
+    if (lineOne && suburb && postcode && state && country) {
       const [[addressExists]] = await conn.query(
-        'SELECT * FROM Addresses WHERE streetOne = ? AND (streetTwo = ? OR streetTwo IS NULL) AND suburb = ? AND postcode = ? AND state = ? AND country = ?',
-        [streetOne, null, suburb, postcode, state, country]
+        'SELECT * FROM Addresses WHERE lineOne = ? AND (lineTwo = ? OR lineTwo IS NULL) AND suburb = ? AND postcode = ? AND state = ? AND country = ?',
+        [lineOne, null, suburb, postcode, state, country]
       );
       if (addressExists) {
         // -- Use the found address row's PK if exists
@@ -121,10 +121,10 @@ adminController.post('/admins', permit('Admin'), async (req, res) => {
         const [createAddressResult] = await conn.query(
           `
           INSERT INTO Addresses
-          (streetOne, streetTwo, suburb, postcode, state, country)
+          (lineOne, lineTwo, suburb, postcode, state, country)
           VALUES (?, ?, ?, ?, ?, ?)
           `,
-          [streetOne, streetTwo, suburb, postcode, state, country]
+          [lineOne, lineTwo, suburb, postcode, state, country]
         );
         addressId = createAddressResult.insertId;
       }
@@ -175,8 +175,8 @@ adminController.patch('/admins/:id', permit('Admin'), async (req, res) => {
       firstName,
       lastName,
       phone,
-      streetOne,
-      streetTwo,
+      lineOne,
+      lineTwo,
       suburb,
       postcode,
       state,
@@ -212,8 +212,8 @@ adminController.patch('/admins/:id', permit('Admin'), async (req, res) => {
     // Find if there's duplicate address row
     let [[addressId]] = await conn.query('SELECT addressId FROM Admins WHERE id = ?', [id]);
     const [[addressExists]] = await conn.query(
-      'SELECT * FROM Addresses WHERE streetOne = ? AND (streetTwo = ? OR streetTwo IS NULL) AND suburb = ? AND postcode = ? AND state = ? AND country = ?',
-      [streetOne, streetTwo, suburb, postcode, state, country]
+      'SELECT * FROM Addresses WHERE lineOne = ? AND (lineTwo = ? OR lineTwo IS NULL) AND suburb = ? AND postcode = ? AND state = ? AND country = ?',
+      [lineOne, lineTwo, suburb, postcode, state, country]
     );
     if (addressExists) {
       // -- Use the found address row's PK if exists
@@ -223,10 +223,10 @@ adminController.patch('/admins/:id', permit('Admin'), async (req, res) => {
       await conn.query(
         `
         UPDATE Addresses
-        SET streetOne = ?, streetTwo = ?, suburb = ?, postcode = ?, state = ?, country = ?
+        SET lineOne = ?, lineTwo = ?, suburb = ?, postcode = ?, state = ?, country = ?
         WHERE id = ?
         `,
-        [streetOne, streetTwo, suburb, postcode, state, country, addressId]
+        [lineOne, lineTwo, suburb, postcode, state, country, addressId]
       );
     }
 

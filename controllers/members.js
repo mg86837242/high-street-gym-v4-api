@@ -164,8 +164,8 @@ memberController.post('/members', permit('Admin', 'Trainer', 'Member'), async (r
       phone,
       age,
       gender,
-      streetOne,
-      streetTwo,
+      lineOne,
+      lineTwo,
       suburb,
       postcode,
       state,
@@ -198,12 +198,12 @@ memberController.post('/members', permit('Admin', 'Trainer', 'Member'), async (r
 
     // Find if there's duplicate address row – referring to the parent table `Addresses`
     let addressId = null;
-    if (streetOne && suburb && postcode && state && country) {
-      // NB `WHERE streetTwo = null` returns null i/o true, therefore the extra evaluation o/w the following query
+    if (lineOne && suburb && postcode && state && country) {
+      // NB `WHERE lineTwo = null` returns null i/o true, therefore the extra evaluation o/w the following query
       //  won't work as intended, see: https://stackoverflow.com/questions/8775098/mysql-display-rows-where-value-is-null-or-equal-to-x
       const [[addressExists]] = await conn.query(
-        'SELECT * FROM Addresses WHERE streetOne = ? AND (streetTwo = ? OR streetTwo IS NULL) AND suburb = ? AND postcode = ? AND state = ? AND country = ?',
-        [streetOne, streetTwo, suburb, postcode, state, country]
+        'SELECT * FROM Addresses WHERE lineOne = ? AND (lineTwo = ? OR lineTwo IS NULL) AND suburb = ? AND postcode = ? AND state = ? AND country = ?',
+        [lineOne, lineTwo, suburb, postcode, state, country]
       );
       if (addressExists) {
         // -- Use the found address row's PK if exists
@@ -213,10 +213,10 @@ memberController.post('/members', permit('Admin', 'Trainer', 'Member'), async (r
         const [createAddressResult] = await conn.query(
           `
           INSERT INTO Addresses
-          (streetOne, streetTwo, suburb, postcode, state, country)
+          (lineOne, lineTwo, suburb, postcode, state, country)
           VALUES (?, ?, ?, ?, ?, ?)
           `,
-          [streetOne, streetTwo, suburb, postcode, state, country]
+          [lineOne, lineTwo, suburb, postcode, state, country]
         );
         addressId = createAddressResult.insertId;
       }
@@ -277,8 +277,8 @@ memberController.patch('/members/:id', permit('Admin', 'Trainer', 'Member'), asy
       phone,
       age,
       gender,
-      streetOne,
-      streetTwo,
+      lineOne,
+      lineTwo,
       suburb,
       postcode,
       state,
@@ -314,8 +314,8 @@ memberController.patch('/members/:id', permit('Admin', 'Trainer', 'Member'), asy
     // Find if there's duplicate address row
     let [[addressId]] = await conn.query('SELECT addressId FROM Members WHERE id = ?', [id]);
     const [[addressExists]] = await conn.query(
-      'SELECT * FROM Addresses WHERE streetOne = ? AND (streetTwo = ? OR streetTwo IS NULL) AND suburb = ? AND postcode = ? AND state = ? AND country = ?',
-      [streetOne, streetTwo, suburb, postcode, state, country]
+      'SELECT * FROM Addresses WHERE lineOne = ? AND (lineTwo = ? OR lineTwo IS NULL) AND suburb = ? AND postcode = ? AND state = ? AND country = ?',
+      [lineOne, lineTwo, suburb, postcode, state, country]
     );
     if (addressExists) {
       // -- Use the found address row's PK if exists
@@ -325,10 +325,10 @@ memberController.patch('/members/:id', permit('Admin', 'Trainer', 'Member'), asy
       await conn.query(
         `
         UPDATE Addresses
-        SET streetOne = ?, streetTwo = ?, suburb = ?, postcode = ?, state = ?, country = ?
+        SET lineOne = ?, lineTwo = ?, suburb = ?, postcode = ?, state = ?, country = ?
         WHERE id = ?
         `,
-        [streetOne, streetTwo, suburb, postcode, state, country, addressId]
+        [lineOne, lineTwo, suburb, postcode, state, country, addressId]
       );
     }
 
