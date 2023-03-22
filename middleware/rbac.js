@@ -7,7 +7,7 @@ export default function permit(...permittedRoles) {
       if (!req?.session?.accessKey) {
         return res.status(401).json({
           status: 401,
-          message: 'Unauthorized',
+          message: 'Unauthorized request',
         });
       }
       const { accessKey } = req.session;
