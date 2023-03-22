@@ -26,14 +26,14 @@ loginController.get('/users/by-key/:accessKey', async (req, res) => {
     }
 
     // Get info from the login row
-    const [[{ id, username, role, accessKey }]] = await getLoginsByAccessKey(accessKeyInput);
+    const [[{ id, email, username, role, accessKey }]] = await getLoginsByAccessKey(accessKeyInput);
     if (!id) {
       return res.status(401).json({
         status: 401,
         message: 'Unauthorized access key',
       });
     }
-    // Get necessary info from respective child table
+    // Get necessary info from respective child table // TODO Decide whether firstName and lastName are needed
     let firstName = null;
     let lastName = null;
     let memberId = null;
@@ -55,7 +55,7 @@ loginController.get('/users/by-key/:accessKey', async (req, res) => {
           message: 'Insufficient privilege',
         });
     }
-    const user = { username, role, accessKey, memberId, trainerId, adminId, firstName, lastName };
+    const user = { email, username, role, accessKey, memberId, trainerId, adminId, firstName, lastName };
 
     // Synchronize the key in the session in case of session getting reset by refresh, closing tab, etc.
     req.session.accessKey = accessKey;
