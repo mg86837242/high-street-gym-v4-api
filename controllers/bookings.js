@@ -46,7 +46,7 @@ bookingController.get('/bookings', async (req, res) => {
   }
 });
 
-bookingController.get('/bookings/booking-and-details-by-date/:date', async (req, res) => {
+bookingController.get('/bookings/booking-with-details-by-date/:date', async (req, res) => {
   await fakeDelay(`getBookingList:${req.params.date}`);
   try {
     // NB `req.params.date` is a string, see: https://reactrouter.com/en/main/start/concepts#route-matches; the data type expected to be used in
@@ -95,7 +95,7 @@ bookingController.get('/bookings/booking-and-details-by-date/:date', async (req,
 });
 
 bookingController.get(
-  '/bookings/booking-and-details-by-id/:id',
+  '/bookings/booking-with-details-by-id/:id',
   permit('Admin', 'Trainer', 'Member'),
   async (req, res) => {
     try {
