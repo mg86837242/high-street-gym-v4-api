@@ -10,8 +10,8 @@ const loginSchema = z.object({
   //  longer form, however, not the case for frontend
   password: z
     .string()
-    .min(8, { message: 'Email must have at least 8 character(s)' })
-    .max(100, { message: 'Email must have at most 100 character(s)' }),
+    .min(8, { message: 'Password must have at least 8 character(s)' })
+    .max(100, { message: 'Password exceeds maximum character requirement' }),
   // .regex(/^((?=\S*?[A-Z])(?=\S*?[a-z])(?=\S*?[0-9]).{6,})\S$/, {
   //     message:
   //     'Password must be 6 characters minimum, with at least 1 uppercase letter, 1 lowercase letter, and 1 number with no spaces',

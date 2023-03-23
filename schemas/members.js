@@ -8,7 +8,10 @@ export const signupSchema = z.object({
     .max(45, { message: 'Email must have at most 45 character(s)' }),
   // NB Max length of password is set to 100 for server-side validation b/c encrypting password results in longer
   //  password
-  password: z.string().min(8, { message: 'Password must have at least 8 character(s)' }).max(100),
+  password: z
+    .string()
+    .min(8, { message: 'Password must have at least 8 character(s)' })
+    .max(100, { message: 'Password exceeds maximum character requirement' }),
   username: z
     .string()
     .regex(/^(?=.*[a-zA-Z]{1,})(?=.*[\d]{0,})[a-zA-Z0-9]+$/, {
@@ -45,7 +48,10 @@ export const memberSchema = z.object({
     .min(1, { message: 'Email must have at least 1 character(s)' })
     .email()
     .max(45, { message: 'Email must have at most 45 character(s)' }),
-  password: z.string().min(8, { message: 'Password must have at least 8 character(s)' }).max(100),
+  password: z
+    .string()
+    .min(8, { message: 'Password must have at least 8 character(s)' })
+    .max(100, { message: 'Password exceeds maximum character requirement' }),
   username: z
     .string()
     .regex(/^(?=.*[a-zA-Z]{1,})(?=.*[\d]{0,})[a-zA-Z0-9]+$/, {
