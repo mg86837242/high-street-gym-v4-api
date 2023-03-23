@@ -28,6 +28,10 @@ export function getMembersByLoginId(loginId) {
   return pool.query('SELECT * FROM Members WHERE loginId = ?', [loginId]);
 }
 
+export function getMembersAddressesIdByMemberId(id) {
+  return pool.query('SELECT addressId FROM Members WHERE id = ?', [id]);
+}
+
 // Create Member
 export function createMember(loginId, firstName, lastName, phone, addressId, age, gender) {
   return pool.query(

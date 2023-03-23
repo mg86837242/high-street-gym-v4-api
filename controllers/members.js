@@ -2,7 +2,7 @@ import { Router } from 'express';
 import bcrypt from 'bcryptjs'; // reason to use `bcryptjs`: https://github.com/kelektiv/node.bcrypt.js/issues/705
 import pool from '../config/database.js';
 import { emptyObjSchema, idSchema } from '../schemas/index.js';
-import { signupSchema, memberSchema } from '../schemas/members.js';
+import { signupSchema, memberSchema, memberDetailedSchema } from '../schemas/members.js';
 import { getAllMembers, getMembersById, getMembersWithDetailsById, deleteMemberById } from '../models/members.js';
 import permit from '../middleware/rbac.js';
 
@@ -65,7 +65,7 @@ memberController.get('/members/:id', permit('Admin', 'Trainer', 'Member'), async
 });
 
 memberController.get(
-  '/members/member-with-details-by-id/:id',
+  '/members/member-with-all-details-by-id/:id',
   permit('Admin', 'Trainer', 'Member'),
   async (req, res) => {
     try {
@@ -332,7 +332,7 @@ memberController.patch('/members/:id', permit('Admin', 'Trainer', 'Member'), asy
     );
 
     // Get `addressId` in current row
-    let [[addressId]] = await conn.query('SELECT addressId FROM Members WHERE id = ?', [id]);
+    let [[{ addressId }]] = await conn.query('SELECT addressId FROM Members WHERE id = ?', [id]);
 
     // Update member row with 2 FKs
     const [{ affectedRows }] = await conn.query(
@@ -381,10 +381,10 @@ memberController.patch(
           message: idSchema.safeParse(id).error.issues,
         });
       }
-      if (!memberSchema.safeParse(req.body).success) {
+      if (!memberDetailedSchema.safeParse(req.body).success) {
         return res.status(400).json({
           status: 400,
-          message: memberSchema.safeParse(req.body).error.issues,
+          message: memberDetailedSchema.safeParse(req.body).error.issues,
         });
       }
       const {
@@ -409,7 +409,7 @@ memberController.patch(
       await conn.beginTransaction();
 
       // Find if there's login row with duplicate email EXCEPT the request maker – referring to the parent table `Logins`
-      const [[loginId]] = await conn.query('SELECT loginId FROM Members WHERE id = ?', [id]);
+      const [[{ loginId }]] = await conn.query('SELECT loginId FROM Members WHERE id = ?', [id]);
       const [[emailExists]] = await conn.query('SELECT * FROM Logins WHERE email = ? AND NOT id = ?', [email, loginId]);
       if (emailExists) {
         // -- Return error if exists
@@ -431,7 +431,7 @@ memberController.patch(
       );
 
       // Find if there's duplicate address row
-      let [[addressId]] = await conn.query('SELECT addressId FROM Members WHERE id = ?', [id]);
+      let [[{ addressId }]] = await conn.query('SELECT addressId FROM Members WHERE id = ?', [id]);
       const [[addressExists]] = await conn.query(
         'SELECT * FROM Addresses WHERE lineOne = ? AND (lineTwo = ? OR lineTwo IS NULL) AND suburb = ? AND postcode = ? AND state = ? AND country = ?',
         [lineOne, lineTwo, suburb, postcode, state, country]
