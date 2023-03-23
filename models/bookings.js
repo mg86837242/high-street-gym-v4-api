@@ -64,7 +64,7 @@ export function getOtherBookingsByTrainerAndDateTime(id, trainerId, dateTime) {
   ]);
 }
 
-export function getBookingsByDetails(memberId, trainerId, activityId, dateTime) {
+export function getBookingsByAttrs(memberId, trainerId, activityId, dateTime) {
   return pool.query('SELECT * FROM Bookings WHERE memberId = ? AND trainerId = ? AND activityId = ? AND dateTime = ?', [
     memberId,
     trainerId,

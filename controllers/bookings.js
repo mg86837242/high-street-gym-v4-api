@@ -8,7 +8,7 @@ import {
   getBookingsById,
   getBookingsByTrainerAndDateTime,
   getOtherBookingsByTrainerAndDateTime,
-  getBookingsByDetails,
+  getBookingsByAttrs,
   createBooking,
   updateBookingById,
   deleteBookingById,
@@ -211,7 +211,7 @@ bookingController.post('/bookings', permit('Admin', 'Trainer', 'Member'), async 
     const [[trainerUnavailable]] = await getBookingsByTrainerAndDateTime(trainerId, dateTime);
     if (trainerUnavailable) {
       // Find if a same booking already exists
-      const [[bookingExists]] = await getBookingsByDetails(memberId, trainerId, activityId, dateTime);
+      const [[bookingExists]] = await getBookingsByAttrs(memberId, trainerId, activityId, dateTime);
       if (bookingExists) {
         // -- Return error indicating a same booking already exists
         return res.status(409).json({
@@ -273,7 +273,7 @@ bookingController.patch('/bookings/:id', permit('Admin', 'Trainer', 'Member'), a
     }
 
     // Find if a same booking already exists
-    const [[bookingExists]] = await getBookingsByDetails(memberId, trainerId, activityId, dateTime);
+    const [[bookingExists]] = await getBookingsByAttrs(memberId, trainerId, activityId, dateTime);
     if (bookingExists) {
       // -- Return redirection given that nothing is modified
       return res.status(200).json({
