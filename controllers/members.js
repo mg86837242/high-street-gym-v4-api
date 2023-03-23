@@ -3,7 +3,7 @@ import bcrypt from 'bcryptjs'; // reason to use `bcryptjs`: https://github.com/k
 import pool from '../config/database.js';
 import { emptyObjSchema, idSchema } from '../schemas/index.js';
 import { signupSchema, memberSchema } from '../schemas/members.js';
-import { getAllMembers, getMembersById, deleteMemberById } from '../models/members.js';
+import { getAllMembers, getMembersById, getMembersWithDetailsById, deleteMemberById } from '../models/members.js';
 import permit from '../middleware/rbac.js';
 
 const memberController = Router();
@@ -63,6 +63,41 @@ memberController.get('/members/:id', permit('Admin', 'Trainer', 'Member'), async
     });
   }
 });
+
+memberController.get(
+  '/members/member-with-details-by-id/:id',
+  permit('Admin', 'Trainer', 'Member'),
+  async (req, res) => {
+    try {
+      const { id } = req.params;
+      if (!idSchema.safeParse(id).success) {
+        return res.status(400).json({
+          status: 400,
+          message: idSchema.safeParse(id).error.issues,
+        });
+      }
+      const [[firstMemberResult]] = await getMembersWithDetailsById(id);
+
+      if (!firstMemberResult) {
+        return res.status(404).json({
+          status: 404,
+          message: 'No member found with the ID provided',
+        });
+      }
+      return res.status(200).json({
+        status: 200,
+        message: 'Member record successfully retrieved',
+        defaultValues: firstMemberResult,
+      });
+    } catch (error) {
+      return res.status(500).json({
+        status: 500,
+        message: 'Database or server error',
+        error,
+      });
+    }
+  }
+);
 
 // Create Member
 memberController.post('/members/signup', async (req, res) => {

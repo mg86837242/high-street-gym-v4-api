@@ -9,6 +9,21 @@ export function getMembersById(id) {
   return pool.query('SELECT * FROM Members WHERE id = ?', [id]);
 }
 
+export function getMembersWithDetailsById(id) {
+  return pool.query(
+    `
+    SELECT m.firstName, m.lastName, m.phone, m.age, m.gender,
+    l.email, l.password, l.username,
+    a.lineOne, a.lineTwo, a.suburb, a.postcode, a.state, a.country
+    FROM Members m
+    INNER JOIN Logins l on m.loginId = l.id
+    INNER JOIN Addresses a on m.addressId = a.id
+    WHERE m.id = ?
+  `,
+    [id]
+  );
+}
+
 export function getMembersByLoginId(loginId) {
   return pool.query('SELECT * FROM Members WHERE loginId = ?', [loginId]);
 }
