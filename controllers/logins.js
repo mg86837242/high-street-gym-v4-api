@@ -40,14 +40,14 @@ loginController.get('/users/by-key/:accessKey', async (req, res) => {
     let trainerId = null;
     let adminId = null;
     switch (role) {
-      case 'Member':
-        [[{ id: memberId, firstName, lastName }]] = await getMembersByLoginId(id);
+      case 'Admin':
+        [[{ id: adminId, firstName, lastName }]] = await getAdminsByLoginId(id);
         break;
       case 'Trainer':
         [[{ id: trainerId, firstName, lastName }]] = await getTrainersByLoginId(id);
         break;
-      case 'Admin':
-        [[{ id: adminId, firstName, lastName }]] = await getAdminsByLoginId(id);
+      case 'Member':
+        [[{ id: memberId, firstName, lastName }]] = await getMembersByLoginId(id);
         break;
       default:
         return res.status(403).json({
