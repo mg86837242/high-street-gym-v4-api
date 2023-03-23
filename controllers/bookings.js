@@ -126,7 +126,7 @@ bookingController.get('/bookings/by-id/:id', permit('Admin', 'Trainer', 'Member'
 });
 
 bookingController.get(
-  '/bookings/booking-and-options-by-id/:id',
+  '/bookings/booking-with-options-by-id/:id',
   permit('Admin', 'Trainer', 'Member'),
   async (req, res) => {
     try {
