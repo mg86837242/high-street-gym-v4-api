@@ -310,7 +310,7 @@ memberController.patch('/members/:id', permit('Admin', 'Trainer', 'Member'), asy
     await conn.beginTransaction();
 
     // Find if there's login row with duplicate email EXCEPT the request maker – referring to the parent table `Logins`
-    const [[loginId]] = await conn.query('SELECT loginId FROM Members WHERE id = ?', [id]);
+    const [[{ loginId }]] = await conn.query('SELECT loginId FROM Members WHERE id = ?', [id]);
     const [[emailExists]] = await conn.query('SELECT * FROM Logins WHERE email = ? AND NOT id = ?', [email, loginId]);
     if (emailExists) {
       // -- Return error if exists
@@ -357,6 +357,7 @@ memberController.patch('/members/:id', permit('Admin', 'Trainer', 'Member'), asy
     });
   } catch (error) {
     if (conn) await conn.rollback();
+    console.log(error);
     return res.status(500).json({
       status: 500,
       message: 'Database or server error',
