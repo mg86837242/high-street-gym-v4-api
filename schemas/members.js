@@ -33,8 +33,7 @@ export const signupSchema = z.object({
     })
     .max(45),
   age: z
-    .string()
-    .regex(/^\d*$/, { message: 'Age only accepts numbers' })
+    .number({ message: 'Age only accepts numbers' })
     .max(3, { message: 'Age must have at most 3 number(s)' })
     .nullable(),
   gender: z.enum(['Female', 'Male', 'Prefer not to say', '']).nullable(),
@@ -70,11 +69,7 @@ export const memberSchema = z.object({
       message: 'Invalid phone number format',
     })
     .max(45),
-  age: z
-    .string()
-    .regex(/^\d*$/, { message: 'Age only accepts numbers' })
-    .max(3, { message: 'Age must have at most 3 number(s)' })
-    .nullable(),
+  age: z.number({ message: 'Age only accepts numbers' }).max(200, { message: 'Age must be at most 200' }).nullable(),
   gender: z.enum(['Female', 'Male', 'Prefer not to say', '']).nullable(),
   // lineOne: z.string().max(45).nullable(),
   // lineTwo: z.string().max(45).nullable(),
