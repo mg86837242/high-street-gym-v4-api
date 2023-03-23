@@ -46,7 +46,7 @@ bookingController.get('/bookings', async (req, res) => {
   }
 });
 
-bookingController.get('/bookings/by-date/:date', async (req, res) => {
+bookingController.get('/bookings/booking-and-details-by-date/:date', async (req, res) => {
   await fakeDelay(`getBookingList:${req.params.date}`);
   try {
     // NB `req.params.date` is a string, see: https://reactrouter.com/en/main/start/concepts#route-matches; the data type expected to be used in
@@ -94,36 +94,40 @@ bookingController.get('/bookings/by-date/:date', async (req, res) => {
   }
 });
 
-bookingController.get('/bookings/by-id/:id', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
-  try {
-    const { id } = req.params;
-    if (!idSchema.safeParse(id).success) {
-      return res.status(400).json({
-        status: 400,
-        message: idSchema.safeParse(id).error.issues,
-      });
-    }
-    const [[firstBookingResult]] = await getBookingsWithDetailsById(id);
+bookingController.get(
+  '/bookings/booking-and-details-by-id/:id',
+  permit('Admin', 'Trainer', 'Member'),
+  async (req, res) => {
+    try {
+      const { id } = req.params;
+      if (!idSchema.safeParse(id).success) {
+        return res.status(400).json({
+          status: 400,
+          message: idSchema.safeParse(id).error.issues,
+        });
+      }
+      const [[firstBookingResult]] = await getBookingsWithDetailsById(id);
 
-    if (!firstBookingResult) {
-      return res.status(404).json({
-        status: 404,
-        message: 'No bookings found with the ID provided',
+      if (!firstBookingResult) {
+        return res.status(404).json({
+          status: 404,
+          message: 'No bookings found with the ID provided',
+        });
+      }
+      return res.status(200).json({
+        status: 200,
+        message: 'Booking record successfully retrieved',
+        booking: firstBookingResult,
+      });
+    } catch (error) {
+      return res.status(500).json({
+        status: 500,
+        message: 'Database or server error',
+        error,
       });
     }
-    return res.status(200).json({
-      status: 200,
-      message: 'Booking record successfully retrieved',
-      booking: firstBookingResult,
-    });
-  } catch (error) {
-    return res.status(500).json({
-      status: 500,
-      message: 'Database or server error',
-      error,
-    });
   }
-});
+);
 
 bookingController.get(
   '/bookings/booking-with-options-by-id/:id',
