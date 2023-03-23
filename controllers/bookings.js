@@ -3,8 +3,8 @@ import { emptyObjSchema, idSchema, dateSchema } from '../schemas/index.js';
 import bookingSchema from '../schemas/bookings.js';
 import {
   getAllBookings,
-  getJoinedBookingsByDate,
-  getJoinedBookingsById,
+  getBookingsWithDetailsByDate,
+  getBookingsWithDetailsById,
   getBookingsById,
   getBookingsByTrainerAndDateTime,
   getOtherBookingsByTrainerAndDateTime,
@@ -59,7 +59,7 @@ bookingController.get('/bookings/by-date/:date', async (req, res) => {
         message: dateSchema.safeParse(date).error.issues,
       });
     }
-    const [bookingResults] = await getJoinedBookingsByDate(date);
+    const [bookingResults] = await getBookingsWithDetailsByDate(date);
     // #region un-foldable
     // NB Bug: query result `bookingResults.dateTime` is in UTC format i/o intended local time format (DATETIME type)
     //  => Culprit: `mysql2` => Solution: add `dateStrings: true` to the connection option (i.e., `pool.js`), see:
@@ -103,7 +103,7 @@ bookingController.get('/bookings/by-id/:id', permit('Admin', 'Trainer', 'Member'
         message: idSchema.safeParse(id).error.issues,
       });
     }
-    const [[firstBookingResult]] = await getJoinedBookingsById(id);
+    const [[firstBookingResult]] = await getBookingsWithDetailsById(id);
 
     if (!firstBookingResult) {
       return res.status(404).json({

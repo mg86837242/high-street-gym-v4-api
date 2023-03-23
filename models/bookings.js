@@ -13,7 +13,7 @@ export function getBookingsByActivityId(activityId) {
   return pool.query('SELECT * FROM Bookings WHERE activityId = ?', [activityId]);
 }
 
-export function getJoinedBookingsByDate(date) {
+export function getBookingsWithDetailsByDate(date) {
   return pool.query(
     `
     SELECT b.id, b.memberId, b.trainerId, b.activityId, b.dateTime,
@@ -31,7 +31,7 @@ export function getJoinedBookingsByDate(date) {
   );
 }
 
-export function getJoinedBookingsById(id) {
+export function getBookingsWithDetailsById(id) {
   return pool.query(
     `
     SELECT b.id, b.memberId, b.trainerId, b.activityId, b.dateTime,
