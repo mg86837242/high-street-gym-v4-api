@@ -77,12 +77,6 @@ export const memberSchema = z.object({
     .max(45),
   age: z.number({ message: 'Age only accepts numbers' }).max(200, { message: 'Age must be at most 200' }).nullable(),
   gender: z.enum(['Female', 'Male', 'Prefer not to say', '']).nullable(),
-  // lineOne: z.string().max(45).nullable(),
-  // lineTwo: z.string().max(45).nullable(),
-  // suburb: z.string().max(45).nullable(),
-  // postcode: z.string().max(10).nullable(),
-  // state: z.string().max(45).nullable(),
-  // country: z.string().max(45).nullable(),
 });
 
 export const memberDetailedSchema = z.object({

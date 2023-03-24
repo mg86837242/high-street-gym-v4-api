@@ -196,7 +196,7 @@ trainerController.patch('/trainers/:id', permit('Admin', 'Trainer'), async (req,
     await conn.beginTransaction();
 
     // Find if there's login row with duplicate email EXCEPT the request maker – referring to the parent table `Logins`
-    const [[loginId]] = await conn.query('SELECT loginId FROM Trainers WHERE id = ?', [id]);
+    const [[{ loginId }]] = await conn.query('SELECT loginId FROM Trainers WHERE id = ?', [id]);
     const [[emailExists]] = await conn.query('SELECT * FROM Logins WHERE email = ? AND NOT id = ?', [email, loginId]);
     if (emailExists) {
       // -- Return error if exists
