@@ -122,9 +122,9 @@ export const memberDetailedSchema = z.object({
   country: z.string().max(45).nullable(),
 });
 
-// NB Based on tests, `optional()` won't let null pass, but will let undefined and empty string pass;
-//  `nullable()` won't let undefined pass, but will let null and empty string pass => PREFERRED;
-//  when `enum()` is involved, both won't accept empty string unless specified within `enum()`
+// NB Based on tests, `nullable()` won't let undefined pass, but will let null and empty string pass => PREFERRED
+//  `optional()` won't let null pass, but will let undefined and empty string pass; when `enum()` is involved, both
+//  won't accept empty string unless specified within `enum()`
 
 // NB Empty form fields: (1) For fields that are not required but of enum data type, empty string is added as an option
 //  to avoid validation error if the user submits an empty input field, see:
