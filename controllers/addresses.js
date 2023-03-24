@@ -177,7 +177,6 @@ addressController.patch('/addresses/by-memberid/:memberid', permit('Admin', 'Tra
       message: 'Address successfully updated',
     });
   } catch (error) {
-    console.log(error);
     return res.status(500).json({
       status: 500,
       message: 'Database or server error',
