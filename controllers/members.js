@@ -234,10 +234,8 @@ memberController.post('/members', permit('Admin', 'Trainer', 'Member'), async (r
     // Find if there's duplicate address row – referring to the parent table `Addresses`
     let addressId = null;
     if (lineOne && suburb && postcode && state && country) {
-      // NB `WHERE lineTwo = null` returns null i/o true, therefore the extra evaluation o/w the following query
-      //  won't work as intended, see: https://stackoverflow.com/questions/8775098/mysql-display-rows-where-value-is-null-or-equal-to-x
       const [[addressExists]] = await conn.query(
-        'SELECT * FROM Addresses WHERE lineOne = ? AND (lineTwo = ? OR lineTwo IS NULL) AND suburb = ? AND postcode = ? AND state = ? AND country = ?',
+        'SELECT * FROM Addresses WHERE lineOne = ? AND lineTwo = ? AND suburb = ? AND postcode = ? AND state = ? AND country = ?',
         [lineOne, lineTwo, suburb, postcode, state, country]
       );
       if (addressExists) {
@@ -331,17 +329,14 @@ memberController.patch('/members/:id', permit('Admin', 'Trainer', 'Member'), asy
       [email, hashedPassword, username, loginId]
     );
 
-    // Get `addressId` in current row
-    let [[{ addressId }]] = await conn.query('SELECT addressId FROM Members WHERE id = ?', [id]);
-
     // Update member row with 2 FKs
     const [{ affectedRows }] = await conn.query(
       `
       UPDATE Members
-      SET loginId = ?, firstName = ?, lastName = ?, phone = ?, addressId = ?, age = ?, gender = ?
+      SET loginId = ?, firstName = ?, lastName = ?, phone = ?, age = ?, gender = ?
       WHERE id = ?
       `,
-      [loginId, firstName, lastName, phone, addressId, age, gender, id]
+      [loginId, firstName, lastName, phone, age, gender, id]
     );
 
     if (!affectedRows) {
@@ -433,7 +428,7 @@ memberController.patch(
       // Find if there's duplicate address row
       let [[{ addressId }]] = await conn.query('SELECT addressId FROM Members WHERE id = ?', [id]);
       const [[addressExists]] = await conn.query(
-        'SELECT * FROM Addresses WHERE lineOne = ? AND (lineTwo = ? OR lineTwo IS NULL) AND suburb = ? AND postcode = ? AND state = ? AND country = ?',
+        'SELECT * FROM Addresses WHERE lineOne = ? AND lineTwo = ? AND suburb = ? AND postcode = ? AND state = ? AND country = ?',
         [lineOne, lineTwo, suburb, postcode, state, country]
       );
       if (addressExists) {

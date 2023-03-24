@@ -9,7 +9,7 @@ import {
   updateAddressById,
   deleteAddressById,
 } from '../models/addresses.js';
-import { getMembersAddressesIdByMemberId } from '../models/members.js';
+import { getMembersAddressesIdById, updateMembersAddressIdById } from '../models/members.js';
 import permit from '../middleware/rbac.js';
 
 const addressController = Router();
@@ -146,16 +146,23 @@ addressController.patch('/addresses/by-memberid/:memberid', permit('Admin', 'Tra
       });
     }
     const { lineOne, lineTwo, suburb, postcode, state, country } = req.body;
-
     // Find if there's duplicate address row
-    let [[{ addressId: id }]] = await getMembersAddressesIdByMemberId(memberId);
+    let [[{ addressId }]] = await getMembersAddressesIdById(memberId);
     const [[addressExists]] = await getAddressesByDetails(lineOne, lineTwo, suburb, postcode, state, country);
     if (addressExists) {
       // -- Use the found address row's PK if exists
-      id = addressExists.id;
+      addressId = addressExists.id;
+      const [{ affectedRows }] = await updateMembersAddressIdById(memberId, addressId);
+
+      if (!affectedRows) {
+        return res.status(404).json({
+          status: 404,
+          message: 'No addresses found with the ID provided',
+        });
+      }
     } else {
       // -- Update address row if NOT exists
-      const [{ affectedRows }] = await updateAddressById(id, lineOne, lineTwo, suburb, postcode, state, country);
+      const [{ affectedRows }] = await updateAddressById(addressId, lineOne, lineTwo, suburb, postcode, state, country);
 
       if (!affectedRows) {
         return res.status(404).json({

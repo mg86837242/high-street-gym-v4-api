@@ -110,7 +110,7 @@ adminController.post('/admins', permit('Admin'), async (req, res) => {
     let addressId = null;
     if (lineOne && suburb && postcode && state && country) {
       const [[addressExists]] = await conn.query(
-        'SELECT * FROM Addresses WHERE lineOne = ? AND (lineTwo = ? OR lineTwo IS NULL) AND suburb = ? AND postcode = ? AND state = ? AND country = ?',
+        'SELECT * FROM Addresses WHERE lineOne = ? AND lineTwo = ? AND suburb = ? AND postcode = ? AND state = ? AND country = ?',
         [lineOne, null, suburb, postcode, state, country]
       );
       if (addressExists) {
@@ -212,7 +212,7 @@ adminController.patch('/admins/:id', permit('Admin'), async (req, res) => {
     // Find if there's duplicate address row
     let [[addressId]] = await conn.query('SELECT addressId FROM Admins WHERE id = ?', [id]);
     const [[addressExists]] = await conn.query(
-      'SELECT * FROM Addresses WHERE lineOne = ? AND (lineTwo = ? OR lineTwo IS NULL) AND suburb = ? AND postcode = ? AND state = ? AND country = ?',
+      'SELECT * FROM Addresses WHERE lineOne = ? AND lineTwo = ? AND suburb = ? AND postcode = ? AND state = ? AND country = ?',
       [lineOne, lineTwo, suburb, postcode, state, country]
     );
     if (addressExists) {
