@@ -28,6 +28,10 @@ export function getMembersByLoginId(loginId) {
   return pool.query('SELECT * FROM Members WHERE loginId = ?', [loginId]);
 }
 
+export function getAdminsAddressesIdById(id) {
+  return pool.query('SELECT addressId FROM Admins WHERE id = ?', [id]);
+}
+
 export function getMembersAddressesIdById(id) {
   return pool.query('SELECT addressId FROM Members WHERE id = ?', [id]);
 }
@@ -59,6 +63,17 @@ export function updateMembersAddressIdById(id, addressId) {
   return pool.query(
     `
     UPDATE Members
+    SET addressId = ?
+    WHERE id = ?
+    `,
+    [addressId, id]
+  );
+}
+
+export function updateAdminsAddressIdById(id, addressId) {
+  return pool.query(
+    `
+    UPDATE Admins
     SET addressId = ?
     WHERE id = ?
     `,

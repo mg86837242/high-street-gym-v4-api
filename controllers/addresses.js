@@ -9,7 +9,7 @@ import {
   updateAddressById,
   deleteAddressById,
 } from '../models/addresses.js';
-import { getMembersAddressesIdById, updateMembersAddressIdById } from '../models/members.js';
+import { getAdminsAddressesIdById, getMembersAddressesIdById, updateMembersAddressIdById } from '../models/members.js';
 import permit from '../middleware/rbac.js';
 
 const addressController = Router();
@@ -130,6 +130,61 @@ addressController.patch('/addresses/:id', permit('Admin', 'Trainer', 'Member'), 
   }
 });
 
+addressController.patch('/addresses/by-adminid/:adminid', permit('Admin'), async (req, res) => {
+  try {
+    const { adminid: adminId } = req.params;
+    if (!idSchema.safeParse(adminId).success) {
+      return res.status(400).json({
+        status: 400,
+        message: idSchema.safeParse(adminId).error.issues,
+      });
+    }
+    if (!addressSchema.safeParse(req.body).success) {
+      return res.status(400).json({
+        status: 400,
+        message: addressSchema.safeParse(req.body).error.issues,
+      });
+    }
+    const { lineOne, lineTwo, suburb, postcode, state, country } = req.body;
+    // Find if there's duplicate address row
+    let [[{ addressId }]] = await getAdminsAddressesIdById(adminId);
+    const [[addressExists]] = await getAddressesByDetails(lineOne, lineTwo, suburb, postcode, state, country);
+    if (addressExists) {
+      // -- Use the found address row's PK if exists, then update admin row
+      addressId = addressExists.id;
+      const [{ affectedRows }] = await updateAdminsAddressIdById(adminId, addressId);
+
+      if (!affectedRows) {
+        return res.status(404).json({
+          status: 404,
+          message: 'No addresses found with the ID provided',
+        });
+      }
+    } else {
+      // -- Update address row if NOT exists
+      const [{ affectedRows }] = await updateAddressById(addressId, lineOne, lineTwo, suburb, postcode, state, country);
+
+      if (!affectedRows) {
+        return res.status(404).json({
+          status: 404,
+          message: 'No addresses found with the ID provided',
+        });
+      }
+    }
+
+    return res.status(200).json({
+      status: 200,
+      message: 'Address successfully updated',
+    });
+  } catch (error) {
+    return res.status(500).json({
+      status: 500,
+      message: 'Database or server error',
+      error,
+    });
+  }
+});
+
 addressController.patch('/addresses/by-memberid/:memberid', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
   try {
     const { memberid: memberId } = req.params;
@@ -150,7 +205,7 @@ addressController.patch('/addresses/by-memberid/:memberid', permit('Admin', 'Tra
     let [[{ addressId }]] = await getMembersAddressesIdById(memberId);
     const [[addressExists]] = await getAddressesByDetails(lineOne, lineTwo, suburb, postcode, state, country);
     if (addressExists) {
-      // -- Use the found address row's PK if exists
+      // -- Use the found address row's PK if exists, then update member row
       addressId = addressExists.id;
       const [{ affectedRows }] = await updateMembersAddressIdById(memberId, addressId);
 

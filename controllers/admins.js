@@ -65,7 +65,6 @@ adminController.get('/admins/:id', permit('Admin'), async (req, res) => {
 
 adminController.get('/admins/admin-with-all-details-by-id/:id', permit('Admin'), async (req, res) => {
   try {
-    console.log('in target endpoint');
     const { id } = req.params;
     if (!idSchema.safeParse(id).success) {
       return res.status(400).json({
