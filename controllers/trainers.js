@@ -2,6 +2,7 @@ import { Router } from 'express';
 import bcrypt from 'bcryptjs'; // reason to use `bcryptjs`: https://github.com/kelektiv/node.bcrypt.js/issues/705
 import pool from '../config/database.js';
 import { emptyObjSchema, idSchema } from '../schemas/index.js';
+import { trainerSchema } from '../schemas/trainers.js';
 import { getAllTrainers, getTrainersById, getTrainersWithDetailsById, deleteTrainerById } from '../models/trainers.js';
 import permit from '../middleware/rbac.js';
 
@@ -194,6 +195,85 @@ trainerController.post('/trainers', permit('Admin', 'Trainer'), async (req, res)
 
 // Update Trainer
 trainerController.patch('/trainers/:id', permit('Admin', 'Trainer'), async (req, res) => {
+  let conn = null;
+  try {
+    const { id } = req.params;
+    if (!idSchema.safeParse(id).success) {
+      return res.status(400).json({
+        status: 400,
+        message: idSchema.safeParse(id).error.issues,
+      });
+    }
+    if (!trainerSchema.safeParse(req.body).success) {
+      return res.status(400).json({
+        status: 400,
+        message: trainerSchema.safeParse(req.body).error.issues,
+      });
+    }
+    const { email, password, username, firstName, lastName, phone, description, specialty, certificate, imageUrl } =
+      req.body;
+
+    // Manually acquire a connection from the pool & start a TRANSACTION
+    conn = await pool.getConnection();
+    await conn.beginTransaction();
+
+    // Find if there's login row with duplicate email EXCEPT the request maker – referring to the parent table `Logins`
+    const [[{ loginId }]] = await conn.query('SELECT loginId FROM trainers WHERE id = ?', [id]);
+    const [[emailExists]] = await conn.query('SELECT * FROM Logins WHERE email = ? AND NOT id = ?', [email, loginId]);
+    if (emailExists) {
+      // -- Return error if exists
+      return res.status(409).json({
+        status: 409,
+        message: 'Email has already been used',
+      });
+    }
+    // -- Update login row if NOT exists (NB current business logic doesn't deal with role change, and requires a
+    //  separate account for any diff role)
+    const hashedPassword = password.startsWith('$2') ? password : await bcrypt.hash(password, 6);
+    await conn.query(
+      `
+      UPDATE Logins
+      SET email = ?, password = ?, username = ?
+      WHERE id = ?
+      `,
+      [email, hashedPassword, username, loginId]
+    );
+
+    // Update trainer row with 2 FKs
+    const [{ affectedRows }] = await conn.query(
+      `
+      UPDATE trainers
+      SET loginId = ?, firstName = ?, lastName = ?, phone = ?, description = ?, specialty = ?, certificate = ?, imageUrl = ?
+      WHERE id = ?
+      `,
+      [loginId, firstName, lastName, phone, description, specialty, certificate, imageUrl, id]
+    );
+
+    if (!affectedRows) {
+      return res.status(404).json({
+        status: 404,
+        message: 'No trainer found with the ID provided',
+      });
+    }
+    await conn.commit();
+    return res.status(200).json({
+      status: 200,
+      message: 'trainer successfully updated',
+    });
+  } catch (error) {
+    if (conn) await conn.rollback();
+    console.log(error);
+    return res.status(500).json({
+      status: 500,
+      message: 'Database or server error',
+      error,
+    });
+  } finally {
+    if (conn) conn.release();
+  }
+});
+
+trainerController.patch('/trainers/trainer-with-all-details/:id', permit('Admin', 'Trainer'), async (req, res) => {
   let conn = null;
   try {
     const { id } = req.params;

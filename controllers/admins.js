@@ -206,7 +206,7 @@ adminController.patch('/admins/:id', permit('Admin'), async (req, res) => {
         message: adminSchema.safeParse(req.body).error.issues,
       });
     }
-    const { email, password, username, firstName, lastName, phone, age, gender } = req.body;
+    const { email, password, username, firstName, lastName, phone } = req.body;
 
     // Manually acquire a connection from the pool & start a TRANSACTION
     conn = await pool.getConnection();
