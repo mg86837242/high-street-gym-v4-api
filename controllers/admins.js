@@ -2,7 +2,7 @@ import { Router } from 'express';
 import bcrypt from 'bcryptjs'; // reason to use `bcryptjs`: https://github.com/kelektiv/node.bcrypt.js/issues/705
 import pool from '../config/database.js';
 import { emptyObjSchema, idSchema } from '../schemas/index.js';
-import { getAllAdmins, getAdminsById, deleteAdminById } from '../models/admins.js';
+import { getAllAdmins, getAdminsById, getAdminsWithDetailsById, deleteAdminById } from '../models/admins.js';
 import permit from '../middleware/rbac.js';
 
 const adminController = Router();
@@ -32,7 +32,7 @@ adminController.get('/admins', permit('Admin', 'Trainer', 'Member'), async (req,
   }
 });
 
-adminController.get('/admins/:id', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
+adminController.get('/admins/:id', permit('Admin'), async (req, res) => {
   try {
     const { id } = req.params;
     if (!idSchema.safeParse(id).success) {
@@ -53,6 +53,38 @@ adminController.get('/admins/:id', permit('Admin', 'Trainer', 'Member'), async (
       status: 200,
       message: 'Admin record successfully retrieved',
       admin: firstAdminResult,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      status: 500,
+      message: 'Database or server error',
+      error,
+    });
+  }
+});
+
+adminController.get('/admins/admin-with-all-details-by-id/:id', permit('Admin'), async (req, res) => {
+  try {
+    console.log('in target endpoint');
+    const { id } = req.params;
+    if (!idSchema.safeParse(id).success) {
+      return res.status(400).json({
+        status: 400,
+        message: idSchema.safeParse(id).error.issues,
+      });
+    }
+    const [[firstAdminResult]] = await getAdminsWithDetailsById(id);
+
+    if (!firstAdminResult) {
+      return res.status(404).json({
+        status: 404,
+        message: 'No admin found with the ID provided',
+      });
+    }
+    return res.status(200).json({
+      status: 200,
+      message: 'Admin record successfully retrieved',
+      defaultValues: firstAdminResult,
     });
   } catch (error) {
     return res.status(500).json({
