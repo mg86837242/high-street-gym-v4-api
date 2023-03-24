@@ -33,7 +33,7 @@ adminController.get('/admins', permit('Admin', 'Trainer', 'Member'), async (req,
   }
 });
 
-adminController.get('/admins/:id', permit('Admin'), async (req, res) => {
+adminController.get('/admins/:id', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
   try {
     const { id } = req.params;
     if (!idSchema.safeParse(id).success) {

@@ -2,7 +2,7 @@ import { Router } from 'express';
 import bcrypt from 'bcryptjs'; // reason to use `bcryptjs`: https://github.com/kelektiv/node.bcrypt.js/issues/705
 import pool from '../config/database.js';
 import { emptyObjSchema, idSchema } from '../schemas/index.js';
-import { getAllTrainers, getTrainersById, deleteTrainerById } from '../models/trainers.js';
+import { getAllTrainers, getTrainersById, getTrainersWithDetailsById, deleteTrainerById } from '../models/trainers.js';
 import permit from '../middleware/rbac.js';
 
 const trainerController = Router();
@@ -53,6 +53,37 @@ trainerController.get('/trainers/:id', permit('Admin', 'Trainer', 'Member'), asy
       status: 200,
       message: 'Trainer record successfully retrieved',
       trainer: firstTrainerResult,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      status: 500,
+      message: 'Database or server error',
+      error,
+    });
+  }
+});
+
+trainerController.get('/trainers/trainer-with-all-details-by-id/:id', permit('Admin', 'Trainer'), async (req, res) => {
+  try {
+    const { id } = req.params;
+    if (!idSchema.safeParse(id).success) {
+      return res.status(400).json({
+        status: 400,
+        message: idSchema.safeParse(id).error.issues,
+      });
+    }
+    const [[firstTrainerResult]] = await getTrainersWithDetailsById(id);
+
+    if (!firstTrainerResult) {
+      return res.status(404).json({
+        status: 404,
+        message: 'No trainer found with the ID provided',
+      });
+    }
+    return res.status(200).json({
+      status: 200,
+      message: 'Trainer record successfully retrieved',
+      defaultValues: firstTrainerResult,
     });
   } catch (error) {
     return res.status(500).json({
