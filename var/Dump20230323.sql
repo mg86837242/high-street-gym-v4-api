@@ -74,7 +74,7 @@ CREATE TABLE `addresses` (
 
 LOCK TABLES `addresses` WRITE;
 /*!40000 ALTER TABLE `addresses` DISABLE KEYS */;
-INSERT INTO `addresses` VALUES (1,'1 Amber St','','Brisbane City','4000','QLD','Australia'),(2,'2 Brooklyn St','','Brisbane City','4000','QLD','Australia'),(3,'3 Christine St','','Brisbane City','4000','QLD','Australia'),(4,'4 Diamond St','','Brisbane City','4000','QLD','Australia'),(5,'5 Emblem St','','Brisbane City','4000','QLD','Australia'),(6,'6 Frank St','','Brisbane City','4000','QLD','Australia'),(7,'7 Golden St','','Brisbane City','4000','QLD','Australia'),(8,'8 Helena St','','Brisbane City','4000','QLD','Australia'),(19,'6000 HOLMES AVE',NULL,'LOS ANGELES','90001','CA','United States'),(20,'1333 BROCKTON AVE APT 1',NULL,'LOS ANGELES','90025','CA','United States'),(24,'62, Menser Street',NULL,'Calamvale, Brisbane City','4116','QLD','Australia');
+INSERT INTO `addresses` VALUES (1,'1 Amber St','','Brisbane City','4000','QLD','Australia'),(2,'2 Brooklyn St','','Brisbane City','4000','QLD','Australia'),(3,'3 Christine St','','Brisbane City','4000','QLD','Australia'),(4,'4 Diamond St','','Brisbane City','4000','QLD','Australia'),(5,'5 Emblem St','','Brisbane City','4000','QLD','Australia'),(6,'6 Frank St','','Brisbane City','4000','QLD','Australia'),(7,'7 Golden St','','Brisbane City','4000','QLD','Australia'),(8,'8 Helena St','','Brisbane City','4000','QLD','Australia'),(19,'195 Leacroft Road','','Burbank','4156','QLD','Australia'),(20,'35 The Promenade','','Benowa','4217','QLD','Australia'),(24,'46 Victoria Crescent','','Algester','4115','QLD','Australia');
 /*!40000 ALTER TABLE `addresses` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -199,7 +199,7 @@ CREATE TABLE `logins` (
 
 LOCK TABLES `logins` WRITE;
 /*!40000 ALTER TABLE `logins` DISABLE KEYS */;
-INSERT INTO `logins` VALUES (1,'jadoe@server.com','password','jadoe','Admin',NULL),(2,'jbdoe@server.com','password','jbdoe','Admin',NULL),(3,'jcdoe@server.com','password','jcdoe','Trainer',NULL),(4,'jddoe@server.com','password','jddoe','Trainer',NULL),(5,'jedoe@server.com','password','jedoe','Member',NULL),(6,'jfdoe@server.com','password','jfdoe','Member',NULL),(21,'demomember@gmail.com','$2a$06$LKcMZ5m20oomNJVvC0slSOFuejoYyh/j6MdHPP3bFtNcdo3keWSKe','demomember','Member','a49d57c8-0d5d-483f-90ac-818368531920'),(23,'demotrainer@gmail.com','$2a$06$0AVY2juB2jXFHrGPpp9IUOQ1AYk.qrdspw1q.8Iw9j7NtPKnYVidm','demotrainer','Trainer',NULL),(27,'demoadmin@gmail.com','$2a$06$8epaVqbKmM.b4NlmE7J3IOi7Ile6gLmCMG1NTvd/mbxlPWlE.0isS','demoadmin','Admin',NULL),(30,'demomember2@gmail.com','$2a$06$C3TDwH2TsHVAqh4/y90SUuZsmt26JtTJP0v6wK33MswhZMwKmDhSC','demomember','Member',NULL);
+INSERT INTO `logins` VALUES (1,'jadoe@server.com','password','jadoe','Admin',NULL),(2,'jbdoe@server.com','password','jbdoe','Admin',NULL),(3,'jcdoe@server.com','password','jcdoe','Trainer',NULL),(4,'jddoe@server.com','password','jddoe','Trainer',NULL),(5,'jedoe@server.com','password','jedoe','Member',NULL),(6,'jfdoe@server.com','password','jfdoe','Member',NULL),(21,'demomember@gmail.com','$2a$06$LKcMZ5m20oomNJVvC0slSOFuejoYyh/j6MdHPP3bFtNcdo3keWSKe','demomember','Member',NULL),(23,'demotrainer@gmail.com','$2a$06$0AVY2juB2jXFHrGPpp9IUOQ1AYk.qrdspw1q.8Iw9j7NtPKnYVidm','demotrainer','Trainer','f292182f-763c-4990-8d46-faf3a40ddbf4'),(27,'demoadmin@gmail.com','$2a$06$8epaVqbKmM.b4NlmE7J3IOi7Ile6gLmCMG1NTvd/mbxlPWlE.0isS','demoadmin','Admin',NULL);
 /*!40000 ALTER TABLE `logins` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -233,7 +233,7 @@ CREATE TABLE `members` (
 
 LOCK TABLES `members` WRITE;
 /*!40000 ALTER TABLE `members` DISABLE KEYS */;
-INSERT INTO `members` VALUES (1,5,'Ja','Doe','0123456789',5,25,'Female'),(2,6,'Jb','Doe','0123456789',6,26,'Male'),(9,21,'Demo','Member','0123456789',19,22,NULL),(12,30,'Demo','Member','0123456789',NULL,NULL,NULL);
+INSERT INTO `members` VALUES (1,5,'Ja','Doe','0123456789',5,25,'Female'),(2,6,'Jb','Doe','0123456789',6,26,'Male'),(9,21,'Demo','Member','0123456789',19,26,NULL);
 /*!40000 ALTER TABLE `members` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -269,7 +269,7 @@ CREATE TABLE `trainers` (
 
 LOCK TABLES `trainers` WRITE;
 /*!40000 ALTER TABLE `trainers` DISABLE KEYS */;
-INSERT INTO `trainers` VALUES (1,3,'Some','Trainer','0123456789',3,'Lorem ipsum','Aerobatic and physiotherapy','Certificate III in Fitness',''),(2,4,'Another','Trainer','0123456789',4,'Lorem ipsum','Strength and physiotherapy','Certificate IV in Fitness',''),(11,23,'Demo','Trainer','0123456789',20,NULL,NULL,NULL,NULL);
+INSERT INTO `trainers` VALUES (1,3,'Some','Trainer','0123456789',3,'Lorem ipsum','Aerobatic and physiotherapy','Certificate III in Fitness',NULL),(2,4,'Another','Trainer','0123456789',4,'Lorem ipsum','Strength and physiotherapy','Certificate IV in Fitness',NULL),(11,23,'Demo','Trainer','0123456789',20,NULL,NULL,NULL,NULL);
 /*!40000 ALTER TABLE `trainers` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -290,4 +290,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2023-03-23  0:38:15
+-- Dump completed on 2023-03-24 20:07:33
