@@ -12,16 +12,6 @@ const loginSchema = z.object({
     .string()
     .min(8, { message: 'Password must have at least 8 character(s)' })
     .max(100, { message: 'Password exceeds maximum character requirement' }),
-  // .regex(/^((?=\S*?[A-Z])(?=\S*?[a-z])(?=\S*?[0-9]).{6,})\S$/, {
-  //     message:
-  //     'Password must be 6 characters minimum, with at least 1 uppercase letter, 1 lowercase letter, and 1 number with no spaces',
-  // }),
-  // username: z
-  //   .string()
-  //   .regex(/^(?=.*[a-zA-Z]{1,})(?=.*[\d]{0,})[a-zA-Z0-9]+$/, {
-  //     message: 'Username only accepts letters and numbers, and must include at least 1 letter at the moment',
-  //   })
-  //   .max(45),
 });
 
 export default loginSchema;
