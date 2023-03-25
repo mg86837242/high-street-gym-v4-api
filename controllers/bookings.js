@@ -17,7 +17,6 @@ import { getAllMembers } from '../models/members.js';
 import { getAllTrainers } from '../models/trainers.js';
 import { getAllActivities } from '../models/activities.js';
 import permit from '../middleware/rbac.js';
-import fakeDelay from '../var/fakeCache.js';
 
 const bookingController = Router();
 
@@ -47,7 +46,6 @@ bookingController.get('/bookings', async (req, res) => {
 });
 
 bookingController.get('/bookings/booking-with-details-by-date/:date', async (req, res) => {
-  await fakeDelay(`getBookingList:${req.params.date}`);
   try {
     // NB `req.params.date` is a string, see: https://reactrouter.com/en/main/start/concepts#route-matches; the data type expected to be used in
     //  the WHERE clause is also a string, however, needs to be formatted like this `YYYY-MM-DD` in the SQL query, this is found out by writing raw
