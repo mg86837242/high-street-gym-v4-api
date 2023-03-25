@@ -10,7 +10,7 @@ export default async function fakeDelay(key) {
   }
 
   fakeCache[key] = true;
-  return new Promise((res) => {
-    setTimeout(res, 1_000);
+  return new Promise((r) => {
+    setTimeout(r, 1_000);
   });
 }
