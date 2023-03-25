@@ -61,14 +61,15 @@ bookingController.get('/bookings/booking-with-details-by-date/:date', async (req
     // #region un-foldable
     // NB Bug: query result `bookingResults.dateTime` is in UTC format i/o intended local time format (DATETIME type)
     //  => Culprit: `mysql2` => Solution: add `dateStrings: true` to the connection option (i.e., `pool.js`), see:
-    //  -- https://dev.mysql.com/doc/refman/8.0/en/datetime.html: MySQL converts `TIMESTAMP` values from the current time zone to UTC for storage,
-    //  and back from UTC to the current time zone for retrieval. (This does not occur for other types such as DATETIME.)
+    //  -- https://dev.mysql.com/doc/refman/8.0/en/datetime.html: MySQL converts `TIMESTAMP` values from the current
+    //  time zone to UTC for storage, and back from UTC to the current time zone for retrieval. (This does not occur
+    //  for other types such as DATETIME.)
     //  -- https://github.com/sidorares/node-mysql2/issues/1089
-    //  ---- https://github.com/sidorares/node-mysql2#api-and-configuration: "Check (Node MySQL/`mysql`) API documentation to see all available API
-    //  options."
-    //  ---- https://github.com/mysqljs/mysql#connection-options: `mysql` connection options: "`dateStrings`: Force date types (`TIMESTAMP`,
-    //  `DATETIME`, `DATE`) to be returned as strings rather than inflated into JavaScript Date objects. Can be `true`/`false` or an array of type
-    //  names to keep as strings. (Default: `false`)"
+    //  ---- https://github.com/sidorares/node-mysql2#api-and-configuration: "Check (Node MySQL/`mysql`) API
+    //  documentation to see all available API options."
+    //  ---- https://github.com/mysqljs/mysql#connection-options: `mysql` connection options: "`dateStrings`: Force
+    //  date types (`TIMESTAMP`, `DATETIME`, `DATE`) to be returned as strings rather than inflated into JavaScript
+    //  Date objects. Can be `true`/`false` or an array of type names to keep as strings. (Default: `false`)"
     // #endregion
 
     if (!bookingResults.length) {
