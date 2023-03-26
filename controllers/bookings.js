@@ -6,9 +6,9 @@ import {
   getBookingsWithDetailsByDate,
   getBookingsWithDetailsById,
   getBookingsById,
-  getBookingsByTrainerAndDateTime,
+  getConflictBookingsByMemberTrainerAndDateTime,
+  getSameBookingsByAttrs,
   getOtherBookingsByTrainerAndDateTime,
-  getBookingsByAttrs,
   createBooking,
   updateBookingById,
   deleteBookingById,
@@ -210,26 +210,25 @@ bookingController.post('/bookings', permit('Admin', 'Trainer', 'Member'), async 
     const { memberId, trainerId, activityId, date, time } = req.body;
     const dateTime = [date, time].join(' ');
 
-    // Find if the trainer is available at given date and time
-    const [[trainerUnavailable]] = await getBookingsByTrainerAndDateTime(trainerId, dateTime);
-    if (trainerUnavailable) {
+    // Find if either of the parties involved is available at given date and time
+    const [[isUnavailable]] = await getConflictBookingsByMemberTrainerAndDateTime(memberId, trainerId, dateTime);
+    if (isUnavailable) {
       // Find if a same booking already exists
-      const [[bookingExists]] = await getBookingsByAttrs(memberId, trainerId, activityId, dateTime);
-      if (bookingExists) {
+      const [[sameBookingExists]] = await getSameBookingsByAttrs(memberId, trainerId, activityId, dateTime);
+      if (sameBookingExists) {
         // -- Return error indicating a same booking already exists
         return res.status(409).json({
           status: 409,
           message: 'Same booking record already exists',
         });
       }
-      // -- Return error indicating the trainer is unavailable at the given date and time
+      // -- Return error indicating a party involved is unavailable at the given date and time
       return res.status(409).json({
         status: 409,
-        message: 'The selected trainer is not available at the given date and time',
+        message: 'The selected member and/or trainer is not available at the given date and time',
       });
     }
-
-    // -- Create booking row if NOT exists
+    // -- Create booking row if NEITHER of these exceptions are triggered
     const [{ insertId }] = await createBooking(memberId, trainerId, activityId, dateTime);
 
     return res.status(200).json({
@@ -248,6 +247,8 @@ bookingController.post('/bookings', permit('Admin', 'Trainer', 'Member'), async 
 
 // Update Booking
 bookingController.patch('/bookings/:id', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
+  // FIX Dup booking: same member can't book at the same time, even the trainer is available
+  // FIX Auto select current member/trainer in the `edit booking` and `update booking` panel
   try {
     const { id } = req.params;
     if (!idSchema.safeParse(id).success) {
@@ -276,8 +277,8 @@ bookingController.patch('/bookings/:id', permit('Admin', 'Trainer', 'Member'), a
     }
 
     // Find if a same booking already exists
-    const [[bookingExists]] = await getBookingsByAttrs(memberId, trainerId, activityId, dateTime);
-    if (bookingExists) {
+    const [[sameBookingExists]] = await getBookingsByAttrs(memberId, trainerId, activityId, dateTime);
+    if (sameBookingExists) {
       // -- Return redirection given that nothing is modified
       return res.status(200).json({
         status: 200,

@@ -52,8 +52,12 @@ export function getBookingsWithDetailsById(id) {
   );
 }
 
-export function getBookingsByTrainerAndDateTime(trainerId, dateTime) {
-  return pool.query('SELECT * FROM Bookings WHERE trainerId = ? AND dateTime = ?', [trainerId, dateTime]);
+export function getConflictBookingsByMemberTrainerAndDateTime(memberId, trainerId, dateTime) {
+  return pool.query('SELECT * FROM Bookings WHERE (memberId = ? OR trainerId = ?) AND dateTime = ?', [
+    memberId,
+    trainerId,
+    dateTime,
+  ]);
 }
 
 export function getOtherBookingsByTrainerAndDateTime(id, trainerId, dateTime) {
@@ -64,7 +68,7 @@ export function getOtherBookingsByTrainerAndDateTime(id, trainerId, dateTime) {
   ]);
 }
 
-export function getBookingsByAttrs(memberId, trainerId, activityId, dateTime) {
+export function getSameBookingsByAttrs(memberId, trainerId, activityId, dateTime) {
   return pool.query('SELECT * FROM Bookings WHERE memberId = ? AND trainerId = ? AND activityId = ? AND dateTime = ?', [
     memberId,
     trainerId,
