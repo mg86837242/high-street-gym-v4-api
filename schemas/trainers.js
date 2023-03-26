@@ -48,7 +48,7 @@ export const trainerSchema = z.object({
         message: 'Invalid url format',
       }
     )
-    // ??? Triggering server/backend 400 (such as disabling the following line) will cause session loss, will restore after refresh and Effect (which means in the error page, the "go back" button should have refresh functionality)
+    // ??? Triggering server/backend 400 (such as disabling the following line) will cause session loss, which requires refresh and Effect to restore session (which means in the error page, the "go back" button should have refresh functionality)
     .nullable(), // this `nullable()` is a must to let `null` pass even if it's already allowed in `refine()`,
 });
 
