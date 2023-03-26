@@ -8,7 +8,7 @@ import {
   getBookingsById,
   getConflictBookingsByMemberTrainerAndDateTime,
   getSameBookingsByAttrs,
-  getOtherBookingsByTrainerAndDateTime,
+  getConflictBookingsByMemberTrainerAndDateTimeExceptCurr,
   createBooking,
   updateBookingById,
   deleteBookingById,
@@ -216,7 +216,7 @@ bookingController.post('/bookings', permit('Admin', 'Trainer', 'Member'), async 
       // Find if a same booking already exists
       const [[sameBookingExists]] = await getSameBookingsByAttrs(memberId, trainerId, activityId, dateTime);
       if (sameBookingExists) {
-        // -- Return error indicating a same booking already exists
+        // -- Return error indicating same booking already exists
         return res.status(409).json({
           status: 409,
           message: 'Same booking record already exists',
@@ -247,8 +247,6 @@ bookingController.post('/bookings', permit('Admin', 'Trainer', 'Member'), async 
 
 // Update Booking
 bookingController.patch('/bookings/:id', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
-  // FIX Dup booking: same member can't book at the same time, even the trainer is available
-  // FIX Auto select current member/trainer in the `edit booking` and `update booking` panel
   try {
     const { id } = req.params;
     if (!idSchema.safeParse(id).success) {
@@ -266,10 +264,15 @@ bookingController.patch('/bookings/:id', permit('Admin', 'Trainer', 'Member'), a
     const { memberId, trainerId, activityId, date, time } = req.body;
     const dateTime = [date, time].join(' ');
 
-    // Find if the trainer is available at given date and time
-    const [[trainerUnavailable]] = await getOtherBookingsByTrainerAndDateTime(id, trainerId, dateTime);
-    if (trainerUnavailable) {
-      // -- Return error indicating the trainer is unavailable at the given date and time
+    // Find if either of the parties involved is available at given date and time
+    const [[isUnavailable]] = await getConflictBookingsByMemberTrainerAndDateTimeExceptCurr(
+      id,
+      memberId,
+      trainerId,
+      dateTime
+    );
+    if (isUnavailable) {
+      // -- Return error indicating a party involved is unavailable at the given date and time
       return res.status(409).json({
         status: 409,
         message: 'The selected trainer is not available at the given date and time',
@@ -277,9 +280,9 @@ bookingController.patch('/bookings/:id', permit('Admin', 'Trainer', 'Member'), a
     }
 
     // Find if a same booking already exists
-    const [[sameBookingExists]] = await getBookingsByAttrs(memberId, trainerId, activityId, dateTime);
+    const [[sameBookingExists]] = await getSameBookingsByAttrs(memberId, trainerId, activityId, dateTime);
     if (sameBookingExists) {
-      // -- Return redirection given that nothing is modified
+      // -- Skip update if same booking already exists
       return res.status(200).json({
         status: 200,
         message: 'No change to booking has been made',
