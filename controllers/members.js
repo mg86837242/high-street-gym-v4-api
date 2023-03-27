@@ -87,7 +87,7 @@ memberController.get(
       return res.status(200).json({
         status: 200,
         message: 'Member record successfully retrieved',
-        defaultValues: firstMemberResult,
+        initialValues: firstMemberResult,
       });
     } catch (error) {
       return res.status(500).json({

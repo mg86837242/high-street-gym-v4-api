@@ -84,7 +84,7 @@ trainerController.get('/trainers/trainer-with-all-details-by-id/:id', permit('Ad
     return res.status(200).json({
       status: 200,
       message: 'Trainer record successfully retrieved',
-      defaultValues: firstTrainerResult,
+      initialValues: firstTrainerResult,
     });
   } catch (error) {
     return res.status(500).json({
