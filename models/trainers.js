@@ -24,6 +24,21 @@ export function getTrainersWithDetailsById(id) {
   );
 }
 
+export function getTrainersWithDetailsByLoginId(loginId) {
+  return pool.query(
+    `
+    SELECT t.firstName, t.lastName, t.phone, t.description, t.specialty, t.certificate, t.imageUrl,
+    l.email, l.password, l.username,
+    a.lineOne, a.lineTwo, a.suburb, a.postcode, a.state, a.country
+    FROM Trainers t
+    INNER JOIN Logins l on t.loginId = l.id
+    INNER JOIN Addresses a on t.addressId = a.id
+    WHERE t.loginId = ?
+    `,
+    [loginId]
+  );
+}
+
 export function getTrainersByLoginId(loginId) {
   return pool.query('SELECT * FROM Trainers WHERE loginId = ?', [loginId]);
 }

@@ -9,9 +9,10 @@ import {
   getLoginsByEmail,
   updateLoginAccessKeyById,
 } from '../models/logins.js';
-import { getMembersByLoginId } from '../models/members.js';
-import { getTrainersByLoginId } from '../models/trainers.js';
-import { getAdminsByLoginId } from '../models/admins.js';
+import { getAdminsByLoginId, getAdminsWithDetailsByLoginId } from '../models/admins.js';
+import { getTrainersByLoginId, getTrainersWithDetailsByLoginId } from '../models/trainers.js';
+import { getMembersByLoginId, getMembersWithDetailsByLoginId } from '../models/members.js';
+import permit from '../middleware/rbac.js';
 
 const loginController = Router();
 
@@ -153,7 +154,7 @@ loginController.post('/logout', async (req, res) => {
   }
 });
 
-loginController.get('/logins/emails', async (req, res) => {
+loginController.get('/logins/all-emails', async (req, res) => {
   try {
     if (!emptyObjSchema.safeParse(req.body).success) {
       return res.status(400).json({
@@ -176,5 +177,50 @@ loginController.get('/logins/emails', async (req, res) => {
     });
   }
 });
+
+loginController.get(
+  '/users/user-with-all-details-and-all-emails/by-key/:accessKey',
+  permit('Admin', 'Trainer', 'Member'),
+  async (req, res) => {
+    try {
+      const { accessKey } = req.params;
+      // 400: zod
+      const [emailResults] = await getAllLoginsEmails();
+      const [[firstLoginResult]] = await getLoginsByAccessKey(accessKey);
+      // 401: if no `firstLoginResult.id`
+      let user = null;
+      switch (firstLoginResult?.role) {
+        case 'Admin':
+          [[user]] = await getAdminsWithDetailsByLoginId(firstLoginResult.id);
+          break;
+        case 'Trainer':
+          [[user]] = await getTrainersWithDetailsByLoginId(firstLoginResult.id);
+          break;
+        case 'Member':
+          [[user]] = await getMembersWithDetailsByLoginId(firstLoginResult.id);
+          break;
+        default:
+          return res.status(403).json({
+            status: 403,
+            message: 'Insufficient privilege',
+          });
+      }
+
+      return res.status(200).json({
+        status: 200,
+        message: 'Login record successfully retrieved',
+        emails: emailResults,
+        user,
+      });
+    } catch (error) {
+      console.log(error);
+      return res.status(500).json({
+        status: 500,
+        message: 'Database or server error',
+        error,
+      });
+    }
+  }
+);
 
 export default loginController;

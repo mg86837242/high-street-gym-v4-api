@@ -24,6 +24,21 @@ export function getAdminsWithDetailsById(id) {
   );
 }
 
+export function getAdminsWithDetailsByLoginId(loginId) {
+  return pool.query(
+    `
+    SELECT d.firstName, d.lastName, d.phone,
+    l.email, l.password, l.username,
+    a.lineOne, a.lineTwo, a.suburb, a.postcode, a.state, a.country
+    FROM Admins d
+    INNER JOIN Logins l on d.loginId = l.id
+    INNER JOIN Addresses a on d.addressId = a.id
+    WHERE d.loginId = ?
+    `,
+    [loginId]
+  );
+}
+
 export function getAdminsByLoginId(loginId) {
   return pool.query('SELECT * FROM Admins WHERE loginId = ?', [loginId]);
 }
