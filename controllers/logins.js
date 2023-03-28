@@ -183,11 +183,11 @@ loginController.get(
   permit('Admin', 'Trainer', 'Member'),
   async (req, res) => {
     try {
-      const { accessKey: accessKeyInput } = req.params;
-      if (!uuidSchema.safeParse(accessKeyInput).success) {
+      const { accessKey } = req.params;
+      if (!uuidSchema.safeParse(accessKey).success) {
         return res.status(400).json({
           status: 400,
-          message: uuidSchema.safeParse(accessKeyInput).error.issues,
+          message: uuidSchema.safeParse(accessKey).error.issues,
         });
       }
 
