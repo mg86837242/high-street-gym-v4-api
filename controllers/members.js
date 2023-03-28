@@ -33,7 +33,7 @@ memberController.get('/members', permit('Admin', 'Trainer', 'Member'), async (re
   }
 });
 
-memberController.get('/members/:id', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
+memberController.get('/members/id/:id', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
   try {
     const { id } = req.params;
     if (!idSchema.safeParse(id).success) {
@@ -65,7 +65,7 @@ memberController.get('/members/:id', permit('Admin', 'Trainer', 'Member'), async
 });
 
 memberController.get(
-  '/members/member-with-all-details-by-id/:id',
+  '/members/member-with-all-details/id/:id',
   permit('Admin', 'Trainer', 'Member'),
   async (req, res) => {
     try {
@@ -285,7 +285,7 @@ memberController.post('/members', permit('Admin', 'Trainer', 'Member'), async (r
 // PS1 Depending on the business logic, it's possible to update login and address info separately in their respective routers, e.g., GitHub
 // PS2 The logic of React Router calls for the juxtaposed usage of `req.body` and `req.params` in update routes
 // NB If anything, catch 409 i/o 404 within an update operation, see: https://stackoverflow.com/questions/10727699/is-http-404-an-appropriate-response-for-a-put-operation-where-some-linked-resour
-memberController.patch('/members/:id', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
+memberController.patch('/members/id/:id', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
   let conn = null;
   try {
     const { id } = req.params;
@@ -364,7 +364,7 @@ memberController.patch('/members/:id', permit('Admin', 'Trainer', 'Member'), asy
 });
 
 memberController.patch(
-  '/members/member-with-all-details/:id',
+  '/members/member-with-all-details/id/:id',
   permit('Admin', 'Trainer', 'Member'),
   async (req, res) => {
     let conn = null;
@@ -481,7 +481,7 @@ memberController.patch(
 );
 
 // Delete Member
-memberController.delete('/members/:id', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
+memberController.delete('/members/id/:id', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
   try {
     const { id } = req.params;
     if (!idSchema.safeParse(id).success) {

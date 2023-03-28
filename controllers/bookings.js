@@ -45,7 +45,7 @@ bookingController.get('/bookings', async (req, res) => {
   }
 });
 
-bookingController.get('/bookings/booking-with-details-by-date/:date', async (req, res) => {
+bookingController.get('/bookings/booking-with-details/date/:date', async (req, res) => {
   try {
     // NB `req.params.date` is a string, see: https://reactrouter.com/en/main/start/concepts#route-matches; the data type expected to be used in
     //  the WHERE clause is also a string, however, needs to be formatted like this `YYYY-MM-DD` in the SQL query, this is found out by writing raw
@@ -94,7 +94,7 @@ bookingController.get('/bookings/booking-with-details-by-date/:date', async (req
 });
 
 bookingController.get(
-  '/bookings/booking-with-details-by-id/:id',
+  '/bookings/booking-with-details/id/:id',
   permit('Admin', 'Trainer', 'Member'),
   async (req, res) => {
     try {
@@ -129,7 +129,7 @@ bookingController.get(
 );
 
 bookingController.get(
-  '/bookings/booking-with-options-by-id/:id',
+  '/bookings/booking-with-options/id/:id',
   permit('Admin', 'Trainer', 'Member'),
   async (req, res) => {
     try {
@@ -246,7 +246,7 @@ bookingController.post('/bookings', permit('Admin', 'Trainer', 'Member'), async 
 });
 
 // Update Booking
-bookingController.patch('/bookings/:id', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
+bookingController.patch('/bookings/id/:id', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
   try {
     const { id } = req.params;
     if (!idSchema.safeParse(id).success) {
@@ -311,7 +311,7 @@ bookingController.patch('/bookings/:id', permit('Admin', 'Trainer', 'Member'), a
 });
 
 // Delete Booking
-bookingController.delete('/bookings/:id', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
+bookingController.delete('/bookings/id/:id', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
   try {
     const { id } = req.params;
     if (!idSchema.safeParse(id).success) {

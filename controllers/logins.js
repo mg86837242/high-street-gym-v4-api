@@ -16,7 +16,7 @@ import permit from '../middleware/rbac.js';
 
 const loginController = Router();
 
-loginController.get('/users/by-key/:accessKey', async (req, res) => {
+loginController.get('/users/key/:accessKey', async (req, res) => {
   try {
     const { accessKey: accessKeyInput } = req.params;
     if (!uuidSchema.safeParse(accessKeyInput).success) {
@@ -179,7 +179,7 @@ loginController.get('/logins/all-emails', async (req, res) => {
 });
 
 loginController.get(
-  '/users/user-with-all-details-and-all-emails/by-key/:accessKey',
+  '/users/user-with-all-details-and-all-emails/key/:accessKey',
   permit('Admin', 'Trainer', 'Member'),
   async (req, res) => {
     try {
