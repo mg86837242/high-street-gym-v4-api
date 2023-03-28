@@ -37,7 +37,7 @@ activityController.get('/activities', permit('Admin', 'Trainer', 'Member'), asyn
   }
 });
 
-activityController.get('/activities/:id', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
+activityController.get('/activities/id/:id', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
   try {
     const { id } = req.params;
     if (!idSchema.safeParse(id).success) {
@@ -120,7 +120,7 @@ activityController.post('/activities', permit('Admin', 'Trainer'), async (req, r
 });
 
 // Update Activity
-activityController.patch('/activities/:id', permit('Admin', 'Trainer'), async (req, res) => {
+activityController.patch('/activities/id/:id', permit('Admin', 'Trainer'), async (req, res) => {
   try {
     const { id } = req.params;
     if (!idSchema.safeParse(id).success) {
@@ -174,7 +174,7 @@ activityController.patch('/activities/:id', permit('Admin', 'Trainer'), async (r
 });
 
 // Delete Activity
-activityController.delete('/activities/:id', permit('Admin', 'Trainer'), async (req, res) => {
+activityController.delete('/activities/id/:id', permit('Admin', 'Trainer'), async (req, res) => {
   try {
     const { id } = req.params;
     if (!idSchema.safeParse(id).success) {
