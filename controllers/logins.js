@@ -183,11 +183,22 @@ loginController.get(
   permit('Admin', 'Trainer', 'Member'),
   async (req, res) => {
     try {
-      const { accessKey } = req.params;
-      // 400: zod
+      const { accessKey: accessKeyInput } = req.params;
+      if (!uuidSchema.safeParse(accessKeyInput).success) {
+        return res.status(400).json({
+          status: 400,
+          message: uuidSchema.safeParse(accessKeyInput).error.issues,
+        });
+      }
+
       const [emailResults] = await getAllLoginsEmails();
       const [[firstLoginResult]] = await getLoginsByAccessKey(accessKey);
-      // 401: if no `firstLoginResult.id`
+      if (!firstLoginResult) {
+        return res.status(401).json({
+          status: 401,
+          message: 'Unauthorized access key',
+        });
+      }
       let user = null;
       switch (firstLoginResult?.role) {
         case 'Admin':
