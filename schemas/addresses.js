@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-export const addressSchema = z.object({
+const addressSchema = z.object({
   lineOne: z.string().max(45).nullable(),
   lineTwo: z.string().max(45).nullable(),
   suburb: z.string().max(45).nullable(),
