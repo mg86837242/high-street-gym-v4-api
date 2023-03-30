@@ -83,16 +83,6 @@ activityController.post('/activities', permit('Admin', 'Trainer'), async (req, r
       price,
     } = req.body;
 
-    // Find if there's duplicate activity name
-    const [activityExists] = await getActivitiesByName(name);
-    if (activityExists) {
-      // -- Return error if exists
-      return res.status(409).json({
-        status: 409,
-        message: 'Same activity record already exists',
-      });
-    }
-    // -- Create activity row if NOT exists
     const [{ insertId }] = await createActivity(
       name,
       category,
