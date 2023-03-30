@@ -218,7 +218,7 @@ CREATE TABLE `members` (
   `phone` varchar(45) COLLATE utf8mb3_bin NOT NULL,
   `addressId` int DEFAULT NULL,
   `age` int DEFAULT NULL,
-  `gender` enum('Female','Male','Prefer not to say') COLLATE utf8mb3_bin DEFAULT NULL,
+  `gender` enum('Female','Male','Other') COLLATE utf8mb3_bin DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `fk_members_specific_traits_users1_idx` (`loginId`),
   KEY `fk_Members_Addresses1_idx` (`addressId`),
