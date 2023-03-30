@@ -18,15 +18,15 @@ exportController.get('/member-list', async (req, res) => {
         message: emptyObjSchema.safeParse(req.body).error.issues,
       });
     }
-    // Build an array of member objects from relational data
+    // Build an array of member objs from relational data
     const [members] = await getAllMembers();
     // NB Use `async` within `map()`: https://stackoverflow.com/questions/42489918/async-await-inside-arrow-functions-arraymap-filter;
     //  alternatively, use `for await...of`, which has better performance, however, forbade by the linting rule
     const mapMemberPromises = members.map(async (m) => {
-      // Append an address object as the value to the `address` key for each member object
+      // Append an address obj as the value to the `address` key for each member obj
       const [[address]] = await getAddressesById(m.addressId);
       // NB Error: `Assignment to property of function parameter 'm'` => Solution: (1) declare a new constant, and (2)
-      //  use spread syntax in object literals `{...}`, the combination of which will create a shallow clone and avoid
+      //  use spread syntax in obj literals `{...}`, the combination of which will create a shallow clone and avoid
       //  mutation, see MDN's article for explanation
       const appendedM = { ...m, address };
       return appendedM;
@@ -59,15 +59,15 @@ exportController.get('/activity-list', async (req, res) => {
         message: emptyObjSchema.safeParse(req.body).error.issues,
       });
     }
-    // Build an array of activity objects from relational data
+    // Build an array of activity objs from relational data
     const [activities] = await getAllActivities();
     const mapActivityPromises = activities.map(async (a) => {
-      // Append an array of booking object(s) as the value to the `bookings` key for each activity object
+      // Append an array of booking obj(s) as the value to the `bookings` key for each activity obj
       const [bookings] = await getBookingsByActivityId(a.id);
       const mapBookingPromises = bookings.map(async (b) => {
-        // Append a member object as the value to the `member` key for each booking object
+        // Append a member obj as the value to the `member` key for each booking obj
         const [[member]] = await getMembersById(b.memberId);
-        // Append a trainer  object as the value to the `trainer` key for each booking object
+        // Append a trainer  obj as the value to the `trainer` key for each booking obj
         const [[trainer]] = await getTrainersById(b.trainerId);
         const appendedB = { ...b, member, trainer };
         return appendedB;

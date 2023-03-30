@@ -11,6 +11,6 @@ const pool = mysql.createPool({
 
 export default pool;
 
-// NB `pool.query()` returns a promise object by the design of `mysql2`, this can be observed by placing
+// NB `pool.query()` returns a promise obj by the design of `mysql2`, this can be observed by placing
 //  `console.log(getLoginsByUsername('someUsernameStr'))` in the `server.js`, then `npm start`; the console
 //  will then print `Promise { <pending> }`, which can be unpacked by `then()` or `await`

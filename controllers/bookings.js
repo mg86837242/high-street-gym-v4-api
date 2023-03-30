@@ -69,7 +69,7 @@ bookingController.get('/bookings/booking-with-details/date/:date', async (req, r
     //  documentation to see all available API options."
     //  ---- https://github.com/mysqljs/mysql#connection-options: `mysql` connection options: "`dateStrings`: Force
     //  date types (`TIMESTAMP`, `DATETIME`, `DATE`) to be returned as strings rather than inflated into JavaScript
-    //  Date objects. Can be `true`/`false` or an array of type names to keep as strings. (Default: `false`)"
+    //  Date objs. Can be `true`/`false` or an array of type names to keep as strings. (Default: `false`)"
     // #endregion
 
     if (!bookingResults.length) {
