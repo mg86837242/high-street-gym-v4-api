@@ -9,30 +9,30 @@ export function getBlogsById(id) {
   return pool.query('SELECT * FROM Blogs WHERE id = ?', [id]);
 }
 
-export function getBlogsByMemberId(memberId) {
-  return pool.query('SELECT * FROM Blogs WHERE memberId = ?', [memberId]);
+export function getBlogsByLoginId(loginId) {
+  return pool.query('SELECT * FROM Blogs WHERE loginId = ?', [loginId]);
 }
 
 // Create Blog
-export function createBlog(memberId, title, body) {
+export function createBlog(title, body, loginId) {
   return pool.query(
     `
-		INSERT INTO Blogs (memberId, title, body, createdAt)
+		INSERT INTO Blogs (title, body, loginId, createdAt)
 		VALUES (?, ?, ?, NOW())
 		`,
-    [memberId, title, body]
+    [title, body, loginId]
   );
 }
 
 // Update Blog
-export function updateBlogById(id, memberId, title, body) {
+export function updateBlogById(id, title, body, loginId) {
   return pool.query(
     `
 		UPDATE Blogs
-		SET memberId = ?, title = ?, body = ?, updatedAt = NOW()
+		SET title = ?, body = ?, loginId = ?, updatedAt = NOW()
 		WHERE id = ?
 		`,
-    [memberId, title, body, id]
+    [title, body, loginId, id]
   );
 }
 

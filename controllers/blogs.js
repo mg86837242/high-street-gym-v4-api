@@ -64,9 +64,9 @@ blogController.get('/blogs/id/:id', async (req, res) => {
 // Create Blog
 blogController.post('/blogs', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
   try {
-    const { memberId, title, body } = req.body;
+    const { title, body, loginId } = req.body;
 
-    const [{ insertId }] = await createBlog(memberId, title, body);
+    const [{ insertId }] = await createBlog(title, body, loginId);
 
     res.status(200).json({
       status: 200,
@@ -92,9 +92,9 @@ blogController.patch('/blogs/id/:id', permit('Admin', 'Trainer', 'Member'), asyn
         message: idSchema.safeParse(id).error.issues,
       });
     }
-    const { memberId, title, body } = req.body;
+    const { title, body, loginId } = req.body;
 
-    const [{ affectedRows }] = await updateBlogById(id, memberId, title, body);
+    const [{ affectedRows }] = await updateBlogById(id, title, body, loginId);
 
     if (!affectedRows) {
       return res.status(404).json({
