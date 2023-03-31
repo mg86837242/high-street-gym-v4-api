@@ -2,11 +2,25 @@ import pool from '../config/database.js';
 
 // Read Blog
 export function getAllBlogs() {
-  return pool.query('SELECT * FROM Blogs');
+  return pool.query(`
+  SELECT b.id, b.title, b.body, b.loginId, b.createdAt, b.updatedAt,
+  l.username, l.role
+  FROM Blogs b
+  INNER JOIN Logins l on b.loginId = l.id
+  `);
 }
 
 export function getBlogsById(id) {
-  return pool.query('SELECT * FROM Blogs WHERE id = ?', [id]);
+  return pool.query(
+    `
+    SELECT b.id, b.title, b.body, b.loginId, b.createdAt, b.updatedAt,
+    l.username, l.role
+    FROM Blogs b
+    INNER JOIN Logins l on b.loginId = l.id
+    WHERE b.id = ?
+    `,
+    [id]
+  );
 }
 
 export function getBlogsByLoginId(loginId) {
