@@ -35,21 +35,8 @@ export const trainerSchema = z.object({
   description: z.string().max(255).nullable(),
   specialty: z.string().max(45).nullable(),
   certificate: z.string().max(45).nullable(),
-  imageUrl: z
-    .string()
-    .refine(
-      (val) =>
-        val === null ||
-        (/https?:\/\/(www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()!@:%_+.~#?&//=]*)/.test(
-          val
-        ) === true &&
-          val.length <= 255),
-      {
-        message: 'Invalid url format',
-      }
-    )
-    // ??? Triggering server/backend 400 (such as disabling the following line) will cause session loss, which requires refresh and Effect to restore session (which means in the error page, the "go back" button should have refresh functionality)
-    .nullable(), // this `nullable()` is a must to let `null` pass even if it's already allowed in `refine()`,
+  // ??? Triggering server/backend 400 (e.g., change this union type) will cause session loss, which requires refresh and Effect to restore session (which means in the error page, the "go back" button should have refresh functionality)
+  imageUrl: z.union([z.nullable({ message: 'Image url must be empty or a valid url' }), z.string().url()]),
 });
 
 export const trainerDetailedSchema = z.object({
