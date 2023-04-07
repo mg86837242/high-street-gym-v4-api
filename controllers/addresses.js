@@ -75,6 +75,12 @@ addressController.get('/addresses/id/:id', permit('Admin', 'Trainer', 'Member'),
 // Create Address
 addressController.post('/addresses', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
   try {
+    if (!addressSchema.safeParse(req.body).success) {
+      return res.status(400).json({
+        status: 400,
+        message: addressSchema.safeParse(req.body).error.issues,
+      });
+    }
     const { lineOne, lineTwo, suburb, postcode, state, country } = req.body;
 
     const [{ insertId }] = await createAddress(lineOne, lineTwo, suburb, postcode, state, country);

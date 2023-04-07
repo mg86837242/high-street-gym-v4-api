@@ -1,12 +1,12 @@
 import { Router } from 'express';
 import { emptyObjSchema, idSchema } from '../schemas/index.js';
+import activitySchema from '../schemas/activities.js';
 import {
   getAllActivities,
   getActivitiesById,
   createActivity,
   updateActivityById,
   deleteActivityById,
-  getActivitiesByName,
 } from '../models/activities.js';
 import permit from '../middleware/rbac.js';
 
@@ -71,6 +71,12 @@ activityController.get('/activities/id/:id', permit('Admin', 'Trainer', 'Member'
 // Create Activity
 activityController.post('/activities', permit('Admin', 'Trainer'), async (req, res) => {
   try {
+    if (!activitySchema.safeParse(req.body).success) {
+      return res.status(400).json({
+        status: 400,
+        message: activitySchema.safeParse(req.body).error.issues,
+      });
+    }
     const {
       name,
       category,
@@ -117,6 +123,12 @@ activityController.patch('/activities/id/:id', permit('Admin', 'Trainer'), async
       return res.status(400).json({
         status: 400,
         message: idSchema.safeParse(id).error.issues,
+      });
+    }
+    if (!activitySchema.safeParse(req.body).success) {
+      return res.status(400).json({
+        status: 400,
+        message: activitySchema.safeParse(req.body).error.issues,
       });
     }
     const {

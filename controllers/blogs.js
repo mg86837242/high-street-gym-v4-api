@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import { emptyObjSchema, idSchema } from '../schemas/index.js';
+import blogSchema from '../schemas/blogs.js';
 import { getAllBlogs, getBlogsById, createBlog, updateBlogById, deleteBlogById } from '../models/blogs.js';
 import permit from '../middleware/rbac.js';
 
@@ -64,6 +65,12 @@ blogController.get('/blogs/id/:id', async (req, res) => {
 // Create Blog
 blogController.post('/blogs', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
   try {
+    if (!blogSchema.safeParse(req.body).success) {
+      return res.status(400).json({
+        status: 400,
+        message: blogSchema.safeParse(req.body).error.issues,
+      });
+    }
     const { title, body, loginId } = req.body;
 
     const [{ insertId }] = await createBlog(title, body, loginId);
@@ -90,6 +97,12 @@ blogController.patch('/blogs/id/:id', permit('Admin', 'Trainer', 'Member'), asyn
       return res.status(400).json({
         status: 400,
         message: idSchema.safeParse(id).error.issues,
+      });
+    }
+    if (!blogSchema.safeParse(req.body).success) {
+      return res.status(400).json({
+        status: 400,
+        message: blogSchema.safeParse(req.body).error.issues,
       });
     }
     const { title, body, loginId } = req.body;
