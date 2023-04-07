@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { emptyObjSchema, idSchema } from '../schemas/index.js';
+import { emptyObjSchema, idSchema } from '../schemas/params.js';
 import activitySchema from '../schemas/activities.js';
 import {
   getAllActivities,

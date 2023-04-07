@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import bcrypt from 'bcryptjs'; // reason to use `bcryptjs`: https://github.com/kelektiv/node.bcrypt.js/issues/705
 import { v4 as uuid4 } from 'uuid';
-import { emptyObjSchema, uuidSchema } from '../schemas/index.js';
+import { emptyObjSchema, uuidSchema } from '../schemas/params.js';
 import loginSchema from '../schemas/logins.js';
 import {
   getAllLoginsEmails,

@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { emptyObjSchema, idSchema } from '../schemas/index.js';
+import { emptyObjSchema, idSchema } from '../schemas/params.js';
 import blogSchema from '../schemas/blogs.js';
 import { getAllBlogs, getBlogsById, createBlog, updateBlogById, deleteBlogById } from '../models/blogs.js';
 import permit from '../middleware/rbac.js';

@@ -1,7 +1,7 @@
 import fs from 'node:fs';
 import ejs from 'ejs';
 import { Router } from 'express';
-import { emptyObjSchema } from '../schemas/index.js';
+import { emptyObjSchema } from '../schemas/params.js';
 import { getAllMembers, getMembersById } from '../models/members.js';
 import { getAddressesById } from '../models/addresses.js';
 import { getAllActivities } from '../models/activities.js';

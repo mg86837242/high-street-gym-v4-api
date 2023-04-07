@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import bcrypt from 'bcryptjs'; // reason to use `bcryptjs`: https://github.com/kelektiv/node.bcrypt.js/issues/705
 import pool from '../config/database.js';
-import { emptyObjSchema, idSchema } from '../schemas/index.js';
+import { emptyObjSchema, idSchema } from '../schemas/params.js';
 import { adminSchema } from '../schemas/admins.js';
 import { getAllAdmins, getAdminsById, getAdminsWithDetailsById, deleteAdminById } from '../models/admins.js';
 import permit from '../middleware/rbac.js';

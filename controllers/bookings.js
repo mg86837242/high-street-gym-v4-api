@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { emptyObjSchema, idSchema, dateSchema } from '../schemas/index.js';
+import { emptyObjSchema, idSchema, dateSchema } from '../schemas/params.js';
 import bookingSchema from '../schemas/bookings.js';
 import {
   getAllBookings,
