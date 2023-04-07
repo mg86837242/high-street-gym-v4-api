@@ -7,16 +7,15 @@ const pool = mysql.createPool({
   password: constants.DB_PASSWORD,
   database: constants.DB_SCHEMA,
   dateStrings: true,
-  // ??? How to allow emoji in the blog post body
   charset: 'utf8mb4',
 });
 
 export default pool;
 
 // NB `pool.query()` returns a promise obj by the design of `mysql2`, this can be observed by placing
-//  `console.log(getLoginsByUsername('someUsernameStr'))` in the `server.js`, then `npm start`; the console
-//  will then print `Promise { <pending> }`, which can be unpacked by `then()` or `await`
+//  `console.log(getLoginsById(1))` in the `server.js`, then `npm start`; the console will then print
+//  `Promise { <pending> }`, which can be unpacked by `then()` or `await`
 
 // References:
 // -- https://github.com/sidorares/node-mysql2/issues/1089: Force `DATETIME` to be returned as strings
-// -- https://stackoverflow.com/questions/39463134: Allow emoji in MySQL
+// -- https://stackoverflow.com/questions/39463134: Allow emoji in MySQL (ended up make a new schema for it to work)

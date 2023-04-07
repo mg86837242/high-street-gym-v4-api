@@ -107,7 +107,6 @@ blogController.patch('/blogs/id/:id', permit('Admin', 'Trainer', 'Member'), asyn
       message: 'Blog successfully updated',
     });
   } catch (error) {
-    console.log(`🟢 [${new Date().toLocaleTimeString()}] : `, error);
     return res.status(500).json({
       status: 500,
       message: 'Database or server error',
