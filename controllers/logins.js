@@ -3,12 +3,7 @@ import bcrypt from 'bcryptjs'; // reason to use `bcryptjs`: https://github.com/k
 import { v4 as uuid4 } from 'uuid';
 import { emptyObjSchema, uuidSchema } from '../schemas/params.js';
 import loginSchema from '../schemas/logins.js';
-import {
-  getAllLoginsEmails,
-  getLoginsByAccessKey,
-  getLoginsByEmail,
-  updateLoginAccessKeyById,
-} from '../models/logins.js';
+import { getAllEmails, getLoginsByAccessKey, getLoginsByEmail, updateLoginAccessKeyById } from '../models/logins.js';
 import { getAdminsByLoginId, getAdminsWithDetailsByLoginId } from '../models/admins.js';
 import { getTrainersByLoginId, getTrainersWithDetailsByLoginId } from '../models/trainers.js';
 import { getMembersByLoginId, getMembersWithDetailsByLoginId } from '../models/members.js';
@@ -74,7 +69,7 @@ loginController.get('/users/key/:accessKey', async (req, res) => {
   }
 });
 
-loginController.post('/login', async (req, res) => {
+loginController.post('/users/login', async (req, res) => {
   try {
     if (!loginSchema.safeParse(req.body).success) {
       return res.status(400).json({
@@ -124,7 +119,7 @@ loginController.post('/login', async (req, res) => {
   }
 });
 
-loginController.post('/logout', async (req, res) => {
+loginController.post('/users/logout', async (req, res) => {
   try {
     const { accessKey } = req.body;
     if (!uuidSchema.safeParse(accessKey).success) {
@@ -152,7 +147,7 @@ loginController.post('/logout', async (req, res) => {
   }
 });
 
-loginController.get('/logins/all-emails', async (req, res) => {
+loginController.get('/users/all-emails', async (req, res) => {
   try {
     if (!emptyObjSchema.safeParse(req.body).success) {
       return res.status(400).json({
@@ -160,7 +155,7 @@ loginController.get('/logins/all-emails', async (req, res) => {
         message: emptyObjSchema.safeParse(req.body).error.issues,
       });
     }
-    const [emailResults] = await getAllLoginsEmails();
+    const [emailResults] = await getAllEmails();
 
     return res.status(200).json({
       status: 200,
@@ -189,7 +184,7 @@ loginController.get(
         });
       }
 
-      const [emailResults] = await getAllLoginsEmails();
+      const [emailResults] = await getAllEmails();
       const [[firstLoginResult]] = await getLoginsByAccessKey(accessKey);
       if (!firstLoginResult) {
         return res.status(401).json({

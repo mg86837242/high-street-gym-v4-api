@@ -5,7 +5,7 @@ export function getAllLogins() {
   return pool.query('SELECT * FROM Logins');
 }
 
-export function getAllLoginsEmails() {
+export function getAllEmails() {
   return pool.query('SELECT email FROM Logins');
 }
 

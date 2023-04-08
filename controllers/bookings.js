@@ -45,7 +45,35 @@ bookingController.get('/bookings', async (req, res) => {
   }
 });
 
-bookingController.get('/bookings/booking-with-details/date/:date', async (req, res) => {
+bookingController.get('/bookings/options-only', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
+  try {
+    if (!emptyObjSchema.safeParse(req.body).success) {
+      return res.status(400).json({
+        status: 400,
+        message: emptyObjSchema.safeParse(req.body).error.issues,
+      });
+    }
+    const [memberResults] = await getAllMembers();
+    const [trainerResults] = await getAllTrainers();
+    const [activityResults] = await getAllActivities();
+
+    return res.status(200).json({
+      status: 200,
+      message: 'Booking options successfully retrieved',
+      members: memberResults,
+      trainers: trainerResults,
+      activities: activityResults,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      status: 500,
+      message: 'Database or server error',
+      error,
+    });
+  }
+});
+
+bookingController.get('/bookings/bookings-with-details/:date', async (req, res) => {
   try {
     // NB `req.params.date` is a string, see: https://reactrouter.com/en/main/start/concepts#route-matches; the data type expected to be used in
     //  the WHERE clause is also a string, however, needs to be formatted like this `YYYY-MM-DD` in the SQL query, this is found out by writing raw
@@ -93,36 +121,40 @@ bookingController.get('/bookings/booking-with-details/date/:date', async (req, r
   }
 });
 
-bookingController.get('/bookings/booking-with-details/:id', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
-  try {
-    const { id } = req.params;
-    if (!idSchema.safeParse(id).success) {
-      return res.status(400).json({
-        status: 400,
-        message: idSchema.safeParse(id).error.issues,
-      });
-    }
-    const [[firstBookingResult]] = await getBookingsWithDetailsById(id);
+bookingController.get(
+  '/bookings/booking-with-all-details/:id',
+  permit('Admin', 'Trainer', 'Member'),
+  async (req, res) => {
+    try {
+      const { id } = req.params;
+      if (!idSchema.safeParse(id).success) {
+        return res.status(400).json({
+          status: 400,
+          message: idSchema.safeParse(id).error.issues,
+        });
+      }
+      const [[firstBookingResult]] = await getBookingsWithDetailsById(id);
 
-    if (!firstBookingResult) {
-      return res.status(404).json({
-        status: 404,
-        message: 'No bookings found with the ID provided',
+      if (!firstBookingResult) {
+        return res.status(404).json({
+          status: 404,
+          message: 'No bookings found with the ID provided',
+        });
+      }
+      return res.status(200).json({
+        status: 200,
+        message: 'Booking record successfully retrieved',
+        booking: firstBookingResult,
+      });
+    } catch (error) {
+      return res.status(500).json({
+        status: 500,
+        message: 'Database or server error',
+        error,
       });
     }
-    return res.status(200).json({
-      status: 200,
-      message: 'Booking record successfully retrieved',
-      booking: firstBookingResult,
-    });
-  } catch (error) {
-    return res.status(500).json({
-      status: 500,
-      message: 'Database or server error',
-      error,
-    });
   }
-});
+);
 
 bookingController.get('/bookings/booking-with-options/:id', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
   try {
@@ -149,34 +181,6 @@ bookingController.get('/bookings/booking-with-options/:id', permit('Admin', 'Tra
       status: 200,
       message: 'Booking record and options successfully retrieved',
       booking: firstBookingResult,
-      members: memberResults,
-      trainers: trainerResults,
-      activities: activityResults,
-    });
-  } catch (error) {
-    return res.status(500).json({
-      status: 500,
-      message: 'Database or server error',
-      error,
-    });
-  }
-});
-
-bookingController.get('/bookings/options-only', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
-  try {
-    if (!emptyObjSchema.safeParse(req.body).success) {
-      return res.status(400).json({
-        status: 400,
-        message: emptyObjSchema.safeParse(req.body).error.issues,
-      });
-    }
-    const [memberResults] = await getAllMembers();
-    const [trainerResults] = await getAllTrainers();
-    const [activityResults] = await getAllActivities();
-
-    return res.status(200).json({
-      status: 200,
-      message: 'Booking options successfully retrieved',
       members: memberResults,
       trainers: trainerResults,
       activities: activityResults,
