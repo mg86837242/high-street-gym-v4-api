@@ -33,7 +33,7 @@ adminController.get('/admins', permit('Admin', 'Trainer', 'Member'), async (req,
   }
 });
 
-adminController.get('/admins/id/:id', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
+adminController.get('/admins/:id', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
   try {
     const { id } = req.params;
     if (!idSchema.safeParse(id).success) {
@@ -64,7 +64,7 @@ adminController.get('/admins/id/:id', permit('Admin', 'Trainer', 'Member'), asyn
   }
 });
 
-adminController.get('/admins/admin-with-all-details/id/:id', permit('Admin'), async (req, res) => {
+adminController.get('/admins/admin-with-all-details/:id', permit('Admin'), async (req, res) => {
   try {
     const { id } = req.params;
     if (!idSchema.safeParse(id).success) {
@@ -197,7 +197,7 @@ adminController.post(
 );
 
 // Update Admin
-adminController.patch('/admins/id/:id', permit('Admin'), async (req, res) => {
+adminController.patch('/admins/:id', permit('Admin'), async (req, res) => {
   let conn = null;
   try {
     const { id } = req.params;
@@ -275,7 +275,7 @@ adminController.patch('/admins/id/:id', permit('Admin'), async (req, res) => {
   }
 });
 
-adminController.patch('/admins/admin-with-all-details/id/:id', permit('Admin'), async (req, res) => {
+adminController.patch('/admins/admin-with-all-details/:id', permit('Admin'), async (req, res) => {
   let conn = null;
   try {
     const { id } = req.params;
@@ -381,7 +381,7 @@ adminController.patch('/admins/admin-with-all-details/id/:id', permit('Admin'), 
 });
 
 // Delete Admin
-adminController.delete('/admins/id/:id', permit('Admin'), async (req, res) => {
+adminController.delete('/admins/:id', permit('Admin'), async (req, res) => {
   try {
     const { id } = req.params;
     if (!idSchema.safeParse(id).success) {

@@ -33,7 +33,7 @@ trainerController.get('/trainers', permit('Admin', 'Trainer', 'Member'), async (
   }
 });
 
-trainerController.get('/trainers/id/:id', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
+trainerController.get('/trainers/:id', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
   try {
     const { id } = req.params;
     if (!idSchema.safeParse(id).success) {
@@ -64,7 +64,7 @@ trainerController.get('/trainers/id/:id', permit('Admin', 'Trainer', 'Member'), 
   }
 });
 
-trainerController.get('/trainers/trainer-with-all-details/id/:id', permit('Admin', 'Trainer'), async (req, res) => {
+trainerController.get('/trainers/trainer-with-all-details/:id', permit('Admin', 'Trainer'), async (req, res) => {
   try {
     const { id } = req.params;
     if (!idSchema.safeParse(id).success) {
@@ -201,7 +201,7 @@ trainerController.post(
 );
 
 // Update Trainer
-trainerController.patch('/trainers/id/:id', permit('Admin', 'Trainer'), async (req, res) => {
+trainerController.patch('/trainers/:id', permit('Admin', 'Trainer'), async (req, res) => {
   let conn = null;
   try {
     const { id } = req.params;
@@ -280,7 +280,7 @@ trainerController.patch('/trainers/id/:id', permit('Admin', 'Trainer'), async (r
   }
 });
 
-trainerController.patch('/trainers/trainer-with-all-details/id/:id', permit('Admin', 'Trainer'), async (req, res) => {
+trainerController.patch('/trainers/trainer-with-all-details/:id', permit('Admin', 'Trainer'), async (req, res) => {
   let conn = null;
   try {
     const { id } = req.params;
@@ -390,7 +390,7 @@ trainerController.patch('/trainers/trainer-with-all-details/id/:id', permit('Adm
 });
 
 // Delete Trainer
-trainerController.delete('/trainers/id/:id', permit('Admin', 'Trainer'), async (req, res) => {
+trainerController.delete('/trainers/:id', permit('Admin', 'Trainer'), async (req, res) => {
   try {
     const { id } = req.params;
     if (!idSchema.safeParse(id).success) {

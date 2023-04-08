@@ -41,7 +41,7 @@ addressController.get('/addresses', permit('Admin', 'Trainer', 'Member'), async 
   }
 });
 
-addressController.get('/addresses/id/:id', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
+addressController.get('/addresses/:id', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
   try {
     const { id } = req.params;
     if (!idSchema.safeParse(id).success) {
@@ -100,7 +100,7 @@ addressController.post('/addresses', permit('Admin', 'Trainer', 'Member'), async
 });
 
 // Update Address
-addressController.patch('/addresses/id/:id', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
+addressController.patch('/addresses/:id', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
   try {
     const { id } = req.params;
     if (!idSchema.safeParse(id).success) {
@@ -307,7 +307,7 @@ addressController.patch('/addresses/memberid/:memberid', permit('Admin', 'Traine
 });
 
 // Delete Address
-addressController.delete('/addresses/id/:id', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
+addressController.delete('/addresses/:id', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
   try {
     const { id } = req.params;
     if (!idSchema.safeParse(id).success) {

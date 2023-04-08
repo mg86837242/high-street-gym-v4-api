@@ -93,82 +93,74 @@ bookingController.get('/bookings/booking-with-details/date/:date', async (req, r
   }
 });
 
-bookingController.get(
-  '/bookings/booking-with-details/id/:id',
-  permit('Admin', 'Trainer', 'Member'),
-  async (req, res) => {
-    try {
-      const { id } = req.params;
-      if (!idSchema.safeParse(id).success) {
-        return res.status(400).json({
-          status: 400,
-          message: idSchema.safeParse(id).error.issues,
-        });
-      }
-      const [[firstBookingResult]] = await getBookingsWithDetailsById(id);
-
-      if (!firstBookingResult) {
-        return res.status(404).json({
-          status: 404,
-          message: 'No bookings found with the ID provided',
-        });
-      }
-      return res.status(200).json({
-        status: 200,
-        message: 'Booking record successfully retrieved',
-        booking: firstBookingResult,
-      });
-    } catch (error) {
-      return res.status(500).json({
-        status: 500,
-        message: 'Database or server error',
-        error,
+bookingController.get('/bookings/booking-with-details/:id', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
+  try {
+    const { id } = req.params;
+    if (!idSchema.safeParse(id).success) {
+      return res.status(400).json({
+        status: 400,
+        message: idSchema.safeParse(id).error.issues,
       });
     }
-  }
-);
+    const [[firstBookingResult]] = await getBookingsWithDetailsById(id);
 
-bookingController.get(
-  '/bookings/booking-with-options/id/:id',
-  permit('Admin', 'Trainer', 'Member'),
-  async (req, res) => {
-    try {
-      const { id } = req.params;
-      if (!idSchema.safeParse(id).success) {
-        return res.status(400).json({
-          status: 400,
-          message: idSchema.safeParse(id).error.issues,
-        });
-      }
-      const [[firstBookingResult]] = await getBookingsById(id);
-
-      if (!firstBookingResult) {
-        return res.status(404).json({
-          status: 404,
-          message: 'No bookings found with the ID provided',
-        });
-      }
-      const [memberResults] = await getAllMembers();
-      const [trainerResults] = await getAllTrainers();
-      const [activityResults] = await getAllActivities();
-
-      return res.status(200).json({
-        status: 200,
-        message: 'Booking record and options successfully retrieved',
-        booking: firstBookingResult,
-        members: memberResults,
-        trainers: trainerResults,
-        activities: activityResults,
-      });
-    } catch (error) {
-      return res.status(500).json({
-        status: 500,
-        message: 'Database or server error',
-        error,
+    if (!firstBookingResult) {
+      return res.status(404).json({
+        status: 404,
+        message: 'No bookings found with the ID provided',
       });
     }
+    return res.status(200).json({
+      status: 200,
+      message: 'Booking record successfully retrieved',
+      booking: firstBookingResult,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      status: 500,
+      message: 'Database or server error',
+      error,
+    });
   }
-);
+});
+
+bookingController.get('/bookings/booking-with-options/:id', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
+  try {
+    const { id } = req.params;
+    if (!idSchema.safeParse(id).success) {
+      return res.status(400).json({
+        status: 400,
+        message: idSchema.safeParse(id).error.issues,
+      });
+    }
+    const [[firstBookingResult]] = await getBookingsById(id);
+
+    if (!firstBookingResult) {
+      return res.status(404).json({
+        status: 404,
+        message: 'No bookings found with the ID provided',
+      });
+    }
+    const [memberResults] = await getAllMembers();
+    const [trainerResults] = await getAllTrainers();
+    const [activityResults] = await getAllActivities();
+
+    return res.status(200).json({
+      status: 200,
+      message: 'Booking record and options successfully retrieved',
+      booking: firstBookingResult,
+      members: memberResults,
+      trainers: trainerResults,
+      activities: activityResults,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      status: 500,
+      message: 'Database or server error',
+      error,
+    });
+  }
+});
 
 bookingController.get('/bookings/options-only', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
   try {
@@ -246,7 +238,7 @@ bookingController.post('/bookings', permit('Admin', 'Trainer', 'Member'), async 
 });
 
 // Update Booking
-bookingController.patch('/bookings/id/:id', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
+bookingController.patch('/bookings/:id', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
   try {
     const { id } = req.params;
     if (!idSchema.safeParse(id).success) {
@@ -311,7 +303,7 @@ bookingController.patch('/bookings/id/:id', permit('Admin', 'Trainer', 'Member')
 });
 
 // Delete Booking
-bookingController.delete('/bookings/id/:id', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
+bookingController.delete('/bookings/:id', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
   try {
     const { id } = req.params;
     if (!idSchema.safeParse(id).success) {

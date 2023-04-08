@@ -33,7 +33,7 @@ memberController.get('/members', permit('Admin', 'Trainer', 'Member'), async (re
   }
 });
 
-memberController.get('/members/id/:id', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
+memberController.get('/members/:id', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
   try {
     const { id } = req.params;
     if (!idSchema.safeParse(id).success) {
@@ -64,40 +64,36 @@ memberController.get('/members/id/:id', permit('Admin', 'Trainer', 'Member'), as
   }
 });
 
-memberController.get(
-  '/members/member-with-all-details/id/:id',
-  permit('Admin', 'Trainer', 'Member'),
-  async (req, res) => {
-    try {
-      const { id } = req.params;
-      if (!idSchema.safeParse(id).success) {
-        return res.status(400).json({
-          status: 400,
-          message: idSchema.safeParse(id).error.issues,
-        });
-      }
-      const [[firstMemberResult]] = await getMembersWithDetailsById(id);
-
-      if (!firstMemberResult) {
-        return res.status(404).json({
-          status: 404,
-          message: 'No member found with the ID provided',
-        });
-      }
-      return res.status(200).json({
-        status: 200,
-        message: 'Member record successfully retrieved',
-        initialValues: firstMemberResult,
-      });
-    } catch (error) {
-      return res.status(500).json({
-        status: 500,
-        message: 'Database or server error',
-        error,
+memberController.get('/members/member-with-all-details/:id', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
+  try {
+    const { id } = req.params;
+    if (!idSchema.safeParse(id).success) {
+      return res.status(400).json({
+        status: 400,
+        message: idSchema.safeParse(id).error.issues,
       });
     }
+    const [[firstMemberResult]] = await getMembersWithDetailsById(id);
+
+    if (!firstMemberResult) {
+      return res.status(404).json({
+        status: 404,
+        message: 'No member found with the ID provided',
+      });
+    }
+    return res.status(200).json({
+      status: 200,
+      message: 'Member record successfully retrieved',
+      initialValues: firstMemberResult,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      status: 500,
+      message: 'Database or server error',
+      error,
+    });
   }
-);
+});
 
 // Create Member
 memberController.post('/members/signup', async (req, res) => {
@@ -292,7 +288,7 @@ memberController.post(
 // PS1 Depending on the business logic, it's possible to update login and address info separately in their respective routers, e.g., GitHub
 // PS2 The logic of React Router calls for the juxtaposed usage of `req.body` and `req.params` in update routes
 // NB If anything, catch 409 i/o 404 within an update operation, see: https://stackoverflow.com/questions/10727699/is-http-404-an-appropriate-response-for-a-put-operation-where-some-linked-resour
-memberController.patch('/members/id/:id', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
+memberController.patch('/members/:id', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
   let conn = null;
   try {
     const { id } = req.params;
@@ -371,7 +367,7 @@ memberController.patch('/members/id/:id', permit('Admin', 'Trainer', 'Member'), 
 });
 
 memberController.patch(
-  '/members/member-with-all-details/id/:id',
+  '/members/member-with-all-details/:id',
   permit('Admin', 'Trainer', 'Member'),
   async (req, res) => {
     let conn = null;
@@ -488,7 +484,7 @@ memberController.patch(
 );
 
 // Delete Member
-memberController.delete('/members/id/:id', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
+memberController.delete('/members/:id', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
   try {
     const { id } = req.params;
     if (!idSchema.safeParse(id).success) {
