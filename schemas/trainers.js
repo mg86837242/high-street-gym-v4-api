@@ -35,7 +35,7 @@ export const trainerSchema = z.object({
   description: z.string().max(255).nullable(),
   specialty: z.string().max(45).nullable(),
   certificate: z.string().max(45).nullable(),
-  // ??? Triggering server/backend 400 (e.g., change this union type) will cause session loss, which requires refresh and Effect to restore session (which means in the error page, the "go back" button should have refresh functionality)
+  // ??? Triggering server/backend 400 (e.g., change this union type) will cause session loss, which requires refresh and Effect to restore session; also, what about `sessionStorage` Web API
   imageUrl: z.union([z.nullable({ message: 'Image url must be empty or a valid url' }), z.string().url()]),
 });
 
