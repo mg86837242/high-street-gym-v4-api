@@ -91,7 +91,7 @@ loginController.post('/users/login', async (req, res) => {
     //  return, see:
     // -- https://stackoverflow.com/questions/55601062/using-an-async-function-in-array-find
     // Check password
-    const match = loginResults.find((lr) => bcrypt.compareSync(password, lr.password));
+    const match = loginResults.find(lr => bcrypt.compareSync(password, lr.password));
     // -- Return error if there's NO match
     if (!match) {
       return res.status(401).json({

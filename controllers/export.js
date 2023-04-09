@@ -22,7 +22,7 @@ exportController.get('/member-list', async (req, res) => {
     const [members] = await getAllMembers();
     // NB Use `async` within `map()`: https://stackoverflow.com/questions/42489918/async-await-inside-arrow-functions-arraymap-filter;
     //  alternatively, use `for await...of`, which has better performance, however, forbade by the linting rule
-    const mapMemberPromises = members.map(async (m) => {
+    const mapMemberPromises = members.map(async m => {
       // Append an address obj as the value to the `address` key for each member obj
       const [[address]] = await getAddressesById(m.addressId);
       // NB Error: `Assignment to property of function parameter 'm'` => Solution: (1) declare a new constant, and (2)
@@ -61,10 +61,10 @@ exportController.get('/activity-list', async (req, res) => {
     }
     // Build an array of activity objs from relational data
     const [activities] = await getAllActivities();
-    const mapActivityPromises = activities.map(async (a) => {
+    const mapActivityPromises = activities.map(async a => {
       // Append an array of booking obj(s) as the value to the `bookings` key for each activity obj
       const [bookings] = await getBookingsByActivityId(a.id);
-      const mapBookingPromises = bookings.map(async (b) => {
+      const mapBookingPromises = bookings.map(async b => {
         // Append a member obj as the value to the `member` key for each booking obj
         const [[member]] = await getMembersById(b.memberId);
         // Append a trainer  obj as the value to the `trainer` key for each booking obj

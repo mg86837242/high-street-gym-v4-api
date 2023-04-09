@@ -22,7 +22,7 @@ app.get('/api/test', async (req, res) => {
   }
 });
 
-app.listen(constants.PORT, (err) => {
+app.listen(constants.PORT, err => {
   if (err) {
     throw err;
   } else {
