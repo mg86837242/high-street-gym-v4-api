@@ -184,7 +184,6 @@ loginController.get(
         });
       }
 
-      const [emailResults] = await getAllEmails();
       const [[firstLoginResult]] = await getLoginsByAccessKey(accessKey);
       if (!firstLoginResult) {
         return res.status(401).json({
@@ -210,11 +209,13 @@ loginController.get(
           });
       }
 
+      const [emailResults] = await getAllEmails();
+
       return res.status(200).json({
         status: 200,
         message: 'Login record successfully retrieved',
-        emails: emailResults,
         user,
+        emails: emailResults,
       });
     } catch (error) {
       return res.status(500).json({
