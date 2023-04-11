@@ -10,6 +10,7 @@ import {
 } from '../models/activities.js';
 import permit from '../middleware/rbac.js';
 import upload from '../middleware/multer.js';
+import { XMLParser } from 'fast-xml-parser';
 
 const activityController = Router();
 
@@ -127,8 +128,13 @@ activityController.post(
   async (req, res) => {
     try {
       const xmlStr = req?.file?.buffer?.toString();
-      console.log(xmlStr);
-      // FIX Parse XML str (https://www.npmjs.com/package/fast-xml-parser), build XML, insert into DB, re-enable rbac after done
+      const parser = new XMLParser();
+      const {
+        'trail-upload': {
+          trails: { trail: trails },
+        },
+      } = parser.parse(xmlStr);
+      // FIX build XML, insert into DB, re-enable rbac after done
 
       return res.status(200).json({
         status: 200,
