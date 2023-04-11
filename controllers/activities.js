@@ -10,33 +10,38 @@ import {
 } from '../models/activities.js';
 import permit from '../middleware/rbac.js';
 import upload from '../middleware/multer.js';
+import { Parser } from 'xml2js';
 
 const activityController = Router();
 
 // Read Activity
-activityController.get('/activities', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
-  try {
-    if (!emptyObjSchema.safeParse(req.body).success) {
-      return res.status(400).json({
-        status: 400,
-        message: emptyObjSchema.safeParse(req.body).error.issues,
+activityController.get(
+  '/activities',
+  // [permit('Admin', 'Trainer', 'Member')],
+  async (req, res) => {
+    try {
+      if (!emptyObjSchema.safeParse(req.body).success) {
+        return res.status(400).json({
+          status: 400,
+          message: emptyObjSchema.safeParse(req.body).error.issues,
+        });
+      }
+      const [activityResults] = await getAllActivities();
+
+      return res.status(200).json({
+        status: 200,
+        message: 'Activity records successfully retrieved',
+        activities: activityResults,
+      });
+    } catch (error) {
+      return res.status(500).json({
+        status: 500,
+        message: 'Database or server error',
+        error,
       });
     }
-    const [activityResults] = await getAllActivities();
-
-    return res.status(200).json({
-      status: 200,
-      message: 'Activity records successfully retrieved',
-      activities: activityResults,
-    });
-  } catch (error) {
-    return res.status(500).json({
-      status: 500,
-      message: 'Database or server error',
-      error,
-    });
   }
-});
+);
 
 activityController.get('/activities/:id', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
   try {
@@ -119,12 +124,18 @@ activityController.post('/activities', permit('Admin', 'Trainer'), async (req, r
 activityController.post(
   '/activities/upload/xml',
   upload.single('xml'),
-  permit('Admin', 'Trainer'),
+  // permit('Admin', 'Trainer'),
   async (req, res) => {
     try {
       const xmlStr = req?.file?.buffer?.toString();
-      console.log(xmlStr);
-      // FIX Parse XML str to JSON, then insert into db
+      const { parseStringPromise } = new Parser();
+      const {
+        'trail-upload': {
+          trails: [{ trail: trails }],
+        },
+      } = await parseStringPromise(xmlStr);
+      console.log(trails);
+      // FIX Build XML, then insert into db (re-enable rbac after done)
 
       return res.status(200).json({
         status: 200,
