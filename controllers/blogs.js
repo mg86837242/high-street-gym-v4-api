@@ -75,13 +75,13 @@ blogController.post('/blogs', permit('Admin', 'Trainer', 'Member'), async (req, 
 
     const [{ insertId }] = await createBlog(title, body, loginId);
 
-    res.status(200).json({
+    return res.status(200).json({
       status: 200,
       message: 'Blog successfully created',
       insertId,
     });
   } catch (error) {
-    res.status(500).json({
+    return res.status(500).json({
       status: 500,
       message: 'Database or server error',
       error,

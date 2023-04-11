@@ -85,13 +85,13 @@ addressController.post('/addresses', permit('Admin', 'Trainer', 'Member'), async
 
     const [{ insertId }] = await createAddress(lineOne, lineTwo, suburb, postcode, state, country);
 
-    res.status(200).json({
+    return res.status(200).json({
       status: 200,
       message: 'Address successfully created',
       insertId,
     });
   } catch (error) {
-    res.status(500).json({
+    return res.status(500).json({
       status: 500,
       message: 'Database or server error',
       error,
