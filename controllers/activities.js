@@ -9,6 +9,7 @@ import {
   deleteActivityById,
 } from '../models/activities.js';
 import permit from '../middleware/rbac.js';
+import upload from '../middleware/multer.js';
 
 const activityController = Router();
 
@@ -114,6 +115,32 @@ activityController.post('/activities', permit('Admin', 'Trainer'), async (req, r
     });
   }
 });
+
+activityController.post(
+  '/activities/upload/xml',
+  upload.single('xml'),
+  permit('Admin', 'Trainer'),
+  async (req, res) => {
+    try {
+      const xmlStr = req?.file?.buffer?.toString();
+
+      return res.status(200).json({
+        status: 200,
+        message: 'Activity successfully created',
+        // insertId,
+      });
+    } catch (error) {
+      console.log('🟠');
+      console.log(error);
+      console.log('🟠');
+      return res.status(500).json({
+        status: 500,
+        message: 'Database or server error',
+        error,
+      });
+    }
+  }
+);
 
 // Update Activity
 activityController.patch('/activities/:id', permit('Admin', 'Trainer'), async (req, res) => {

@@ -49,7 +49,7 @@ export default function (app) {
 //  in tandem with environment variables
 // -- https://medium.com/the-node-js-collection/making-your-node-js-work-everywhere-with-environment-variables-2da8cdf6e786
 
-// References for preserving `req.session` after fetching in the frontend
+// References for preserving `req.session` after fetching in the frontend:
 // -- https://twin.sh/articles/11/react-fix-issue-with-session-changing-after-every-request: Gives the hint that it's
 //  related to something with `credentials` in fetch API
 // -- https://developer.mozilla.org/en-US/docs/Web/API/fetch#syntax: Fetch API's `credentials` option
