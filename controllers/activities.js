@@ -123,6 +123,8 @@ activityController.post(
   async (req, res) => {
     try {
       const xmlStr = req?.file?.buffer?.toString();
+      console.log(xmlStr);
+      // FIX Parse XML str to JSON, then insert into db
 
       return res.status(200).json({
         status: 200,
