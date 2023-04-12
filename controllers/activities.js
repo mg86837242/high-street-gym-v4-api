@@ -130,11 +130,9 @@ activityController.post(
       const xmlStr = req?.file?.buffer?.toString();
       const parser = new XMLParser();
       const {
-        'trail-upload': {
-          trails: { trail: trails },
-        },
+        activityList: { activity: activities },
       } = parser.parse(xmlStr);
-      // FIX build XML, insert into DB, re-enable rbac after done
+      // FIX insert into DB, re-enable rbac after done
 
       return res.status(200).json({
         status: 200,
