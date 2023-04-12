@@ -124,6 +124,7 @@ activityController.post('/activities', permit('Admin', 'Trainer'), async (req, r
 activityController.post(
   '/activities/upload/xml',
   upload.single('xml'),
+  // TODO Re-enable rbac after test is complete
   // permit('Admin', 'Trainer'),
   async (req, res) => {
     try {
@@ -132,17 +133,46 @@ activityController.post(
       const {
         activityList: { activity: activities },
       } = parser.parse(xmlStr);
-      // FIX insert into DB, re-enable rbac after done
+      // NB Empty text content within XML Elements becomes empty string after parsing
+
+      const hasInvalid = activities.some(a => !activitySchema.safeParse(a).success);
+      if (hasInvalid) {
+        return res.status(400).json({
+          status: 400,
+          message: 'Contain invalid activity record',
+        });
+      }
+      const mapActivityPromises = activities.map(
+        async ({
+          name,
+          category,
+          description,
+          intensityLevel,
+          maxPeopleAllowed,
+          requirementOne,
+          requirementTwo,
+          durationMinutes,
+          price,
+        }) =>
+          await createActivity(
+            name,
+            category,
+            description,
+            intensityLevel,
+            maxPeopleAllowed,
+            requirementOne,
+            requirementTwo,
+            durationMinutes,
+            price
+          )
+      );
+      await Promise.all(mapActivityPromises);
 
       return res.status(200).json({
         status: 200,
-        message: 'Activity successfully created',
-        // insertId,
+        message: 'Activity(-ies) successfully created',
       });
     } catch (error) {
-      console.log('🟠');
-      console.log(error);
-      console.log('🟠');
       return res.status(500).json({
         status: 500,
         message: 'Database or server error',
