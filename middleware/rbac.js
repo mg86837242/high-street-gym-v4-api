@@ -1,4 +1,4 @@
-import { getLoginsByAccessKey } from '../models/logins.js';
+import { getLoginsByAccessKey } from '../models/users.js';
 // NB With rest parameters, array method `includes` is enabled
 export default function permit(...permittedRoles) {
   return async (req, res, next) => {
