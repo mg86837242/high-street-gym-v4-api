@@ -17,6 +17,7 @@ const activityController = Router();
 // Read Activity
 activityController.get(
   '/activities',
+  // TODO Re-enable rbac after test is complete
   // permit('Admin', 'Trainer', 'Member'),
   async (req, res) => {
     try {

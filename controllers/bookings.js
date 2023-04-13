@@ -209,10 +209,10 @@ bookingController.post('/bookings', permit('Admin', 'Trainer', 'Member'), async 
     // Find if either of the parties involved is available at given date and time
     const [[isUnavailable]] = await getConflictBookingsByMemberTrainerAndDateTime(memberId, trainerId, dateTime);
     if (isUnavailable) {
-      // Find if a same booking already exists
+      // Find if an identical booking already exists
       const [[sameBookingExists]] = await getSameBookingsByAttrs(memberId, trainerId, activityId, dateTime);
       if (sameBookingExists) {
-        // -- Return error indicating same booking already exists
+        // -- Return error indicating an identical booking already exists
         return res.status(409).json({
           status: 409,
           message: 'Same booking record already exists',
@@ -275,10 +275,10 @@ bookingController.patch('/bookings/:id', permit('Admin', 'Trainer', 'Member'), a
       });
     }
 
-    // Find if a same booking already exists
+    // Find if an identical booking already exists
     const [[sameBookingExists]] = await getSameBookingsByAttrs(memberId, trainerId, activityId, dateTime);
     if (sameBookingExists) {
-      // -- Skip update if same booking already exists
+      // -- Skip update if an identical booking already exists
       return res.status(200).json({
         status: 200,
         message: 'No change to booking has been made',

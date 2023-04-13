@@ -155,7 +155,7 @@ addressController.patch('/addresses/adminid/:adminid', permit('Admin'), async (r
     }
     const { lineOne, lineTwo, suburb, postcode, state, country } = req.body;
 
-    // Find if there's duplicate address row
+    // Find if there's an identical address row
     let [[{ addressId }]] = await getAdminsAddressesIdById(adminId);
     const [[addressExists]] = await getAddressesByDetails(lineOne, lineTwo, suburb, postcode, state, country);
     if (addressExists) {
@@ -211,7 +211,7 @@ addressController.patch('/addresses/trainerid/:trainerid', permit('Admin', 'Trai
     }
     const { lineOne, lineTwo, suburb, postcode, state, country } = req.body;
 
-    // Find if there's duplicate address row
+    // Find if there's an identical address row
     let [[{ addressId }]] = await getTrainersAddressesIdById(trainerId);
     const [[addressExists]] = await getAddressesByDetails(lineOne, lineTwo, suburb, postcode, state, country);
     if (addressExists) {
@@ -267,7 +267,7 @@ addressController.patch('/addresses/memberid/:memberid', permit('Admin', 'Traine
     }
     const { lineOne, lineTwo, suburb, postcode, state, country } = req.body;
 
-    // Find if there's duplicate address row
+    // Find if there's an identical address row
     let [[{ addressId }]] = await getMembersAddressesIdById(memberId);
     const [[addressExists]] = await getAddressesByDetails(lineOne, lineTwo, suburb, postcode, state, country);
     if (addressExists) {

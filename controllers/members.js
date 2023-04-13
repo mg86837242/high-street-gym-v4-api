@@ -130,7 +130,7 @@ memberController.post('/members/signup', async (req, res) => {
     conn = await pool.getConnection();
     await conn.beginTransaction();
 
-    // Find if there's login row with duplicate email – referring to the parent table `Logins`
+    // Find if there's a login row with identical email – referring to the parent table `Logins`
     const [[emailExists]] = await conn.query('SELECT * FROM Logins WHERE email = ?', [email]);
     if (emailExists) {
       // -- Return error if exists
@@ -213,7 +213,7 @@ memberController.post(
       conn = await pool.getConnection();
       await conn.beginTransaction();
 
-      // Find if there's login row with duplicate email – referring to the parent table `Logins`
+      // Find if there's a login row with identical email – referring to the parent table `Logins`
       const [[emailExists]] = await conn.query('SELECT * FROM Logins WHERE email = ?', [email]);
       if (emailExists) {
         // -- Return error if exists
@@ -233,7 +233,7 @@ memberController.post(
       );
       const loginId = createLoginResult.insertId;
 
-      // Find if there's duplicate address row – referring to the parent table `Addresses`
+      // Find if there's an identical address row – referring to the parent table `Addresses`
       let addressId = null;
       if (lineOne && suburb && postcode && state && country) {
         const [[addressExists]] = await conn.query(
@@ -310,7 +310,7 @@ memberController.patch('/members/:id', permit('Admin', 'Trainer', 'Member'), asy
     conn = await pool.getConnection();
     await conn.beginTransaction();
 
-    // Find if there's login row with duplicate email EXCEPT the request maker – referring to the parent table `Logins`
+    // Find if there's a login row with identical email EXCEPT the request maker – referring to the parent table `Logins`
     const [[{ loginId }]] = await conn.query('SELECT loginId FROM Members WHERE id = ?', [id]);
     const [[emailExists]] = await conn.query('SELECT * FROM Logins WHERE email = ? AND NOT id = ?', [email, loginId]);
     if (emailExists) {
@@ -406,7 +406,7 @@ memberController.patch(
       conn = await pool.getConnection();
       await conn.beginTransaction();
 
-      // Find if there's login row with duplicate email EXCEPT the request maker – referring to the parent table `Logins`
+      // Find if there's a login row with identical email EXCEPT the request maker – referring to the parent table `Logins`
       const [[{ loginId }]] = await conn.query('SELECT loginId FROM Members WHERE id = ?', [id]);
       const [[emailExists]] = await conn.query('SELECT * FROM Logins WHERE email = ? AND NOT id = ?', [email, loginId]);
       if (emailExists) {
@@ -428,7 +428,7 @@ memberController.patch(
         [email, hashedPassword, username, loginId]
       );
 
-      // Find if there's duplicate address row
+      // Find if there's an identical address row
       let [[{ addressId }]] = await conn.query('SELECT addressId FROM Members WHERE id = ?', [id]);
       const [[addressExists]] = await conn.query(
         'SELECT * FROM Addresses WHERE lineOne = ? AND lineTwo = ? AND suburb = ? AND postcode = ? AND state = ? AND country = ?',
