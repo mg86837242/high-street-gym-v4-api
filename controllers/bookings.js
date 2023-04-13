@@ -7,7 +7,7 @@ import {
   getBookingsWithDetailsById,
   getBookingsById,
   getConflictBookingsByMemberTrainerAndDateTime,
-  getSameBookingsByAttrs,
+  getIdenticalBookings,
   getConflictBookingsByMemberTrainerAndDateTimeExceptCurr,
   createBooking,
   updateBookingById,
@@ -207,11 +207,11 @@ bookingController.post('/bookings', permit('Admin', 'Trainer', 'Member'), async 
     const dateTime = [date, time].join(' ');
 
     // Find if either of the parties involved is available at given date and time
-    const [[isUnavailable]] = await getConflictBookingsByMemberTrainerAndDateTime(memberId, trainerId, dateTime);
-    if (isUnavailable) {
+    const [[isConflicting]] = await getConflictBookingsByMemberTrainerAndDateTime(memberId, trainerId, dateTime);
+    if (isConflicting) {
       // Find if an identical booking already exists
-      const [[sameBookingExists]] = await getSameBookingsByAttrs(memberId, trainerId, activityId, dateTime);
-      if (sameBookingExists) {
+      const [[bookingExists]] = await getIdenticalBookings(memberId, trainerId, activityId, dateTime);
+      if (bookingExists) {
         // -- Return error indicating an identical booking already exists
         return res.status(409).json({
           status: 409,
@@ -261,13 +261,13 @@ bookingController.patch('/bookings/:id', permit('Admin', 'Trainer', 'Member'), a
     const dateTime = [date, time].join(' ');
 
     // Find if either of the parties involved is available at given date and time
-    const [[isUnavailable]] = await getConflictBookingsByMemberTrainerAndDateTimeExceptCurr(
+    const [[isConflicting]] = await getConflictBookingsByMemberTrainerAndDateTimeExceptCurr(
       id,
       memberId,
       trainerId,
       dateTime
     );
-    if (isUnavailable) {
+    if (isConflicting) {
       // -- Return error indicating a party involved is unavailable at the given date and time
       return res.status(409).json({
         status: 409,
@@ -276,8 +276,8 @@ bookingController.patch('/bookings/:id', permit('Admin', 'Trainer', 'Member'), a
     }
 
     // Find if an identical booking already exists
-    const [[sameBookingExists]] = await getSameBookingsByAttrs(memberId, trainerId, activityId, dateTime);
-    if (sameBookingExists) {
+    const [[bookingExists]] = await getIdenticalBookings(memberId, trainerId, activityId, dateTime);
+    if (bookingExists) {
       // -- Skip update if an identical booking already exists
       return res.status(200).json({
         status: 200,

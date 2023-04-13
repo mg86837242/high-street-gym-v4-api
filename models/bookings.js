@@ -60,7 +60,7 @@ export function getConflictBookingsByMemberTrainerAndDateTime(memberId, trainerI
   ]);
 }
 
-export function getSameBookingsByAttrs(memberId, trainerId, activityId, dateTime) {
+export function getIdenticalBookings(memberId, trainerId, activityId, dateTime) {
   return pool.query('SELECT * FROM Bookings WHERE memberId = ? AND trainerId = ? AND activityId = ? AND dateTime = ?', [
     memberId,
     trainerId,
