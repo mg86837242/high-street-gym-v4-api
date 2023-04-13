@@ -73,7 +73,7 @@ bookingController.get('/bookings/options-only', permit('Admin', 'Trainer', 'Memb
   }
 });
 
-bookingController.get('/bookings/bookings-with-details/:date', async (req, res) => {
+bookingController.get('/bookings/bookings-with-details/by-date/:date', async (req, res) => {
   try {
     // NB `req.params.date` is a string, see: https://reactrouter.com/en/main/start/concepts#route-matches; the data type expected to be used in
     //  the WHERE clause is also a string, however, needs to be formatted like this `YYYY-MM-DD` in the SQL query, this is found out by writing raw
