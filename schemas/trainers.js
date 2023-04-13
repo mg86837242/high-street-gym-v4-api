@@ -11,11 +11,8 @@ export const trainerSchema = z.object({
   description: z.string().max(255).nullable(),
   specialty: z.string().max(45).nullable(),
   certificate: z.string().max(45).nullable(),
-  // ??? Triggering server/backend 400 (e.g., change this union type) will cause session loss, which requires refresh and Effect to restore session; also, what about `sessionStorage` Web API
-  imageUrl: z.union([
-    z.string().length(0, { message: 'Image url must be empty or a valid url' }).nullable(),
-    z.string().url(),
-  ]),
+  // ??? Triggering server/backend 400 (e.g., change this union type) will cause session loss, which requires refresh and Effect to restore session
+  imageUrl: z.string().url().nullable(),
 });
 
 export const trainerDetailedSchema = z.object({
