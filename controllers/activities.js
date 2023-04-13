@@ -17,7 +17,7 @@ const activityController = Router();
 // Read Activity
 activityController.get(
   '/',
-  // TODO Re-enable rbac after test is complete
+  // FIX Re-enable rbac after test is complete
   // permit('Admin', 'Trainer', 'Member'),
   async (req, res) => {
     try {
@@ -125,7 +125,7 @@ activityController.post('/', permit('Admin', 'Trainer'), async (req, res) => {
 activityController.post(
   '/upload/xml',
   upload.single('xml'),
-  // TODO Re-enable rbac after test is complete
+  // FIX Re-enable rbac after test is complete
   // permit('Admin', 'Trainer'),
   async (req, res) => {
     try {

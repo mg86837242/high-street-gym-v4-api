@@ -1,6 +1,13 @@
 import { z } from 'zod';
 import { emailSchema, passwordSchema, usernameSchema, firstNameSchema, lastNameSchema, phoneSchema } from './users.js';
 
+export const ageSchema = z
+  .number({ message: 'Age only accepts numbers' })
+  .nonnegative()
+  .max(999, { message: 'Age must have at most 3 digits' })
+  .nullable();
+export const genderSchema = z.enum(['Female', 'Male', 'Other', '']).nullable();
+
 export const signupSchema = z.object({
   email: emailSchema,
   password: passwordSchema,
@@ -8,12 +15,8 @@ export const signupSchema = z.object({
   firstName: firstNameSchema,
   lastName: lastNameSchema,
   phone: phoneSchema,
-  age: z
-    .number({ message: 'Age only accepts numbers' })
-    .nonnegative()
-    .max(999, { message: 'Age must have at most 3 digits' })
-    .nullable(),
-  gender: z.enum(['Female', 'Male', 'Other', '']).nullable(),
+  age: ageSchema,
+  gender: genderSchema,
 });
 
 export const memberSchema = z.object({
@@ -23,12 +26,8 @@ export const memberSchema = z.object({
   firstName: firstNameSchema,
   lastName: lastNameSchema,
   phone: phoneSchema,
-  age: z
-    .number({ message: 'Age only accepts numbers' })
-    .nonnegative()
-    .max(999, { message: 'Age must have at most 3 digits' })
-    .nullable(),
-  gender: z.enum(['Female', 'Male', 'Other', '']).nullable(),
+  age: ageSchema,
+  gender: genderSchema,
 });
 
 export const memberDetailedSchema = z.object({
@@ -38,12 +37,8 @@ export const memberDetailedSchema = z.object({
   firstName: firstNameSchema,
   lastName: lastNameSchema,
   phone: phoneSchema,
-  age: z
-    .number({ message: 'Age only accepts numbers' })
-    .nonnegative()
-    .max(999, { message: 'Age must have at most 3 digits' })
-    .nullable(),
-  gender: z.enum(['Female', 'Male', 'Other', '']).nullable(),
+  age: ageSchema,
+  gender: genderSchema,
   lineOne: z.string().max(45).nullable(),
   lineTwo: z.string().max(45).nullable(),
   suburb: z.string().max(45).nullable(),
