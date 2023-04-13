@@ -21,7 +21,7 @@ import permit from '../middleware/rbac.js';
 const bookingController = Router();
 
 // Read Booking
-bookingController.get('/bookings', async (req, res) => {
+bookingController.get('/', async (req, res) => {
   try {
     if (!emptyObjSchema.safeParse(req.body).success) {
       return res.status(400).json({
@@ -45,7 +45,7 @@ bookingController.get('/bookings', async (req, res) => {
   }
 });
 
-bookingController.get('/bookings/options-only', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
+bookingController.get('/options-only', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
   try {
     if (!emptyObjSchema.safeParse(req.body).success) {
       return res.status(400).json({
@@ -73,7 +73,7 @@ bookingController.get('/bookings/options-only', permit('Admin', 'Trainer', 'Memb
   }
 });
 
-bookingController.get('/bookings/bookings-with-details/by-date/:date', async (req, res) => {
+bookingController.get('/bookings-with-details/by-date/:date', async (req, res) => {
   try {
     // NB `req.params.date` is a string, see: https://reactrouter.com/en/main/start/concepts#route-matches; the data type expected to be used in
     //  the WHERE clause is also a string, however, needs to be formatted like this `YYYY-MM-DD` in the SQL query, this is found out by writing raw
@@ -121,42 +121,38 @@ bookingController.get('/bookings/bookings-with-details/by-date/:date', async (re
   }
 });
 
-bookingController.get(
-  '/bookings/booking-with-all-details/:id',
-  permit('Admin', 'Trainer', 'Member'),
-  async (req, res) => {
-    try {
-      const { id } = req.params;
-      if (!idSchema.safeParse(id).success) {
-        return res.status(400).json({
-          status: 400,
-          message: idSchema.safeParse(id).error.issues,
-        });
-      }
-      const [[firstBookingResult]] = await getBookingsWithDetailsById(id);
-
-      if (!firstBookingResult) {
-        return res.status(404).json({
-          status: 404,
-          message: 'No bookings found with the ID provided',
-        });
-      }
-      return res.status(200).json({
-        status: 200,
-        message: 'Booking record successfully retrieved',
-        booking: firstBookingResult,
-      });
-    } catch (error) {
-      return res.status(500).json({
-        status: 500,
-        message: 'Database or server error',
-        error,
+bookingController.get('/booking-with-all-details/:id', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
+  try {
+    const { id } = req.params;
+    if (!idSchema.safeParse(id).success) {
+      return res.status(400).json({
+        status: 400,
+        message: idSchema.safeParse(id).error.issues,
       });
     }
-  }
-);
+    const [[firstBookingResult]] = await getBookingsWithDetailsById(id);
 
-bookingController.get('/bookings/booking-with-options/:id', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
+    if (!firstBookingResult) {
+      return res.status(404).json({
+        status: 404,
+        message: 'No bookings found with the ID provided',
+      });
+    }
+    return res.status(200).json({
+      status: 200,
+      message: 'Booking record successfully retrieved',
+      booking: firstBookingResult,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      status: 500,
+      message: 'Database or server error',
+      error,
+    });
+  }
+});
+
+bookingController.get('/booking-with-options/:id', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
   try {
     const { id } = req.params;
     if (!idSchema.safeParse(id).success) {
@@ -195,7 +191,7 @@ bookingController.get('/bookings/booking-with-options/:id', permit('Admin', 'Tra
 });
 
 // Create Booking
-bookingController.post('/bookings', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
+bookingController.post('/', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
   try {
     if (!bookingSchema.safeParse(req.body).success) {
       return res.status(400).json({
@@ -242,7 +238,7 @@ bookingController.post('/bookings', permit('Admin', 'Trainer', 'Member'), async 
 });
 
 // Update Booking
-bookingController.patch('/bookings/:id', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
+bookingController.patch('/:id', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
   try {
     const { id } = req.params;
     if (!idSchema.safeParse(id).success) {
@@ -307,7 +303,7 @@ bookingController.patch('/bookings/:id', permit('Admin', 'Trainer', 'Member'), a
 });
 
 // Delete Booking
-bookingController.delete('/bookings/:id', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
+bookingController.delete('/:id', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
   try {
     const { id } = req.params;
     if (!idSchema.safeParse(id).success) {

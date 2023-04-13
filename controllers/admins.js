@@ -9,7 +9,7 @@ import permit from '../middleware/rbac.js';
 const adminController = Router();
 
 // Read Admin
-adminController.get('/admins', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
+adminController.get('/', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
   try {
     if (!emptyObjSchema.safeParse(req.body).success) {
       return res.status(400).json({
@@ -33,7 +33,7 @@ adminController.get('/admins', permit('Admin', 'Trainer', 'Member'), async (req,
   }
 });
 
-adminController.get('/admins/:id', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
+adminController.get('/:id', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
   try {
     const { id } = req.params;
     if (!idSchema.safeParse(id).success) {
@@ -64,7 +64,7 @@ adminController.get('/admins/:id', permit('Admin', 'Trainer', 'Member'), async (
   }
 });
 
-adminController.get('/admins/admin-with-all-details/:id', permit('Admin'), async (req, res) => {
+adminController.get('/admin-with-all-details/:id', permit('Admin'), async (req, res) => {
   try {
     const { id } = req.params;
     if (!idSchema.safeParse(id).success) {
@@ -96,108 +96,101 @@ adminController.get('/admins/admin-with-all-details/:id', permit('Admin'), async
 });
 
 // Create Admin
-adminController.post(
-  '/admins',
-  [
-    // Enable as needed
-    // permit('Admin'),
-  ],
-  async (req, res) => {
-    let conn = null;
-    try {
-      const {
-        email,
-        password,
-        username,
-        firstName,
-        lastName,
-        phone,
-        lineOne,
-        lineTwo,
-        suburb,
-        postcode,
-        state,
-        country,
-      } = req.body;
+adminController.post('/', permit('Admin'), async (req, res) => {
+  let conn = null;
+  try {
+    const {
+      email,
+      password,
+      username,
+      firstName,
+      lastName,
+      phone,
+      lineOne,
+      lineTwo,
+      suburb,
+      postcode,
+      state,
+      country,
+    } = req.body;
 
-      // Manually acquire a connection from the pool & start a TRANSACTION
-      conn = await pool.getConnection();
-      await conn.beginTransaction();
+    // Manually acquire a connection from the pool & start a TRANSACTION
+    conn = await pool.getConnection();
+    await conn.beginTransaction();
 
-      // Find if there's a login row with identical email – referring to the parent table `Logins`
-      const [[emailExists]] = await conn.query('SELECT * FROM Logins WHERE email = ?', [email]);
-      if (emailExists) {
-        // -- Return error if exists
-        return res.status(409).json({
-          status: 409,
-          message: 'Email has already been used',
-        });
-      }
-      // -- Create login row if NOT exists
-      const hashedPassword = await bcrypt.hash(password, 6);
-      const [createLoginResult] = await conn.query(
-        `
+    // Find if there's a login row with identical email – referring to the parent table `Logins`
+    const [[emailExists]] = await conn.query('SELECT * FROM Logins WHERE email = ?', [email]);
+    if (emailExists) {
+      // -- Return error if exists
+      return res.status(409).json({
+        status: 409,
+        message: 'Email has already been used',
+      });
+    }
+    // -- Create login row if NOT exists
+    const hashedPassword = await bcrypt.hash(password, 6);
+    const [createLoginResult] = await conn.query(
+      `
       INSERT INTO Logins (email, password, username, role)
       VALUES (?, ?, ?, ?)
       `,
-        [email, hashedPassword, username, 'Admin']
-      );
-      const loginId = createLoginResult.insertId;
+      [email, hashedPassword, username, 'Admin']
+    );
+    const loginId = createLoginResult.insertId;
 
-      // Find if there's an identical address row – referring to the parent table `Addresses`
-      let addressId = null;
-      if (lineOne && suburb && postcode && state && country) {
-        const [[addressExists]] = await conn.query(
-          'SELECT * FROM Addresses WHERE lineOne = ? AND lineTwo = ? AND suburb = ? AND postcode = ? AND state = ? AND country = ?',
-          [lineOne, null, suburb, postcode, state, country]
-        );
-        if (addressExists) {
-          // -- Use the found address row's PK if exists
-          addressId = addressExists.id;
-        } else {
-          // -- Create address row if NOT exists
-          const [createAddressResult] = await conn.query(
-            `
+    // Find if there's an identical address row – referring to the parent table `Addresses`
+    let addressId = null;
+    if (lineOne && suburb && postcode && state && country) {
+      const [[addressExists]] = await conn.query(
+        'SELECT * FROM Addresses WHERE lineOne = ? AND lineTwo = ? AND suburb = ? AND postcode = ? AND state = ? AND country = ?',
+        [lineOne, null, suburb, postcode, state, country]
+      );
+      if (addressExists) {
+        // -- Use the found address row's PK if exists
+        addressId = addressExists.id;
+      } else {
+        // -- Create address row if NOT exists
+        const [createAddressResult] = await conn.query(
+          `
           INSERT INTO Addresses
           (lineOne, lineTwo, suburb, postcode, state, country)
           VALUES (?, ?, ?, ?, ?, ?)
           `,
-            [lineOne, lineTwo, suburb, postcode, state, country]
-          );
-          addressId = createAddressResult.insertId;
-        }
+          [lineOne, lineTwo, suburb, postcode, state, country]
+        );
+        addressId = createAddressResult.insertId;
       }
+    }
 
-      // Create admin row with 2 FKs
-      const [{ insertId }] = await conn.query(
-        `
+    // Create admin row with 2 FKs
+    const [{ insertId }] = await conn.query(
+      `
       INSERT INTO Admins (loginId, firstName, lastName, phone, addressId)
       VALUES (?, ?, ?, ?, ?)
       `,
-        [loginId, firstName, lastName, phone, addressId]
-      );
+      [loginId, firstName, lastName, phone, addressId]
+    );
 
-      await conn.commit();
-      return res.status(200).json({
-        status: 200,
-        message: 'Admin successfully created',
-        insertId,
-      });
-    } catch (error) {
-      if (conn) await conn.rollback();
-      return res.status(500).json({
-        status: 500,
-        message: 'Database or server error',
-        error,
-      });
-    } finally {
-      if (conn) conn.release();
-    }
+    await conn.commit();
+    return res.status(200).json({
+      status: 200,
+      message: 'Admin successfully created',
+      insertId,
+    });
+  } catch (error) {
+    if (conn) await conn.rollback();
+    return res.status(500).json({
+      status: 500,
+      message: 'Database or server error',
+      error,
+    });
+  } finally {
+    if (conn) conn.release();
   }
-);
+});
 
 // Update Admin
-adminController.patch('/admins/:id', permit('Admin'), async (req, res) => {
+adminController.patch('/:id', permit('Admin'), async (req, res) => {
   let conn = null;
   try {
     const { id } = req.params;
@@ -275,7 +268,7 @@ adminController.patch('/admins/:id', permit('Admin'), async (req, res) => {
   }
 });
 
-adminController.patch('/admins/admin-with-all-details/:id', permit('Admin'), async (req, res) => {
+adminController.patch('/admin-with-all-details/:id', permit('Admin'), async (req, res) => {
   let conn = null;
   try {
     const { id } = req.params;
@@ -381,7 +374,7 @@ adminController.patch('/admins/admin-with-all-details/:id', permit('Admin'), asy
 });
 
 // Delete Admin
-adminController.delete('/admins/:id', permit('Admin'), async (req, res) => {
+adminController.delete('/:id', permit('Admin'), async (req, res) => {
   try {
     const { id } = req.params;
     if (!idSchema.safeParse(id).success) {

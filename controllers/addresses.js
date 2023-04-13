@@ -17,7 +17,7 @@ import permit from '../middleware/rbac.js';
 const addressController = Router();
 
 // Read Address
-addressController.get('/addresses', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
+addressController.get('/', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
   try {
     if (!emptyObjSchema.safeParse(req.body).success) {
       return res.status(400).json({
@@ -41,7 +41,7 @@ addressController.get('/addresses', permit('Admin', 'Trainer', 'Member'), async 
   }
 });
 
-addressController.get('/addresses/:id', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
+addressController.get('/:id', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
   try {
     const { id } = req.params;
     if (!idSchema.safeParse(id).success) {
@@ -73,7 +73,7 @@ addressController.get('/addresses/:id', permit('Admin', 'Trainer', 'Member'), as
 });
 
 // Create Address
-addressController.post('/addresses', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
+addressController.post('/', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
   try {
     if (!addressSchema.safeParse(req.body).success) {
       return res.status(400).json({
@@ -100,7 +100,7 @@ addressController.post('/addresses', permit('Admin', 'Trainer', 'Member'), async
 });
 
 // Update Address
-addressController.patch('/addresses/:id', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
+addressController.patch('/:id', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
   try {
     const { id } = req.params;
     if (!idSchema.safeParse(id).success) {
@@ -138,7 +138,7 @@ addressController.patch('/addresses/:id', permit('Admin', 'Trainer', 'Member'), 
   }
 });
 
-addressController.patch('/addresses/by-adminid/:adminid', permit('Admin'), async (req, res) => {
+addressController.patch('/by-adminid/:adminid', permit('Admin'), async (req, res) => {
   try {
     const { adminid: adminId } = req.params;
     if (!idSchema.safeParse(adminId).success) {
@@ -194,7 +194,7 @@ addressController.patch('/addresses/by-adminid/:adminid', permit('Admin'), async
   }
 });
 
-addressController.patch('/addresses/by-trainerid/:trainerid', permit('Admin', 'Trainer'), async (req, res) => {
+addressController.patch('/by-trainerid/:trainerid', permit('Admin', 'Trainer'), async (req, res) => {
   try {
     const { trainerid: trainerId } = req.params;
     if (!idSchema.safeParse(trainerId).success) {
@@ -250,7 +250,7 @@ addressController.patch('/addresses/by-trainerid/:trainerid', permit('Admin', 'T
   }
 });
 
-addressController.patch('/addresses/by-memberid/:memberid', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
+addressController.patch('/by-memberid/:memberid', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
   try {
     const { memberid: memberId } = req.params;
     if (!idSchema.safeParse(memberId).success) {
@@ -307,7 +307,7 @@ addressController.patch('/addresses/by-memberid/:memberid', permit('Admin', 'Tra
 });
 
 // Delete Address
-addressController.delete('/addresses/:id', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
+addressController.delete('/:id', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
   try {
     const { id } = req.params;
     if (!idSchema.safeParse(id).success) {

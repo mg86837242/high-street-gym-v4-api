@@ -9,9 +9,9 @@ import { getTrainersByLoginId, getTrainersWithDetailsByLoginId } from '../models
 import { getMembersByLoginId, getMembersWithDetailsByLoginId } from '../models/members.js';
 import permit from '../middleware/rbac.js';
 
-const loginController = Router();
+const userController = Router();
 
-loginController.get('/users/key/:accessKey', async (req, res) => {
+userController.get('/by-key/:accessKey', async (req, res) => {
   try {
     const { accessKey: accessKeyInput } = req.params;
     if (!uuidSchema.safeParse(accessKeyInput).success) {
@@ -69,7 +69,7 @@ loginController.get('/users/key/:accessKey', async (req, res) => {
   }
 });
 
-loginController.post('/users/login', async (req, res) => {
+userController.post('/login', async (req, res) => {
   try {
     if (!loginSchema.safeParse(req.body).success) {
       return res.status(400).json({
@@ -119,7 +119,7 @@ loginController.post('/users/login', async (req, res) => {
   }
 });
 
-loginController.post('/users/logout', async (req, res) => {
+userController.post('/logout', async (req, res) => {
   try {
     const { accessKey } = req.body;
     if (!uuidSchema.safeParse(accessKey).success) {
@@ -147,7 +147,7 @@ loginController.post('/users/logout', async (req, res) => {
   }
 });
 
-loginController.get('/users/all-emails', async (req, res) => {
+userController.get('/all-emails', async (req, res) => {
   try {
     if (!emptyObjSchema.safeParse(req.body).success) {
       return res.status(400).json({
@@ -171,8 +171,8 @@ loginController.get('/users/all-emails', async (req, res) => {
   }
 });
 
-loginController.get(
-  '/users/user-with-all-details-and-all-emails/key/:accessKey',
+userController.get(
+  '/user-with-all-details-and-all-emails/by-key/:accessKey',
   permit('Admin', 'Trainer', 'Member'),
   async (req, res) => {
     try {
@@ -227,4 +227,4 @@ loginController.get(
   }
 );
 
-export default loginController;
+export default userController;

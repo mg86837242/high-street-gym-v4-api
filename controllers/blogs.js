@@ -7,7 +7,7 @@ import permit from '../middleware/rbac.js';
 const blogController = Router();
 
 // Read Blog
-blogController.get('/blogs', async (req, res) => {
+blogController.get('/', async (req, res) => {
   try {
     if (!emptyObjSchema.safeParse(req.body).success) {
       return res.status(400).json({
@@ -31,7 +31,7 @@ blogController.get('/blogs', async (req, res) => {
   }
 });
 
-blogController.get('/blogs/:id', async (req, res) => {
+blogController.get('/:id', async (req, res) => {
   try {
     const { id } = req.params;
     if (!idSchema.safeParse(id).success) {
@@ -63,7 +63,7 @@ blogController.get('/blogs/:id', async (req, res) => {
 });
 
 // Create Blog
-blogController.post('/blogs', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
+blogController.post('/', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
   try {
     if (!blogSchema.safeParse(req.body).success) {
       return res.status(400).json({
@@ -90,7 +90,7 @@ blogController.post('/blogs', permit('Admin', 'Trainer', 'Member'), async (req, 
 });
 
 // Update Blog
-blogController.patch('/blogs/:id', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
+blogController.patch('/:id', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
   try {
     const { id } = req.params;
     if (!idSchema.safeParse(id).success) {
@@ -129,7 +129,7 @@ blogController.patch('/blogs/:id', permit('Admin', 'Trainer', 'Member'), async (
 });
 
 // Delete Blog
-blogController.delete('/blogs/:id', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
+blogController.delete('/:id', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
   try {
     const { id } = req.params;
     if (!idSchema.safeParse(id).success) {

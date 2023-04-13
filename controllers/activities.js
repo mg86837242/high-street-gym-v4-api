@@ -16,7 +16,7 @@ const activityController = Router();
 
 // Read Activity
 activityController.get(
-  '/activities',
+  '/',
   // TODO Re-enable rbac after test is complete
   // permit('Admin', 'Trainer', 'Member'),
   async (req, res) => {
@@ -44,7 +44,7 @@ activityController.get(
   }
 );
 
-activityController.get('/activities/:id', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
+activityController.get('/:id', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
   try {
     const { id } = req.params;
     if (!idSchema.safeParse(id).success) {
@@ -76,7 +76,7 @@ activityController.get('/activities/:id', permit('Admin', 'Trainer', 'Member'), 
 });
 
 // Create Activity
-activityController.post('/activities', permit('Admin', 'Trainer'), async (req, res) => {
+activityController.post('/', permit('Admin', 'Trainer'), async (req, res) => {
   try {
     if (!activitySchema.safeParse(req.body).success) {
       return res.status(400).json({
@@ -123,7 +123,7 @@ activityController.post('/activities', permit('Admin', 'Trainer'), async (req, r
 });
 
 activityController.post(
-  '/activities/upload/xml',
+  '/upload/xml',
   upload.single('xml'),
   // TODO Re-enable rbac after test is complete
   // permit('Admin', 'Trainer'),
@@ -184,7 +184,7 @@ activityController.post(
 );
 
 // Update Activity
-activityController.patch('/activities/:id', permit('Admin', 'Trainer'), async (req, res) => {
+activityController.patch('/:id', permit('Admin', 'Trainer'), async (req, res) => {
   try {
     const { id } = req.params;
     if (!idSchema.safeParse(id).success) {
@@ -244,7 +244,7 @@ activityController.patch('/activities/:id', permit('Admin', 'Trainer'), async (r
 });
 
 // Delete Activity
-activityController.delete('/activities/:id', permit('Admin', 'Trainer'), async (req, res) => {
+activityController.delete('/:id', permit('Admin', 'Trainer'), async (req, res) => {
   try {
     const { id } = req.params;
     if (!idSchema.safeParse(id).success) {

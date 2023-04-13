@@ -9,7 +9,7 @@ import permit from '../middleware/rbac.js';
 const memberController = Router();
 
 // Read Member
-memberController.get('/members', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
+memberController.get('/', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
   try {
     if (!emptyObjSchema.safeParse(req.body).success) {
       return res.status(400).json({
@@ -33,7 +33,7 @@ memberController.get('/members', permit('Admin', 'Trainer', 'Member'), async (re
   }
 });
 
-memberController.get('/members/:id', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
+memberController.get('/:id', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
   try {
     const { id } = req.params;
     if (!idSchema.safeParse(id).success) {
@@ -64,7 +64,7 @@ memberController.get('/members/:id', permit('Admin', 'Trainer', 'Member'), async
   }
 });
 
-memberController.get('/members/member-with-all-details/:id', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
+memberController.get('/member-with-all-details/:id', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
   try {
     const { id } = req.params;
     if (!idSchema.safeParse(id).success) {
@@ -96,7 +96,7 @@ memberController.get('/members/member-with-all-details/:id', permit('Admin', 'Tr
 });
 
 // Create Member
-memberController.post('/members/signup', async (req, res) => {
+memberController.post('/signup', async (req, res) => {
   let conn = null;
   try {
     if (!signupSchema.safeParse(req.body).success) {
@@ -177,118 +177,111 @@ memberController.post('/members/signup', async (req, res) => {
   }
 });
 
-memberController.post(
-  '/members',
-  [
-    // Enable as needed
-    // permit('Admin', 'Trainer', 'Member'),
-  ],
-  async (req, res) => {
-    let conn = null;
-    try {
-      if (!memberSchema.safeParse(req.body).success) {
-        return res.status(400).json({
-          status: 400,
-          message: memberSchema.safeParse(req.body).error.issues,
-        });
-      }
-      const {
-        email,
-        password,
-        username,
-        firstName,
-        lastName,
-        phone,
-        age,
-        gender,
-        lineOne,
-        lineTwo,
-        suburb,
-        postcode,
-        state,
-        country,
-      } = req.body;
+memberController.post('/', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
+  let conn = null;
+  try {
+    if (!memberSchema.safeParse(req.body).success) {
+      return res.status(400).json({
+        status: 400,
+        message: memberSchema.safeParse(req.body).error.issues,
+      });
+    }
+    const {
+      email,
+      password,
+      username,
+      firstName,
+      lastName,
+      phone,
+      age,
+      gender,
+      lineOne,
+      lineTwo,
+      suburb,
+      postcode,
+      state,
+      country,
+    } = req.body;
 
-      // Manually acquire a connection from the pool & start a TRANSACTION
-      conn = await pool.getConnection();
-      await conn.beginTransaction();
+    // Manually acquire a connection from the pool & start a TRANSACTION
+    conn = await pool.getConnection();
+    await conn.beginTransaction();
 
-      // Find if there's a login row with identical email – referring to the parent table `Logins`
-      const [[emailExists]] = await conn.query('SELECT * FROM Logins WHERE email = ?', [email]);
-      if (emailExists) {
-        // -- Return error if exists
-        return res.status(409).json({
-          status: 409,
-          message: 'Email has already been used',
-        });
-      }
-      // -- Create login row if NOT exists
-      const hashedPassword = await bcrypt.hash(password, 6);
-      const [createLoginResult] = await conn.query(
-        `
+    // Find if there's a login row with identical email – referring to the parent table `Logins`
+    const [[emailExists]] = await conn.query('SELECT * FROM Logins WHERE email = ?', [email]);
+    if (emailExists) {
+      // -- Return error if exists
+      return res.status(409).json({
+        status: 409,
+        message: 'Email has already been used',
+      });
+    }
+    // -- Create login row if NOT exists
+    const hashedPassword = await bcrypt.hash(password, 6);
+    const [createLoginResult] = await conn.query(
+      `
       INSERT INTO Logins (email, password, username, role)
       VALUES (?, ?, ?, ?)
       `,
-        [email, hashedPassword, username, 'Member']
-      );
-      const loginId = createLoginResult.insertId;
+      [email, hashedPassword, username, 'Member']
+    );
+    const loginId = createLoginResult.insertId;
 
-      // Find if there's an identical address row – referring to the parent table `Addresses`
-      let addressId = null;
-      if (lineOne && suburb && postcode && state && country) {
-        const [[addressExists]] = await conn.query(
-          'SELECT * FROM Addresses WHERE lineOne = ? AND lineTwo = ? AND suburb = ? AND postcode = ? AND state = ? AND country = ?',
-          [lineOne, lineTwo, suburb, postcode, state, country]
-        );
-        if (addressExists) {
-          // -- Use the found address row's PK if exists
-          addressId = addressExists.id;
-        } else {
-          // -- Create address row if NOT exists
-          const [createAddressResult] = await conn.query(
-            `
+    // Find if there's an identical address row – referring to the parent table `Addresses`
+    let addressId = null;
+    if (lineOne && suburb && postcode && state && country) {
+      const [[addressExists]] = await conn.query(
+        'SELECT * FROM Addresses WHERE lineOne = ? AND lineTwo = ? AND suburb = ? AND postcode = ? AND state = ? AND country = ?',
+        [lineOne, lineTwo, suburb, postcode, state, country]
+      );
+      if (addressExists) {
+        // -- Use the found address row's PK if exists
+        addressId = addressExists.id;
+      } else {
+        // -- Create address row if NOT exists
+        const [createAddressResult] = await conn.query(
+          `
           INSERT INTO Addresses
           (lineOne, lineTwo, suburb, postcode, state, country)
           VALUES (?, ?, ?, ?, ?, ?)
           `,
-            [lineOne, lineTwo, suburb, postcode, state, country]
-          );
-          addressId = createAddressResult.insertId;
-        }
+          [lineOne, lineTwo, suburb, postcode, state, country]
+        );
+        addressId = createAddressResult.insertId;
       }
+    }
 
-      // Create member row with 2 FKs
-      const [{ insertId }] = await conn.query(
-        `
+    // Create member row with 2 FKs
+    const [{ insertId }] = await conn.query(
+      `
       INSERT INTO Members (loginId, firstName, lastName, phone, addressId, age, gender)
       VALUES (?, ?, ?, ?, ?, ?, ?)
       `,
-        [loginId, firstName, lastName, phone, addressId, age, gender]
-      );
-      await conn.commit();
-      return res.status(200).json({
-        status: 200,
-        message: 'Member successfully created',
-        insertId,
-      });
-    } catch (error) {
-      if (conn) await conn.rollback();
-      return res.status(500).json({
-        status: 500,
-        message: 'Database or server error',
-        error,
-      });
-    } finally {
-      if (conn) conn.release();
-    }
+      [loginId, firstName, lastName, phone, addressId, age, gender]
+    );
+    await conn.commit();
+    return res.status(200).json({
+      status: 200,
+      message: 'Member successfully created',
+      insertId,
+    });
+  } catch (error) {
+    if (conn) await conn.rollback();
+    return res.status(500).json({
+      status: 500,
+      message: 'Database or server error',
+      error,
+    });
+  } finally {
+    if (conn) conn.release();
   }
-);
+});
 
 // Update Member
 // PS1 Depending on the business logic, it's possible to update login and address info separately in their respective routers, e.g., GitHub
 // PS2 The logic of React Router calls for the juxtaposed usage of `req.body` and `req.params` in update routes
 // NB If anything, catch 409 i/o 404 within an update operation, see: https://stackoverflow.com/questions/10727699/is-http-404-an-appropriate-response-for-a-put-operation-where-some-linked-resour
-memberController.patch('/members/:id', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
+memberController.patch('/:id', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
   let conn = null;
   try {
     const { id } = req.params;
@@ -366,125 +359,121 @@ memberController.patch('/members/:id', permit('Admin', 'Trainer', 'Member'), asy
   }
 });
 
-memberController.patch(
-  '/members/member-with-all-details/:id',
-  permit('Admin', 'Trainer', 'Member'),
-  async (req, res) => {
-    let conn = null;
-    try {
-      const { id } = req.params;
-      if (!idSchema.safeParse(id).success) {
-        return res.status(400).json({
-          status: 400,
-          message: idSchema.safeParse(id).error.issues,
-        });
-      }
-      if (!memberDetailedSchema.safeParse(req.body).success) {
-        return res.status(400).json({
-          status: 400,
-          message: memberDetailedSchema.safeParse(req.body).error.issues,
-        });
-      }
-      const {
-        email,
-        password,
-        username,
-        firstName,
-        lastName,
-        phone,
-        age,
-        gender,
-        lineOne,
-        lineTwo,
-        suburb,
-        postcode,
-        state,
-        country,
-      } = req.body;
+memberController.patch('/member-with-all-details/:id', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
+  let conn = null;
+  try {
+    const { id } = req.params;
+    if (!idSchema.safeParse(id).success) {
+      return res.status(400).json({
+        status: 400,
+        message: idSchema.safeParse(id).error.issues,
+      });
+    }
+    if (!memberDetailedSchema.safeParse(req.body).success) {
+      return res.status(400).json({
+        status: 400,
+        message: memberDetailedSchema.safeParse(req.body).error.issues,
+      });
+    }
+    const {
+      email,
+      password,
+      username,
+      firstName,
+      lastName,
+      phone,
+      age,
+      gender,
+      lineOne,
+      lineTwo,
+      suburb,
+      postcode,
+      state,
+      country,
+    } = req.body;
 
-      // Manually acquire a connection from the pool & start a TRANSACTION
-      conn = await pool.getConnection();
-      await conn.beginTransaction();
+    // Manually acquire a connection from the pool & start a TRANSACTION
+    conn = await pool.getConnection();
+    await conn.beginTransaction();
 
-      // Find if there's a login row with identical email EXCEPT the request maker – referring to the parent table `Logins`
-      const [[{ loginId }]] = await conn.query('SELECT loginId FROM Members WHERE id = ?', [id]);
-      const [[emailExists]] = await conn.query('SELECT * FROM Logins WHERE email = ? AND NOT id = ?', [email, loginId]);
-      if (emailExists) {
-        // -- Return error if exists
-        return res.status(409).json({
-          status: 409,
-          message: 'Email has already been used',
-        });
-      }
-      // -- Update login row if NOT exists (NB current business logic doesn't deal with role change, and requires a
-      //  separate account for any diff role)
-      const hashedPassword = password.startsWith('$2') ? password : await bcrypt.hash(password, 6);
-      await conn.query(
-        `
+    // Find if there's a login row with identical email EXCEPT the request maker – referring to the parent table `Logins`
+    const [[{ loginId }]] = await conn.query('SELECT loginId FROM Members WHERE id = ?', [id]);
+    const [[emailExists]] = await conn.query('SELECT * FROM Logins WHERE email = ? AND NOT id = ?', [email, loginId]);
+    if (emailExists) {
+      // -- Return error if exists
+      return res.status(409).json({
+        status: 409,
+        message: 'Email has already been used',
+      });
+    }
+    // -- Update login row if NOT exists (NB current business logic doesn't deal with role change, and requires a
+    //  separate account for any diff role)
+    const hashedPassword = password.startsWith('$2') ? password : await bcrypt.hash(password, 6);
+    await conn.query(
+      `
       UPDATE Logins
       SET email = ?, password = ?, username = ?
       WHERE id = ?
       `,
-        [email, hashedPassword, username, loginId]
-      );
+      [email, hashedPassword, username, loginId]
+    );
 
-      // Find if there's an identical address row
-      let [[{ addressId }]] = await conn.query('SELECT addressId FROM Members WHERE id = ?', [id]);
-      const [[addressExists]] = await conn.query(
-        'SELECT * FROM Addresses WHERE lineOne = ? AND lineTwo = ? AND suburb = ? AND postcode = ? AND state = ? AND country = ?',
-        [lineOne, lineTwo, suburb, postcode, state, country]
-      );
-      if (addressExists) {
-        // -- Use the found address row's PK if exists
-        addressId = addressExists.id;
-      } else {
-        // -- Update address row if NOT exists
-        await conn.query(
-          `
+    // Find if there's an identical address row
+    let [[{ addressId }]] = await conn.query('SELECT addressId FROM Members WHERE id = ?', [id]);
+    const [[addressExists]] = await conn.query(
+      'SELECT * FROM Addresses WHERE lineOne = ? AND lineTwo = ? AND suburb = ? AND postcode = ? AND state = ? AND country = ?',
+      [lineOne, lineTwo, suburb, postcode, state, country]
+    );
+    if (addressExists) {
+      // -- Use the found address row's PK if exists
+      addressId = addressExists.id;
+    } else {
+      // -- Update address row if NOT exists
+      await conn.query(
+        `
         UPDATE Addresses
         SET lineOne = ?, lineTwo = ?, suburb = ?, postcode = ?, state = ?, country = ?
         WHERE id = ?
         `,
-          [lineOne, lineTwo, suburb, postcode, state, country, addressId]
-        );
-      }
+        [lineOne, lineTwo, suburb, postcode, state, country, addressId]
+      );
+    }
 
-      // Update member row with 2 FKs
-      const [{ affectedRows }] = await conn.query(
-        `
+    // Update member row with 2 FKs
+    const [{ affectedRows }] = await conn.query(
+      `
       UPDATE Members
       SET loginId = ?, firstName = ?, lastName = ?, phone = ?, addressId = ?, age = ?, gender = ?
       WHERE id = ?
       `,
-        [loginId, firstName, lastName, phone, addressId, age, gender, id]
-      );
+      [loginId, firstName, lastName, phone, addressId, age, gender, id]
+    );
 
-      if (!affectedRows) {
-        return res.status(404).json({
-          status: 404,
-          message: 'No member found with the ID provided',
-        });
-      }
-      await conn.commit();
-      return res.status(200).json({
-        status: 200,
-        message: 'Member successfully updated',
+    if (!affectedRows) {
+      return res.status(404).json({
+        status: 404,
+        message: 'No member found with the ID provided',
       });
-    } catch (error) {
-      if (conn) await conn.rollback();
-      return res.status(500).json({
-        status: 500,
-        message: 'Database or server error',
-        error,
-      });
-    } finally {
-      if (conn) conn.release();
     }
+    await conn.commit();
+    return res.status(200).json({
+      status: 200,
+      message: 'Member successfully updated',
+    });
+  } catch (error) {
+    if (conn) await conn.rollback();
+    return res.status(500).json({
+      status: 500,
+      message: 'Database or server error',
+      error,
+    });
+  } finally {
+    if (conn) conn.release();
   }
-);
+});
 
 // Delete Member
-memberController.delete('/members/:id', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
+memberController.delete('/:id', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
   try {
     const { id } = req.params;
     if (!idSchema.safeParse(id).success) {

@@ -9,7 +9,7 @@ import permit from '../middleware/rbac.js';
 const trainerController = Router();
 
 // Read Trainer
-trainerController.get('/trainers', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
+trainerController.get('/', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
   try {
     if (!emptyObjSchema.safeParse(req.body).success) {
       return res.status(400).json({
@@ -33,7 +33,7 @@ trainerController.get('/trainers', permit('Admin', 'Trainer', 'Member'), async (
   }
 });
 
-trainerController.get('/trainers/:id', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
+trainerController.get('/:id', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
   try {
     const { id } = req.params;
     if (!idSchema.safeParse(id).success) {
@@ -64,7 +64,7 @@ trainerController.get('/trainers/:id', permit('Admin', 'Trainer', 'Member'), asy
   }
 });
 
-trainerController.get('/trainers/trainer-with-all-details/:id', permit('Admin', 'Trainer'), async (req, res) => {
+trainerController.get('/trainer-with-all-details/:id', permit('Admin', 'Trainer'), async (req, res) => {
   try {
     const { id } = req.params;
     if (!idSchema.safeParse(id).success) {
@@ -96,112 +96,105 @@ trainerController.get('/trainers/trainer-with-all-details/:id', permit('Admin', 
 });
 
 // Create Trainer
-trainerController.post(
-  '/trainers',
-  [
-    // Enable as needed
-    // permit('Admin', 'Trainer'),
-  ],
-  async (req, res) => {
-    let conn = null;
-    try {
-      const {
-        email,
-        password,
-        username,
-        firstName,
-        lastName,
-        phone,
-        description,
-        specialty,
-        certificate,
-        imageUrl,
-        lineOne,
-        lineTwo,
-        suburb,
-        postcode,
-        state,
-        country,
-      } = req.body;
+trainerController.post('/', permit('Admin', 'Trainer'), async (req, res) => {
+  let conn = null;
+  try {
+    const {
+      email,
+      password,
+      username,
+      firstName,
+      lastName,
+      phone,
+      description,
+      specialty,
+      certificate,
+      imageUrl,
+      lineOne,
+      lineTwo,
+      suburb,
+      postcode,
+      state,
+      country,
+    } = req.body;
 
-      // Manually acquire a connection from the pool & start a TRANSACTION
-      conn = await pool.getConnection();
-      await conn.beginTransaction();
+    // Manually acquire a connection from the pool & start a TRANSACTION
+    conn = await pool.getConnection();
+    await conn.beginTransaction();
 
-      // Find if there's a login row with identical email – referring to the parent table `Logins`
-      const [[emailExists]] = await conn.query('SELECT * FROM Logins WHERE email = ?', [email]);
-      if (emailExists) {
-        // -- Return error if exists
-        return res.status(409).json({
-          status: 409,
-          message: 'Email has already been used',
-        });
-      }
-      // -- Create login row if NOT exists
-      const hashedPassword = await bcrypt.hash(password, 6);
-      const [createLoginResult] = await conn.query(
-        `
+    // Find if there's a login row with identical email – referring to the parent table `Logins`
+    const [[emailExists]] = await conn.query('SELECT * FROM Logins WHERE email = ?', [email]);
+    if (emailExists) {
+      // -- Return error if exists
+      return res.status(409).json({
+        status: 409,
+        message: 'Email has already been used',
+      });
+    }
+    // -- Create login row if NOT exists
+    const hashedPassword = await bcrypt.hash(password, 6);
+    const [createLoginResult] = await conn.query(
+      `
       INSERT INTO Logins (email, password, username, role)
       VALUES (?, ?, ?, ?)
       `,
-        [email, hashedPassword, username, 'Trainer']
-      );
-      const loginId = createLoginResult.insertId;
+      [email, hashedPassword, username, 'Trainer']
+    );
+    const loginId = createLoginResult.insertId;
 
-      // Find if there's an identical address row – referring to the parent table `Addresses`
-      let addressId = null;
-      if (lineOne && suburb && postcode && state && country) {
-        const [[addressExists]] = await conn.query(
-          'SELECT * FROM Addresses WHERE lineOne = ? AND lineTwo = ? AND suburb = ? AND postcode = ? AND state = ? AND country = ?',
-          [lineOne, null, suburb, postcode, state, country]
-        );
-        if (addressExists) {
-          // -- Use the found address row's PK if exists
-          addressId = addressExists.id;
-        } else {
-          // -- Create address row if NOT exists
-          const [createAddressResult] = await conn.query(
-            `
+    // Find if there's an identical address row – referring to the parent table `Addresses`
+    let addressId = null;
+    if (lineOne && suburb && postcode && state && country) {
+      const [[addressExists]] = await conn.query(
+        'SELECT * FROM Addresses WHERE lineOne = ? AND lineTwo = ? AND suburb = ? AND postcode = ? AND state = ? AND country = ?',
+        [lineOne, null, suburb, postcode, state, country]
+      );
+      if (addressExists) {
+        // -- Use the found address row's PK if exists
+        addressId = addressExists.id;
+      } else {
+        // -- Create address row if NOT exists
+        const [createAddressResult] = await conn.query(
+          `
           INSERT INTO Addresses
           (lineOne, lineTwo, suburb, postcode, state, country)
           VALUES (?, ?, ?, ?, ?, ?)
           `,
-            [lineOne, lineTwo, suburb, postcode, state, country]
-          );
-          addressId = createAddressResult.insertId;
-        }
+          [lineOne, lineTwo, suburb, postcode, state, country]
+        );
+        addressId = createAddressResult.insertId;
       }
+    }
 
-      // Create trainer row with 2 FKs
-      const [{ insertId }] = await conn.query(
-        `
+    // Create trainer row with 2 FKs
+    const [{ insertId }] = await conn.query(
+      `
       INSERT INTO Trainers (loginId, firstName, lastName, phone, addressId, description, specialty, certificate, imageUrl)
       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
       `,
-        [loginId, firstName, lastName, phone, addressId, description, specialty, certificate, imageUrl]
-      );
+      [loginId, firstName, lastName, phone, addressId, description, specialty, certificate, imageUrl]
+    );
 
-      await conn.commit();
-      return res.status(200).json({
-        status: 200,
-        message: 'Trainer successfully created',
-        insertId,
-      });
-    } catch (error) {
-      if (conn) await conn.rollback();
-      return res.status(500).json({
-        status: 500,
-        message: 'Database or server error',
-        error,
-      });
-    } finally {
-      if (conn) conn.release();
-    }
+    await conn.commit();
+    return res.status(200).json({
+      status: 200,
+      message: 'Trainer successfully created',
+      insertId,
+    });
+  } catch (error) {
+    if (conn) await conn.rollback();
+    return res.status(500).json({
+      status: 500,
+      message: 'Database or server error',
+      error,
+    });
+  } finally {
+    if (conn) conn.release();
   }
-);
+});
 
 // Update Trainer
-trainerController.patch('/trainers/:id', permit('Admin', 'Trainer'), async (req, res) => {
+trainerController.patch('/:id', permit('Admin', 'Trainer'), async (req, res) => {
   let conn = null;
   try {
     const { id } = req.params;
@@ -280,7 +273,7 @@ trainerController.patch('/trainers/:id', permit('Admin', 'Trainer'), async (req,
   }
 });
 
-trainerController.patch('/trainers/trainer-with-all-details/:id', permit('Admin', 'Trainer'), async (req, res) => {
+trainerController.patch('/trainer-with-all-details/:id', permit('Admin', 'Trainer'), async (req, res) => {
   let conn = null;
   try {
     const { id } = req.params;
@@ -390,7 +383,7 @@ trainerController.patch('/trainers/trainer-with-all-details/:id', permit('Admin'
 });
 
 // Delete Trainer
-trainerController.delete('/trainers/:id', permit('Admin', 'Trainer'), async (req, res) => {
+trainerController.delete('/:id', permit('Admin', 'Trainer'), async (req, res) => {
   try {
     const { id } = req.params;
     if (!idSchema.safeParse(id).success) {
