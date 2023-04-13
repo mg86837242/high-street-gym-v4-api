@@ -10,7 +10,7 @@ import {
 } from '../models/activities.js';
 import permit from '../middleware/rbac.js';
 import upload from '../middleware/multer.js';
-import { XMLParser } from 'fast-xml-parser'; // reason to use 'fast-xml-parser' i/o 'xml2js': no need to extra deep clone or `JSON.parse(JSON.stringify(parsedResult))` to (1) clean up the `[Object null prototype]`, and (2) convert values of obj from array to plain string/number/etc.
+import { XMLParser } from 'fast-xml-parser'; // reason to use `fast-xml-parser` i/o `xml2js`: (1) no need to deep clone or `JSON.parse(JSON.stringify(parsedResult))` to clean up the `[Object null prototype]`, nor (2) `explicitArray` option to explicitly tell the parser to not output the obj value as an array
 
 const activityController = Router();
 
