@@ -11,18 +11,18 @@ import permit from '../middleware/rbac.js';
 
 const userController = Router();
 
-userController.get('/by-key/:accessKey', async (req, res) => {
+userController.get('/by_key/:access_key', async (req, res) => {
   try {
-    const { accessKey: accessKeyInput } = req.params;
-    if (!uuidSchema.safeParse(accessKeyInput).success) {
+    const { access_key: accessKey } = req.params;
+    if (!uuidSchema.safeParse(accessKey).success) {
       return res.status(400).json({
         status: 400,
-        message: uuidSchema.safeParse(accessKeyInput).error.issues,
+        message: uuidSchema.safeParse(accessKey).error.issues,
       });
     }
 
     // Get info from the login row
-    const [[{ id, username, role, accessKey }]] = await getLoginsByAccessKey(accessKeyInput);
+    const [[{ id, username, role }]] = await getLoginsByAccessKey(accessKey);
     if (!id) {
       return res.status(401).json({
         status: 401,
@@ -145,7 +145,7 @@ userController.post('/logout', async (req, res) => {
   }
 });
 
-userController.get('/all-emails', async (req, res) => {
+userController.get('/all_emails', async (req, res) => {
   try {
     if (!emptyObjSchema.safeParse(req.body).success) {
       return res.status(400).json({
@@ -170,11 +170,11 @@ userController.get('/all-emails', async (req, res) => {
 });
 
 userController.get(
-  '/user-with-all-details-and-all-emails/by-key/:accessKey',
+  '/by_key/:access_key/detailed/with_all_emails',
   permit('Admin', 'Trainer', 'Member'),
   async (req, res) => {
     try {
-      const { accessKey } = req.params;
+      const { access_key: accessKey } = req.params;
       if (!uuidSchema.safeParse(accessKey).success) {
         return res.status(400).json({
           status: 400,
