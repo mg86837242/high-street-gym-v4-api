@@ -26,7 +26,7 @@ export function getBookingsWithDetailsByDate(date) {
     INNER JOIN Activities a ON b.activityId = a.id
     WHERE DATE(b.dateTime) = ?
     ORDER BY b.dateTime
-  `,
+    `,
     [date]
   );
 }
@@ -47,7 +47,7 @@ export function getBookingsWithDetailsById(id) {
     INNER JOIN Logins lt on t.loginId = lt.id
     INNER JOIN Activities a ON b.activityId = a.id
     WHERE b.id = ?
-  `,
+    `,
     [id]
   );
 }

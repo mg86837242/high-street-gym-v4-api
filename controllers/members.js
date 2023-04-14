@@ -23,7 +23,7 @@ memberController.get('/', permit('Admin', 'Trainer', 'Member'), async (req, res)
         message: emptyObjSchema.safeParse(req.body).error.issues,
       });
     }
-    const [memberResults] = await getAllMembersWithDetails();
+    const [memberResults] = await getAllMembers();
 
     return res.status(200).json({
       status: 200,
@@ -47,7 +47,7 @@ memberController.get('/detailed', permit('Admin', 'Trainer', 'Member'), async (r
         message: emptyObjSchema.safeParse(req.body).error.issues,
       });
     }
-    const [memberResults] = await getAllMembers();
+    const [memberResults] = await getAllMembersWithDetails();
 
     return res.status(200).json({
       status: 200,

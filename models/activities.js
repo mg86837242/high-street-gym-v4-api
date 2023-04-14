@@ -27,10 +27,10 @@ export function createActivity(
 ) {
   return pool.query(
     `
-        INSERT INTO Activities
-        (name, category, description, intensityLevel, maxPeopleAllowed, requirementOne, requirementTwo, durationMinutes, price)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
-        `,
+      INSERT INTO Activities
+      (name, category, description, intensityLevel, maxPeopleAllowed, requirementOne, requirementTwo, durationMinutes, price)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `,
     [
       name,
       category,
@@ -60,10 +60,10 @@ export function updateActivityById(
 ) {
   return pool.query(
     `
-        UPDATE Activities
-        SET name = ?, category = ?, description = ?, intensityLevel = ?, maxPeopleAllowed = ?, requirementOne = ?, requirementTwo = ?, durationMinutes = ?, price = ?
-        WHERE id = ?
-        `,
+      UPDATE Activities
+      SET name = ?, category = ?, description = ?, intensityLevel = ?, maxPeopleAllowed = ?, requirementOne = ?, requirementTwo = ?, durationMinutes = ?, price = ?
+      WHERE id = ?
+    `,
     [
       name,
       category,

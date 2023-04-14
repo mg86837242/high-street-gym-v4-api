@@ -8,14 +8,13 @@ export function getAllMembers() {
 export function getAllMembersWithDetails() {
   return pool.query(
     `
-    SELECT m.firstName, m.lastName, m.phone, m.age, m.gender,
+    SELECT m.id, m.firstName, m.lastName, m.phone, m.age, m.gender,
     l.email, l.password, l.username,
     a.lineOne, a.lineTwo, a.suburb, a.postcode, a.state, a.country
     FROM Members m
     INNER JOIN Logins l on m.loginId = l.id
     INNER JOIN Addresses a on m.addressId = a.id
-  `,
-    [id]
+    `
   );
 }
 
