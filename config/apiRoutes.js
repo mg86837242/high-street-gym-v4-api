@@ -3,7 +3,7 @@ import addressController from '../controllers/addresses.js';
 import adminController from '../controllers/admins.js';
 import blogController from '../controllers/blogs.js';
 import bookingController from '../controllers/bookings.js';
-import exportController from '../controllers/export.js';
+import exportController from '../controllers/exports.js';
 import memberController from '../controllers/members.js';
 import trainerController from '../controllers/trainers.js';
 import userController from '../controllers/users.js';

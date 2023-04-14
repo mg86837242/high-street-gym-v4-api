@@ -51,9 +51,9 @@ userController.get('/by-key/:accessKey', async (req, res) => {
     }
     const user = { id, username, role, accessKey, memberId, trainerId, adminId };
 
-    // Synchronize the key in the session in case of session getting reset by refresh, closing tab, etc.
+    // Synchronize the key in the server-side session in case of session getting reset by failed request, etc.
     req.session.accessKey = accessKey;
-    // console.log(`🔵 [${new Date().toLocaleTimeString()}] session id:`);
+    // console.log(`🔵 [${new Date().toLocaleTimeString()}] session id: `, req.session.id);
 
     return res.status(200).json({
       status: 200,
