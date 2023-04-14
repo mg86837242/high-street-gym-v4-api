@@ -43,10 +43,10 @@ exportController.get('/member-list', async (req, res) => {
       .header('Content-Type', 'application/xml')
       .send(xml);
   } catch (error) {
+    console.error(error);
     return res.status(500).json({
       status: 500,
       message: 'Database or server error',
-      error,
     });
   }
 });
@@ -90,10 +90,10 @@ exportController.get('/activity-list', async (req, res) => {
       .header('Content-Type', 'application/xml')
       .send(xml);
   } catch (error) {
+    console.error(error);
     return res.status(500).json({
       status: 500,
       message: 'Database or server error',
-      error,
     });
   }
 });

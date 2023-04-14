@@ -37,10 +37,10 @@ bookingController.get('/', async (req, res) => {
       bookings: bookingResults,
     });
   } catch (error) {
+    console.error(error);
     return res.status(500).json({
       status: 500,
       message: 'Database or server error',
-      error,
     });
   }
 });
@@ -65,10 +65,10 @@ bookingController.get('/options-only', permit('Admin', 'Trainer', 'Member'), asy
       activities: activityResults,
     });
   } catch (error) {
+    console.error(error);
     return res.status(500).json({
       status: 500,
       message: 'Database or server error',
-      error,
     });
   }
 });
@@ -113,10 +113,10 @@ bookingController.get('/bookings-with-details/by-date/:date', async (req, res) =
       bookings: bookingResults,
     });
   } catch (error) {
+    console.error(error);
     return res.status(500).json({
       status: 500,
       message: 'Database or server error',
-      error,
     });
   }
 });
@@ -144,10 +144,10 @@ bookingController.get('/booking-with-all-details/:id', permit('Admin', 'Trainer'
       booking: firstBookingResult,
     });
   } catch (error) {
+    console.error(error);
     return res.status(500).json({
       status: 500,
       message: 'Database or server error',
-      error,
     });
   }
 });
@@ -182,10 +182,10 @@ bookingController.get('/booking-with-options/:id', permit('Admin', 'Trainer', 'M
       activities: activityResults,
     });
   } catch (error) {
+    console.error(error);
     return res.status(500).json({
       status: 500,
       message: 'Database or server error',
-      error,
     });
   }
 });
@@ -229,10 +229,10 @@ bookingController.post('/', permit('Admin', 'Trainer', 'Member'), async (req, re
       insertId,
     });
   } catch (error) {
+    console.error(error);
     return res.status(500).json({
       status: 500,
       message: 'Database or server error',
-      error,
     });
   }
 });
@@ -294,10 +294,10 @@ bookingController.patch('/:id', permit('Admin', 'Trainer', 'Member'), async (req
       message: 'Booking successfully updated',
     });
   } catch (error) {
+    console.error(error);
     return res.status(500).json({
       status: 500,
       message: 'Database or server error',
-      error,
     });
   }
 });
@@ -325,10 +325,10 @@ bookingController.delete('/:id', permit('Admin', 'Trainer', 'Member'), async (re
       message: 'Booking successfully deleted',
     });
   } catch (error) {
+    console.error(error);
     return res.status(500).json({
       status: 500,
       message: 'Database or server error',
-      error,
     });
   }
 });

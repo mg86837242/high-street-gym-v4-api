@@ -25,10 +25,10 @@ trainerController.get('/', permit('Admin', 'Trainer', 'Member'), async (req, res
       trainers: trainerResults,
     });
   } catch (error) {
+    console.error(error);
     return res.status(500).json({
       status: 500,
       message: 'Database or server error',
-      error,
     });
   }
 });
@@ -56,10 +56,10 @@ trainerController.get('/:id', permit('Admin', 'Trainer', 'Member'), async (req, 
       trainer: firstTrainerResult,
     });
   } catch (error) {
+    console.error(error);
     return res.status(500).json({
       status: 500,
       message: 'Database or server error',
-      error,
     });
   }
 });
@@ -87,10 +87,10 @@ trainerController.get('/trainer-with-all-details/:id', permit('Admin', 'Trainer'
       initialValues: firstTrainerResult,
     });
   } catch (error) {
+    console.error(error);
     return res.status(500).json({
       status: 500,
       message: 'Database or server error',
-      error,
     });
   }
 });
@@ -183,10 +183,10 @@ trainerController.post('/', permit('Admin', 'Trainer'), async (req, res) => {
     });
   } catch (error) {
     if (conn) await conn.rollback();
+    console.error(error);
     return res.status(500).json({
       status: 500,
       message: 'Database or server error',
-      error,
     });
   } finally {
     if (conn) conn.release();
@@ -262,11 +262,10 @@ trainerController.patch('/:id', permit('Admin', 'Trainer'), async (req, res) => 
     });
   } catch (error) {
     if (conn) await conn.rollback();
-    console.log(error);
+    console.error(error);
     return res.status(500).json({
       status: 500,
       message: 'Database or server error',
-      error,
     });
   } finally {
     if (conn) conn.release();
@@ -372,10 +371,10 @@ trainerController.patch('/trainer-with-all-details/:id', permit('Admin', 'Traine
     });
   } catch (error) {
     if (conn) await conn.rollback();
+    console.error(error);
     return res.status(500).json({
       status: 500,
       message: 'Database or server error',
-      error,
     });
   } finally {
     if (conn) conn.release();
@@ -405,10 +404,10 @@ trainerController.delete('/:id', permit('Admin', 'Trainer'), async (req, res) =>
       message: 'Trainer successfully deleted',
     });
   } catch (error) {
+    console.error(error);
     return res.status(500).json({
       status: 500,
       message: 'Database or server error',
-      error,
     });
   }
 });

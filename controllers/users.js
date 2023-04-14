@@ -61,10 +61,10 @@ userController.get('/by-key/:accessKey', async (req, res) => {
       user,
     });
   } catch (error) {
+    console.error(error);
     return res.status(500).json({
       status: 500,
       message: 'Database or server error',
-      error,
     });
   }
 });
@@ -111,10 +111,10 @@ userController.post('/login', async (req, res) => {
       accessKey,
     });
   } catch (error) {
+    console.error(error);
     return res.status(500).json({
       status: 500,
       message: 'Database or server error',
-      error,
     });
   }
 });
@@ -139,10 +139,10 @@ userController.post('/logout', async (req, res) => {
       message: 'Logout successfully',
     });
   } catch (error) {
+    console.error(error);
     return res.status(500).json({
       status: 500,
       message: 'Database or server error',
-      error,
     });
   }
 });
@@ -163,10 +163,10 @@ userController.get('/all-emails', async (req, res) => {
       emails: emailResults,
     });
   } catch (error) {
+    console.error(error);
     return res.status(500).json({
       status: 500,
       message: 'Database or server error',
-      error,
     });
   }
 });

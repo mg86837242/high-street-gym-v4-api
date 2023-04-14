@@ -33,10 +33,10 @@ addressController.get('/', permit('Admin', 'Trainer', 'Member'), async (req, res
       addresses: addressResults,
     });
   } catch (error) {
+    console.error(error);
     return res.status(500).json({
       status: 500,
       message: 'Database or server error',
-      error,
     });
   }
 });
@@ -64,10 +64,10 @@ addressController.get('/:id', permit('Admin', 'Trainer', 'Member'), async (req, 
       address: firstAddressResult,
     });
   } catch (error) {
+    console.error(error);
     return res.status(500).json({
       status: 500,
       message: 'Database or server error',
-      error,
     });
   }
 });
@@ -91,10 +91,10 @@ addressController.post('/', permit('Admin', 'Trainer', 'Member'), async (req, re
       insertId,
     });
   } catch (error) {
+    console.error(error);
     return res.status(500).json({
       status: 500,
       message: 'Database or server error',
-      error,
     });
   }
 });
@@ -130,10 +130,10 @@ addressController.patch('/:id', permit('Admin', 'Trainer', 'Member'), async (req
       message: 'Address successfully updated',
     });
   } catch (error) {
+    console.error(error);
     return res.status(500).json({
       status: 500,
       message: 'Database or server error',
-      error,
     });
   }
 });
@@ -186,10 +186,10 @@ addressController.patch('/by-adminid/:adminid', permit('Admin'), async (req, res
       message: 'Address successfully updated',
     });
   } catch (error) {
+    console.error(error);
     return res.status(500).json({
       status: 500,
       message: 'Database or server error',
-      error,
     });
   }
 });
@@ -242,10 +242,10 @@ addressController.patch('/by-trainerid/:trainerid', permit('Admin', 'Trainer'), 
       message: 'Address successfully updated',
     });
   } catch (error) {
+    console.error(error);
     return res.status(500).json({
       status: 500,
       message: 'Database or server error',
-      error,
     });
   }
 });
@@ -298,10 +298,10 @@ addressController.patch('/by-memberid/:memberid', permit('Admin', 'Trainer', 'Me
       message: 'Address successfully updated',
     });
   } catch (error) {
+    console.error(error);
     return res.status(500).json({
       status: 500,
       message: 'Database or server error',
-      error,
     });
   }
 });
@@ -329,10 +329,10 @@ addressController.delete('/:id', permit('Admin', 'Trainer', 'Member'), async (re
       message: 'Address successfully deleted',
     });
   } catch (error) {
+    console.error(error);
     return res.status(500).json({
       status: 500,
       message: 'Database or server error',
-      error,
     });
   }
 });

@@ -67,10 +67,10 @@ activityController.get('/:id', permit('Admin', 'Trainer', 'Member'), async (req,
       activity: firstActivityResult,
     });
   } catch (error) {
+    console.error(error);
     return res.status(500).json({
       status: 500,
       message: 'Database or server error',
-      error,
     });
   }
 });
@@ -114,10 +114,10 @@ activityController.post('/', permit('Admin', 'Trainer'), async (req, res) => {
       insertId,
     });
   } catch (error) {
+    console.error(error);
     return res.status(500).json({
       status: 500,
       message: 'Database or server error',
-      error,
     });
   }
 });
@@ -235,10 +235,10 @@ activityController.patch('/:id', permit('Admin', 'Trainer'), async (req, res) =>
       message: 'Activity successfully updated',
     });
   } catch (error) {
+    console.error(error);
     return res.status(500).json({
       status: 500,
       message: 'Database or server error',
-      error,
     });
   }
 });
@@ -266,10 +266,10 @@ activityController.delete('/:id', permit('Admin', 'Trainer'), async (req, res) =
       message: 'Activity successfully deleted',
     });
   } catch (error) {
+    console.error(error);
     return res.status(500).json({
       status: 500,
       message: 'Database or server error',
-      error,
     });
   }
 });

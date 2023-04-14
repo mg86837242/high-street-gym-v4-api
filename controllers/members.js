@@ -25,10 +25,10 @@ memberController.get('/', permit('Admin', 'Trainer', 'Member'), async (req, res)
       members: memberResults,
     });
   } catch (error) {
+    console.error(error);
     return res.status(500).json({
       status: 500,
       message: 'Database or server error',
-      error,
     });
   }
 });
@@ -56,10 +56,10 @@ memberController.get('/:id', permit('Admin', 'Trainer', 'Member'), async (req, r
       member: firstMemberResult,
     });
   } catch (error) {
+    console.error(error);
     return res.status(500).json({
       status: 500,
       message: 'Database or server error',
-      error,
     });
   }
 });
@@ -87,10 +87,10 @@ memberController.get('/member-with-all-details/:id', permit('Admin', 'Trainer', 
       initialValues: firstMemberResult,
     });
   } catch (error) {
+    console.error(error);
     return res.status(500).json({
       status: 500,
       message: 'Database or server error',
-      error,
     });
   }
 });
@@ -167,10 +167,10 @@ memberController.post('/signup', async (req, res) => {
     });
   } catch (error) {
     if (conn) await conn.rollback();
+    console.error(error);
     return res.status(500).json({
       status: 500,
       message: 'Database or server error',
-      error,
     });
   } finally {
     if (conn) conn.release();
@@ -267,10 +267,10 @@ memberController.post('/', permit('Admin', 'Trainer', 'Member'), async (req, res
     });
   } catch (error) {
     if (conn) await conn.rollback();
+    console.error(error);
     return res.status(500).json({
       status: 500,
       message: 'Database or server error',
-      error,
     });
   } finally {
     if (conn) conn.release();
@@ -348,11 +348,10 @@ memberController.patch('/:id', permit('Admin', 'Trainer', 'Member'), async (req,
     });
   } catch (error) {
     if (conn) await conn.rollback();
-    console.log(error);
+    console.error(error);
     return res.status(500).json({
       status: 500,
       message: 'Database or server error',
-      error,
     });
   } finally {
     if (conn) conn.release();
@@ -462,10 +461,10 @@ memberController.patch('/member-with-all-details/:id', permit('Admin', 'Trainer'
     });
   } catch (error) {
     if (conn) await conn.rollback();
+    console.error(error);
     return res.status(500).json({
       status: 500,
       message: 'Database or server error',
-      error,
     });
   } finally {
     if (conn) conn.release();
@@ -495,10 +494,10 @@ memberController.delete('/:id', permit('Admin', 'Trainer', 'Member'), async (req
       message: 'Member successfully deleted',
     });
   } catch (error) {
+    console.error(error);
     return res.status(500).json({
       status: 500,
       message: 'Database or server error',
-      error,
     });
   }
 });

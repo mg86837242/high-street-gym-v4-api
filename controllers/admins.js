@@ -25,10 +25,10 @@ adminController.get('/', permit('Admin', 'Trainer', 'Member'), async (req, res) 
       admins: adminResults,
     });
   } catch (error) {
+    console.error(error);
     return res.status(500).json({
       status: 500,
       message: 'Database or server error',
-      error,
     });
   }
 });
@@ -56,10 +56,10 @@ adminController.get('/:id', permit('Admin', 'Trainer', 'Member'), async (req, re
       admin: firstAdminResult,
     });
   } catch (error) {
+    console.error(error);
     return res.status(500).json({
       status: 500,
       message: 'Database or server error',
-      error,
     });
   }
 });
@@ -87,10 +87,10 @@ adminController.get('/admin-with-all-details/:id', permit('Admin'), async (req, 
       initialValues: firstAdminResult,
     });
   } catch (error) {
+    console.error(error);
     return res.status(500).json({
       status: 500,
       message: 'Database or server error',
-      error,
     });
   }
 });
@@ -179,10 +179,10 @@ adminController.post('/', permit('Admin'), async (req, res) => {
     });
   } catch (error) {
     if (conn) await conn.rollback();
+    console.error(error);
     return res.status(500).json({
       status: 500,
       message: 'Database or server error',
-      error,
     });
   } finally {
     if (conn) conn.release();
@@ -257,11 +257,10 @@ adminController.patch('/:id', permit('Admin'), async (req, res) => {
     });
   } catch (error) {
     if (conn) await conn.rollback();
-    console.log(error);
+    console.error(error);
     return res.status(500).json({
       status: 500,
       message: 'Database or server error',
-      error,
     });
   } finally {
     if (conn) conn.release();
@@ -363,10 +362,10 @@ adminController.patch('/admin-with-all-details/:id', permit('Admin'), async (req
     });
   } catch (error) {
     if (conn) await conn.rollback();
+    console.error(error);
     return res.status(500).json({
       status: 500,
       message: 'Database or server error',
-      error,
     });
   } finally {
     if (conn) conn.release();
@@ -396,10 +395,10 @@ adminController.delete('/:id', permit('Admin'), async (req, res) => {
       message: 'Admin successfully deleted',
     });
   } catch (error) {
+    console.error(error);
     return res.status(500).json({
       status: 500,
       message: 'Database or server error',
-      error,
     });
   }
 });
