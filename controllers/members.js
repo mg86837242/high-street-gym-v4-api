@@ -17,30 +17,6 @@ memberController.get('/', permit('Admin', 'Trainer', 'Member'), async (req, res)
         message: emptyObjSchema.safeParse(req.body).error.issues,
       });
     }
-    const [memberResults] = await getAllMembersWithDetails();
-
-    return res.status(200).json({
-      status: 200,
-      message: 'Member records successfully retrieved',
-      members: memberResults,
-    });
-  } catch (error) {
-    console.error(error);
-    return res.status(500).json({
-      status: 500,
-      message: 'Database or server error',
-    });
-  }
-});
-
-memberController.get('/detailed', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
-  try {
-    if (!emptyObjSchema.safeParse(req.body).success) {
-      return res.status(400).json({
-        status: 400,
-        message: emptyObjSchema.safeParse(req.body).error.issues,
-      });
-    }
     const [memberResults] = await getAllMembers();
 
     return res.status(200).json({
