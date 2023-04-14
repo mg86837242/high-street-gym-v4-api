@@ -5,6 +5,7 @@ export function getAllMembers() {
   return pool.query('SELECT * FROM Members');
 }
 
+<<<<<<< HEAD
 export function getAllMembersWithDetails() {
   return pool.query(
     `
@@ -18,6 +19,8 @@ export function getAllMembersWithDetails() {
   );
 }
 
+=======
+>>>>>>> parent of 93d2c79 (g members api)
 export function getMembersById(id) {
   return pool.query('SELECT * FROM Members WHERE id = ?', [id]);
 }
