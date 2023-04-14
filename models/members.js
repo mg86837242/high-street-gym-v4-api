@@ -14,7 +14,8 @@ export function getAllMembersWithDetails() {
     FROM Members m
     INNER JOIN Logins l on m.loginId = l.id
     INNER JOIN Addresses a on m.addressId = a.id
-    `
+  `,
+    [id]
   );
 }
 
