@@ -3,13 +3,43 @@ import bcrypt from 'bcryptjs'; // reason to use `bcryptjs`: https://github.com/k
 import pool from '../config/database.js';
 import { emptyObjSchema, idSchema } from '../schemas/params.js';
 import { signupSchema, memberSchema, memberDetailedSchema } from '../schemas/members.js';
-import { getAllMembers, getMembersById, getMembersWithDetailsById, deleteMemberById } from '../models/members.js';
+import {
+  getAllMembers,
+  getAllMembersWithDetails,
+  getMembersById,
+  getMembersWithDetailsById,
+  deleteMemberById,
+} from '../models/members.js';
 import permit from '../middleware/rbac.js';
 
 const memberController = Router();
 
 // Read Member
 memberController.get('/', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
+  try {
+    if (!emptyObjSchema.safeParse(req.body).success) {
+      return res.status(400).json({
+        status: 400,
+        message: emptyObjSchema.safeParse(req.body).error.issues,
+      });
+    }
+    const [memberResults] = await getAllMembersWithDetails();
+
+    return res.status(200).json({
+      status: 200,
+      message: 'Member records successfully retrieved',
+      members: memberResults,
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({
+      status: 500,
+      message: 'Database or server error',
+    });
+  }
+});
+
+memberController.get('/detailed', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
   try {
     if (!emptyObjSchema.safeParse(req.body).success) {
       return res.status(400).json({
