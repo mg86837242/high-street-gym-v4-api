@@ -51,14 +51,9 @@ export const memberDetailedSchema = z.object({
 //  `optional()` won't let null pass, but will let undefined and empty string pass; when `enum()` is involved, both
 //  won't accept empty string unless specified within `enum()`
 
-// NB Empty form fields: (1) For fields that are not required but of enum data type, empty string is added as an option
-//  to avoid validation error if the user submits an empty input field, see:
+// NB (1) Empty input fields is treated as empty string in `FormData` and RHF after validation:
 //  -- https://stackoverflow.com/questions/9177802/when-does-an-input-field-value-equals-null-or-undefined
 //  -- https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#type: by default, the input type `text` is used
 //  (2) `FormData.append()` converts field's value to a string in most cases:
 //  -- https://developer.mozilla.org/en-US/docs/Web/API/FormData/Using_FormData_Objects#creating_a_formdata_object_from_scratch
-//  (3) If it's a curl test, field that is not included within the JSON `req.body` is considered as `undefined`
-// console.log('🟢');
-// console.log(z.string().max(45).optional().safeParse(undefined));
-// console.log('🟢');
-// curl -X POST http://localhost:8081/api/members/signup -H "Content-Type:application/json" -d '{"username":"testingmember", "password":"...", "firstName":"Some", "lastName":"Member", "phone":"0123456789", "email":"somemember@gmail.com"}'
+//  (3) If it's a curl/Postman test, field that is not included within the JSON `req.body` is considered as `undefined`
