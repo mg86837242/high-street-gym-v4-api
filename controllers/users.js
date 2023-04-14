@@ -53,7 +53,6 @@ userController.get('/by-key/:accessKey', async (req, res) => {
 
     // Synchronize the key in the server-side session in case of session getting reset by failed request, etc.
     req.session.accessKey = accessKey;
-    // console.log(`🔵 [${new Date().toLocaleTimeString()}] session id: `, req.session.id);
 
     return res.status(200).json({
       status: 200,
@@ -103,7 +102,6 @@ userController.post('/login', async (req, res) => {
     const accessKey = uuid4().toString();
     await updateLoginAccessKeyById(match.id, accessKey);
     req.session.accessKey = accessKey;
-    // console.log(`🟢 [${new Date().toLocaleTimeString()}] id: ${req.session.id}`);
 
     return res.status(200).json({
       status: 200,

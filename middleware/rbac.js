@@ -20,6 +20,7 @@ export default function permit(...permittedRoles) {
       }
       return next();
     } catch (error) {
+      console.error(error);
       return res.json(500).json({
         status: 500,
         message: 'Database or server error',
