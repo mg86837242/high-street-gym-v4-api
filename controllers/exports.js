@@ -39,8 +39,8 @@ exportController.get('/member-list', async (req, res) => {
     // Send XML as download
     return res
       .status(200)
-      .header('Content-Disposition', 'attachment; filename="member-list-export-xml"')
-      .header('Content-Type', 'application/xml')
+      .set('Content-Disposition', 'attachment; filename="member-list-export-xml"')
+      .set('Content-Type', 'application/xml')
       .send(xml);
   } catch (error) {
     console.error(error);
@@ -86,8 +86,8 @@ exportController.get('/activity-list', async (req, res) => {
     // Send XML as download
     return res
       .status(200)
-      .header('Content-Disposition', 'attachment; filename="activity-list-export-xml"')
-      .header('Content-Type', 'application/xml')
+      .set('Content-Disposition', 'attachment; filename="activity-list-export-xml"')
+      .set('Content-Type', 'application/xml')
       .send(xml);
   } catch (error) {
     console.error(error);

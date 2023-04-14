@@ -11,6 +11,7 @@ export default function (app) {
     cors({
       origin: `http://localhost:${constants.VITE_PORT}`,
       credentials: true,
+      maxAge: 24 * 60 * 60 * 1_000,
     })
   );
 
