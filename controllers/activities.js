@@ -117,35 +117,28 @@ activityController.post('/', permit('Admin', 'Trainer'), async (req, res) => {
   }
 });
 
-activityController.post('/upload/xml', upload.single('xml'), permit('Admin', 'Trainer'), async (req, res) => {
-  try {
-    const xmlStr = req?.file?.buffer?.toString();
-    const parser = new XMLParser();
-    const {
-      activityList: { activity: activities },
-    } = parser.parse(xmlStr);
-    // NB Empty text content within XML Elements becomes empty string after parsing
+activityController.post(
+  '/upload/xml',
+  upload.single('new-activity-xml'),
+  permit('Admin', 'Trainer'),
+  async (req, res) => {
+    try {
+      const xmlStr = req?.file?.buffer?.toString();
+      const parser = new XMLParser();
+      const {
+        activityList: { activity: activities },
+      } = parser.parse(xmlStr);
+      // NB Empty text content within XML Elements becomes empty string after parsing
 
-    const hasInvalid = activities.some(a => !activitySchema.safeParse(a).success);
-    if (hasInvalid) {
-      return res.status(400).json({
-        status: 400,
-        message: 'Invalid activity record detected',
-      });
-    }
-    const mapActivityPromises = activities.map(
-      async ({
-        name,
-        category,
-        description,
-        intensityLevel,
-        maxPeopleAllowed,
-        requirementOne,
-        requirementTwo,
-        durationMinutes,
-        price,
-      }) =>
-        await createActivity(
+      const hasInvalid = activities.some(a => !activitySchema.safeParse(a).success);
+      if (hasInvalid) {
+        return res.status(400).json({
+          status: 400,
+          message: 'Invalid activity record detected',
+        });
+      }
+      const mapActivityPromises = activities.map(
+        async ({
           name,
           category,
           description,
@@ -154,23 +147,35 @@ activityController.post('/upload/xml', upload.single('xml'), permit('Admin', 'Tr
           requirementOne,
           requirementTwo,
           durationMinutes,
-          price
-        )
-    );
-    await Promise.all(mapActivityPromises);
+          price,
+        }) =>
+          await createActivity(
+            name,
+            category,
+            description,
+            intensityLevel,
+            maxPeopleAllowed,
+            requirementOne,
+            requirementTwo,
+            durationMinutes,
+            price
+          )
+      );
+      await Promise.all(mapActivityPromises);
 
-    return res.status(200).json({
-      status: 200,
-      message: 'Activity(-ies) successfully created',
-    });
-  } catch (error) {
-    return res.status(500).json({
-      status: 500,
-      message: 'Database or server error',
-      error,
-    });
+      return res.status(200).json({
+        status: 200,
+        message: 'Activity(-ies) successfully created',
+      });
+    } catch (error) {
+      return res.status(500).json({
+        status: 500,
+        message: 'Database or server error',
+        error,
+      });
+    }
   }
-});
+);
 
 // Update Activity
 activityController.patch('/:id', permit('Admin', 'Trainer'), async (req, res) => {
