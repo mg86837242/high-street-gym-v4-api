@@ -64,7 +64,7 @@ adminController.get('/:id', permit('Admin', 'Trainer', 'Member'), async (req, re
   }
 });
 
-adminController.get('/admin-with-all-details/:id', permit('Admin'), async (req, res) => {
+adminController.get('/:id/detailed', permit('Admin'), async (req, res) => {
   try {
     const { id } = req.params;
     if (!idSchema.safeParse(id).success) {
@@ -267,7 +267,7 @@ adminController.patch('/:id', permit('Admin'), async (req, res) => {
   }
 });
 
-adminController.patch('/admin-with-all-details/:id', permit('Admin'), async (req, res) => {
+adminController.patch('/:id/detailed', permit('Admin'), async (req, res) => {
   let conn = null;
   try {
     const { id } = req.params;

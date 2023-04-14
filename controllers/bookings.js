@@ -45,7 +45,7 @@ bookingController.get('/', async (req, res) => {
   }
 });
 
-bookingController.get('/options-only', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
+bookingController.get('/options', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
   try {
     if (!emptyObjSchema.safeParse(req.body).success) {
       return res.status(400).json({
@@ -73,7 +73,7 @@ bookingController.get('/options-only', permit('Admin', 'Trainer', 'Member'), asy
   }
 });
 
-bookingController.get('/bookings-with-details/by-date/:date', async (req, res) => {
+bookingController.get('/by/date/:date', async (req, res) => {
   try {
     // NB `req.params.date` is a string, see: https://reactrouter.com/en/main/start/concepts#route-matches; the data type expected to be used in
     //  the WHERE clause is also a string, however, needs to be formatted like this `YYYY-MM-DD` in the SQL query, this is found out by writing raw
@@ -121,7 +121,7 @@ bookingController.get('/bookings-with-details/by-date/:date', async (req, res) =
   }
 });
 
-bookingController.get('/booking-with-all-details/:id', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
+bookingController.get('/:id', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
   try {
     const { id } = req.params;
     if (!idSchema.safeParse(id).success) {
@@ -152,7 +152,7 @@ bookingController.get('/booking-with-all-details/:id', permit('Admin', 'Trainer'
   }
 });
 
-bookingController.get('/booking-with-options/:id', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
+bookingController.get('/:id/with_options', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
   try {
     const { id } = req.params;
     if (!idSchema.safeParse(id).success) {

@@ -10,7 +10,7 @@ import { getTrainersById } from '../models/trainers.js';
 
 const exportController = Router();
 
-exportController.get('/member-list', async (req, res) => {
+exportController.get('/member_list', async (req, res) => {
   try {
     if (!emptyObjSchema.safeParse(req.body).success) {
       return res.status(400).json({
@@ -51,7 +51,7 @@ exportController.get('/member-list', async (req, res) => {
   }
 });
 
-exportController.get('/activity-list', async (req, res) => {
+exportController.get('/activity_list', async (req, res) => {
   try {
     if (!emptyObjSchema.safeParse(req.body).success) {
       return res.status(400).json({

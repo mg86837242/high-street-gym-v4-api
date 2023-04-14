@@ -23,7 +23,7 @@ blogController.get('/', async (req, res) => {
       blogs: blogResults,
     });
   } catch (error) {
-    console.error(error)
+    console.error(error);
     return res.status(500).json({
       status: 500,
       message: 'Database or server error',
@@ -54,7 +54,7 @@ blogController.get('/:id', async (req, res) => {
       blog: firstBlogResult,
     });
   } catch (error) {
-    console.error(error)
+    console.error(error);
     return res.status(500).json({
       status: 500,
       message: 'Database or server error',
@@ -81,7 +81,7 @@ blogController.post('/', permit('Admin', 'Trainer', 'Member'), async (req, res) 
       insertId,
     });
   } catch (error) {
-    console.error(error)
+    console.error(error);
     return res.status(500).json({
       status: 500,
       message: 'Database or server error',
@@ -120,7 +120,7 @@ blogController.patch('/:id', permit('Admin', 'Trainer', 'Member'), async (req, r
       message: 'Blog successfully updated',
     });
   } catch (error) {
-    console.error(error)
+    console.error(error);
     return res.status(500).json({
       status: 500,
       message: 'Database or server error',
@@ -151,7 +151,7 @@ blogController.delete('/:id', permit('Admin', 'Trainer', 'Member'), async (req, 
       message: 'Blog successfully deleted',
     });
   } catch (error) {
-    console.error(error)
+    console.error(error);
     return res.status(500).json({
       status: 500,
       message: 'Database or server error',
