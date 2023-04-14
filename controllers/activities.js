@@ -15,34 +15,29 @@ import { XMLParser } from 'fast-xml-parser'; // reason to use `fast-xml-parser` 
 const activityController = Router();
 
 // Read Activity
-activityController.get(
-  '/',
-  // FIX Re-enable rbac after test is complete
-  // permit('Admin', 'Trainer', 'Member'),
-  async (req, res) => {
-    try {
-      if (!emptyObjSchema.safeParse(req.body).success) {
-        return res.status(400).json({
-          status: 400,
-          message: emptyObjSchema.safeParse(req.body).error.issues,
-        });
-      }
-      const [activityResults] = await getAllActivities();
-
-      return res.status(200).json({
-        status: 200,
-        message: 'Activity records successfully retrieved',
-        activities: activityResults,
-      });
-    } catch (error) {
-      return res.status(500).json({
-        status: 500,
-        message: 'Database or server error',
-        error,
+activityController.get('/', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
+  try {
+    if (!emptyObjSchema.safeParse(req.body).success) {
+      return res.status(400).json({
+        status: 400,
+        message: emptyObjSchema.safeParse(req.body).error.issues,
       });
     }
+    const [activityResults] = await getAllActivities();
+
+    return res.status(200).json({
+      status: 200,
+      message: 'Activity records successfully retrieved',
+      activities: activityResults,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      status: 500,
+      message: 'Database or server error',
+      error,
+    });
   }
-);
+});
 
 activityController.get('/:id', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
   try {
@@ -122,29 +117,35 @@ activityController.post('/', permit('Admin', 'Trainer'), async (req, res) => {
   }
 });
 
-activityController.post(
-  '/upload/xml',
-  upload.single('xml'),
-  // FIX Re-enable rbac after test is complete
-  // permit('Admin', 'Trainer'),
-  async (req, res) => {
-    try {
-      const xmlStr = req?.file?.buffer?.toString();
-      const parser = new XMLParser();
-      const {
-        activityList: { activity: activities },
-      } = parser.parse(xmlStr);
-      // NB Empty text content within XML Elements becomes empty string after parsing
+activityController.post('/upload/xml', upload.single('xml'), permit('Admin', 'Trainer'), async (req, res) => {
+  try {
+    const xmlStr = req?.file?.buffer?.toString();
+    const parser = new XMLParser();
+    const {
+      activityList: { activity: activities },
+    } = parser.parse(xmlStr);
+    // NB Empty text content within XML Elements becomes empty string after parsing
 
-      const hasInvalid = activities.some(a => !activitySchema.safeParse(a).success);
-      if (hasInvalid) {
-        return res.status(400).json({
-          status: 400,
-          message: 'Invalid activity record detected',
-        });
-      }
-      const mapActivityPromises = activities.map(
-        async ({
+    const hasInvalid = activities.some(a => !activitySchema.safeParse(a).success);
+    if (hasInvalid) {
+      return res.status(400).json({
+        status: 400,
+        message: 'Invalid activity record detected',
+      });
+    }
+    const mapActivityPromises = activities.map(
+      async ({
+        name,
+        category,
+        description,
+        intensityLevel,
+        maxPeopleAllowed,
+        requirementOne,
+        requirementTwo,
+        durationMinutes,
+        price,
+      }) =>
+        await createActivity(
           name,
           category,
           description,
@@ -153,35 +154,23 @@ activityController.post(
           requirementOne,
           requirementTwo,
           durationMinutes,
-          price,
-        }) =>
-          await createActivity(
-            name,
-            category,
-            description,
-            intensityLevel,
-            maxPeopleAllowed,
-            requirementOne,
-            requirementTwo,
-            durationMinutes,
-            price
-          )
-      );
-      await Promise.all(mapActivityPromises);
+          price
+        )
+    );
+    await Promise.all(mapActivityPromises);
 
-      return res.status(200).json({
-        status: 200,
-        message: 'Activity(-ies) successfully created',
-      });
-    } catch (error) {
-      return res.status(500).json({
-        status: 500,
-        message: 'Database or server error',
-        error,
-      });
-    }
+    return res.status(200).json({
+      status: 200,
+      message: 'Activity(-ies) successfully created',
+    });
+  } catch (error) {
+    return res.status(500).json({
+      status: 500,
+      message: 'Database or server error',
+      error,
+    });
   }
-);
+});
 
 // Update Activity
 activityController.patch('/:id', permit('Admin', 'Trainer'), async (req, res) => {

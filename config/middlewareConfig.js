@@ -13,7 +13,6 @@ export default function (app) {
       credentials: true,
     })
   );
-  app.options('*', cors());
 
   // Express session middleware
   // -- Redis client (to be implemented)
