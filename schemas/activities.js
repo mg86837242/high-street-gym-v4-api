@@ -14,7 +14,8 @@ const activitySchema = z.object({
 
 export default activitySchema;
 
-// NB Empty string within the `enum()` is for the "choose" option in case the user wants to intentionally leave it
+// NB Empty string within the `enum()` is for the "Choose ..." option in case the user wants to intentionally leave it
 //  blank
 // NB Empty input of "type='number" will be deemed as NaN during the validation by React Hook Form (or resolver), thus
-//  this union type (however, will be converted to empty string by `handleSubmit()`)
+//  this union type (however, will be converted to empty string after being returned from `handleSubmit()`), see this
+//  Github post for alternative solution: https://github.com/orgs/react-hook-form/discussions/6980

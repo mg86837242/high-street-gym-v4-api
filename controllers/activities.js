@@ -10,7 +10,7 @@ import {
 } from '../models/activities.js';
 import permit from '../middleware/rbac.js';
 import upload from '../middleware/multer.js';
-import { XMLParser } from 'fast-xml-parser'; // reason to use `fast-xml-parser` i/o `xml2js`: (1) no need to deep clone or `JSON.parse(JSON.stringify(parsedResult))` to clean up the `[Object null prototype]`, nor (2) `explicitArray` option to explicitly tell the parser to not output the obj value as an array
+import { XMLParser } from 'fast-xml-parser'; // reason to use `fast-xml-parser` i/o `xml2js`: no need to (1) deep clone or `JSON.parse(JSON.stringify(parsedResult))` to clean up the `[Object null prototype]`, nor (2) tinker `explicitArray` option to explicitly tell the parser to not output the obj value as an array
 
 const activityController = Router();
 
@@ -140,7 +140,7 @@ activityController.post(
       if (hasInvalid) {
         return res.status(400).json({
           status: 400,
-          message: 'Contain invalid activity record',
+          message: 'Invalid activity record detected',
         });
       }
       const mapActivityPromises = activities.map(
