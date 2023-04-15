@@ -84,7 +84,7 @@ trainerController.get('/:id/detailed', permit('Admin', 'Trainer'), async (req, r
     return res.status(200).json({
       status: 200,
       message: 'Trainer record successfully retrieved',
-      initialValues: firstTrainerResult,
+      trainer: firstTrainerResult,
     });
   } catch (error) {
     console.error(error);

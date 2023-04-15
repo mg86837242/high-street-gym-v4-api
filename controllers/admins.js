@@ -84,7 +84,7 @@ adminController.get('/:id/detailed', permit('Admin'), async (req, res) => {
     return res.status(200).json({
       status: 200,
       message: 'Admin record successfully retrieved',
-      initialValues: firstAdminResult,
+      admin: firstAdminResult,
     });
   } catch (error) {
     console.error(error);

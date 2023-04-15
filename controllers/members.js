@@ -120,7 +120,7 @@ memberController.get('/:id/detailed', permit('Admin', 'Trainer', 'Member'), asyn
     return res.status(200).json({
       status: 200,
       message: 'Member record successfully retrieved',
-      initialValues: firstMemberResult,
+      member: firstMemberResult,
     });
   } catch (error) {
     console.error(error);
