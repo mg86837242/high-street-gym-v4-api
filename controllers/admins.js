@@ -96,7 +96,7 @@ adminController.get('/:id/detailed', permit('Admin'), async (req, res) => {
 });
 
 // Create Admin
-adminController.post('/', permit('Admin'), async (req, res) => {
+adminController.post('/detailed', permit('Admin'), async (req, res) => {
   let conn = null;
   try {
     const {

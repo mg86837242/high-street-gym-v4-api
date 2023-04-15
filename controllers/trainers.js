@@ -96,7 +96,7 @@ trainerController.get('/:id/detailed', permit('Admin', 'Trainer'), async (req, r
 });
 
 // Create Trainer
-trainerController.post('/', permit('Admin', 'Trainer'), async (req, res) => {
+trainerController.post('/detailed', permit('Admin', 'Trainer'), async (req, res) => {
   let conn = null;
   try {
     const {
