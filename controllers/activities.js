@@ -138,6 +138,7 @@ activityController.post(
           message: 'Invalid activity record detected',
         });
       }
+
       const mapActivityPromises = activities.map(
         async ({
           name,

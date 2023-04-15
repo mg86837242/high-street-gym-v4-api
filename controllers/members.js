@@ -41,29 +41,33 @@ memberController.get('/', permit('Admin', 'Trainer', 'Member'), async (req, res)
   }
 });
 
-memberController.get('/detailed', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
-  try {
-    if (!emptyObjSchema.safeParse(req.body).success) {
-      return res.status(400).json({
-        status: 400,
-        message: emptyObjSchema.safeParse(req.body).error.issues,
+memberController.get(
+  '/detailed',
+  // permit('Admin', 'Trainer', 'Member'),
+  async (req, res) => {
+    try {
+      if (!emptyObjSchema.safeParse(req.body).success) {
+        return res.status(400).json({
+          status: 400,
+          message: emptyObjSchema.safeParse(req.body).error.issues,
+        });
+      }
+      const [memberResults] = await getAllMembersWithDetails();
+
+      return res.status(200).json({
+        status: 200,
+        message: 'Member records successfully retrieved',
+        members: memberResults,
+      });
+    } catch (error) {
+      console.error(error);
+      return res.status(500).json({
+        status: 500,
+        message: 'Database or server error',
       });
     }
-    const [memberResults] = await getAllMembersWithDetails();
-
-    return res.status(200).json({
-      status: 200,
-      message: 'Member records successfully retrieved',
-      members: memberResults,
-    });
-  } catch (error) {
-    console.error(error);
-    return res.status(500).json({
-      status: 500,
-      message: 'Database or server error',
-    });
   }
-});
+);
 
 memberController.get('/:id', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
   try {
@@ -323,13 +327,16 @@ memberController.post(
       // NB After parsing, (1) empty text content within XML Elements becomes empty string, (2) left-out XML Elements
       //  becomes undefined
 
-      // const hasInvalid = members.some(a => !memberSchema.safeParse(a).success);
-      // if (hasInvalid) {
-      //   return res.status(400).json({
-      //     status: 400,
-      //     message: 'Invalid member record detected',
-      //   });
-      // }
+      // [ ] Coerce pw, phone, age, postcode, etc. for schema validating XML, cuz XML is a bitch
+      // [ ] Transaction loop
+      const hasInvalid = members.some(a => !memberDetailedSchema.safeParse(a).success);
+      if (hasInvalid) {
+        return res.status(400).json({
+          status: 400,
+          message: 'Invalid member record detected',
+        });
+      }
+
       // const mapMemberPromises = members.map(
       //   async ({
       //     name,
