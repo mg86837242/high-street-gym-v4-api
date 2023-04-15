@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { XMLParser } from 'fast-xml-parser'; // reason to use `fast-xml-parser` i/o `xml2js`: no need to (1) deep clone or `JSON.parse(JSON.stringify(parsedResult))` to clean up the `[Object null prototype]`, nor (2) tinker `explicitArray` option to explicitly tell the parser to not output the obj value as an array
 import { emptyObjSchema, idSchema } from '../schemas/params.js';
-import activitySchema from '../schemas/activities.js';
+import { activitySchema, activityXMLSchema } from '../schemas/activities.js';
 import {
   getAllActivities,
   getActivitiesById,
@@ -131,7 +131,7 @@ activityController.post(
       // NB After parsing, (1) empty text content within XML Elements becomes empty string, (2) left-out XML Elements
       //  becomes undefined
 
-      const hasInvalid = activities.some(a => !activitySchema.safeParse(a).success);
+      const hasInvalid = activities.some(a => !activityXMLSchema.safeParse(a).success);
       if (hasInvalid) {
         return res.status(400).json({
           status: 400,
@@ -139,8 +139,8 @@ activityController.post(
         });
       }
 
-      const mapActivityPromises = activities.map(
-        async ({
+      const mapActivityPromises = activities.map(async a => {
+        const {
           name,
           category,
           description,
@@ -150,19 +150,23 @@ activityController.post(
           requirementTwo,
           durationMinutes,
           price,
-        }) =>
-          createActivity(
-            name,
-            category,
-            description,
-            intensityLevel,
-            maxPeopleAllowed,
-            requirementOne,
-            requirementTwo,
-            durationMinutes,
-            price
-          )
-      );
+        } = Object.keys(a).reduce((acc, cv) => {
+          a[cv] === '' ? (acc[cv] = null) : (acc[cv] = a[cv]);
+          return acc;
+        }, {});
+
+        await createActivity(
+          name,
+          category,
+          description,
+          intensityLevel,
+          maxPeopleAllowed,
+          requirementOne,
+          requirementTwo,
+          durationMinutes,
+          price
+        );
+      });
       await Promise.all(mapActivityPromises);
 
       return res.status(200).json({
