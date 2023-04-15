@@ -2,14 +2,14 @@ import { z } from 'zod';
 
 export const emailSchema = z
   .string()
-  .min(1, { message: 'Email must have at least 1 character(s)' })
+  .min(1, { message: 'Email only accepts at least 1 character(s)' })
   .email()
-  .max(45, { message: 'Email must have at most 45 character(s)' });
+  .max(45, { message: 'Email only accepts at most 45 character(s)' });
 export const passwordSchema = z
   // NB Max length of password is set to 100 for server-side validation b/c encrypting password results in longer
   //  password
   .string()
-  .min(8, { message: 'Password must have at least 8 character(s)' })
+  .min(8, { message: 'Password only accepts at least 8 character(s)' })
   .max(100, { message: 'Password exceeds maximum character allowance' });
 export const usernameSchema = z
   .string()
