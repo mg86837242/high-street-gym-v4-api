@@ -32,8 +32,7 @@ export function createLogin(email, password, username) {
   );
 }
 
-// Update Login (NB current business logic doesn't allow role change, and requires a separate separate account for any
-//  diff role)
+// Update Login (NB current business logic doesn't allow role change, and requires a separate account for any diff role)
 export function updateLoginById(id, email, password, username) {
   return pool.query(
     `
