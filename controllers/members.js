@@ -335,20 +335,19 @@ memberController.post(
         });
       }
 
-      console.log('working on sanitization');
-      const sanitizedMembers = members.map(m => {
-        return Object.keys(m).reduce((acc, curr) => {
-          if (curr === 'lineTwo') {
-            acc[curr] = m[curr];
-          } else if (m[curr] === '') {
-            acc[curr] = null;
+      const mapMemberPromises = members.map(async m => {
+        return Object.keys(m).reduce((acc, cv) => {
+          if (cv === 'lineTwo') {
+            acc[cv] = m[cv];
+          } else if (m[cv] === '') {
+            acc[cv] = null;
           } else {
-            acc[curr] = m[curr];
+            acc[cv] = m[cv];
           }
-          return acc, {};
-        });
+          return acc;
+        }, {});
       });
-      console.log(sanitizedMembers);
+      await Promise.all(mapMemberPromises);
 
       return res.status(200).json({
         status: 200,

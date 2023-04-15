@@ -6,7 +6,10 @@ const bookingSchema = z.object({
   trainerId: idSchema,
   activityId: idSchema,
   date: dateSchema,
-  time: z.string().regex(/^\d{2}:00:00$/),
+  time: z
+    .string()
+    .trim()
+    .regex(/^\d{2}:00:00$/),
 });
 
 export default bookingSchema;
