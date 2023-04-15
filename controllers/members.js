@@ -150,12 +150,11 @@ memberController.post(['/', '/signup'], async (req, res) => {
     const { email, password, username, firstName, lastName, phone, age, gender } = req.body;
 
     // #region un-foldable
-    // NB Use SQL query i/o JS array method, if possible, see:
-    //  https://stackoverflow.com/questions/16014295/which-is-more-efficient-javascript-array-search-or-mysql-like-query,
-    //  so transaction is preferred for multiple INSERT
+    // NB Use SQL query i/o JS array method => transaction is preferred over multiple INSERT, see:
+    //  https://stackoverflow.com/questions/16014295
     // NB `await` pauses the thread, (while `then()` doesn't pause), see:
-    //  -- https://stackoverflow.com/questions/54495711/async-await-vs-then-which-is-the-best-for-performance/70206098#70206098
-    //  -- https://stackoverflow.com/questions/64328865/what-makes-async-await-statements-run-sequentially-vs-in-parallel-in-es6
+    //  -- https://stackoverflow.com/questions/54495711
+    //  -- https://stackoverflow.com/questions/64328865
     //  -- https://dev.to/lydiahallie/javascript-visualized-promises-async-await-5gke#asyncawait
     // NB Bug: `createLogin()` succeeds, but `createMember()` fails (e.g., when missing an argument such as missing
     //  `null` as the `addressId` within the arguments passed into `createMember()` and leading to error 500),

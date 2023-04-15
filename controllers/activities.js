@@ -31,6 +31,7 @@ activityController.get('/', permit('Admin', 'Trainer', 'Member'), async (req, re
       activities: activityResults,
     });
   } catch (error) {
+    console.error(error);
     return res.status(500).json({
       status: 500,
       message: 'Database or server error',
@@ -169,6 +170,7 @@ activityController.post(
         message: 'Activity(-ies) successfully created',
       });
     } catch (error) {
+      console.error(error);
       return res.status(500).json({
         status: 500,
         message: 'Database or server error',
