@@ -336,7 +336,22 @@ memberController.post(
       }
 
       const mapMemberPromises = members.map(async m => {
-        return Object.keys(m).reduce((acc, cv) => {
+        const {
+          email,
+          password,
+          username,
+          firstName,
+          lastName,
+          phone,
+          age,
+          gender,
+          lineOne,
+          lineTwo,
+          suburb,
+          postcode,
+          state,
+          country,
+        } = Object.keys(m).reduce((acc, cv) => {
           if (cv === 'lineTwo') {
             acc[cv] = m[cv];
           } else if (m[cv] === '') {
@@ -346,6 +361,7 @@ memberController.post(
           }
           return acc;
         }, {});
+        return email;
       });
       await Promise.all(mapMemberPromises);
 
