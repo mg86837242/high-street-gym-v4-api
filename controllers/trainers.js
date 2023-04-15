@@ -227,8 +227,8 @@ trainerController.patch('/:id', permit('Admin', 'Trainer'), async (req, res) => 
         message: 'Email has already been used',
       });
     }
-    // -- Update login row if NOT exists (NB current business logic doesn't deal with role change, and requires a
-    //  separate account for any diff role)
+    // -- Update login row if NOT exists (NB current business logic doesn't allow role change, and requires a separate
+    //  account for any diff role)
     const hashedPassword = password.startsWith('$2') ? password : await bcrypt.hash(password, 6);
     await conn.query(
       `
@@ -315,8 +315,8 @@ trainerController.patch('/:id/detailed', permit('Admin', 'Trainer'), async (req,
         message: 'Email has already been used',
       });
     }
-    // -- Update login row if NOT exists (NB current business logic doesn't deal with role change, and requires a
-    //  separate account for any diff role)
+    // -- Update login row if NOT exists (NB current business logic doesn't allow role change, and requires a separate
+    //  account for any diff role)
     const hashedPassword = password.startsWith('$2') ? password : await bcrypt.hash(password, 6);
     await conn.query(
       `
