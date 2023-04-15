@@ -3,7 +3,7 @@ import { XMLParser } from 'fast-xml-parser';
 import bcrypt from 'bcryptjs'; // reason to use `bcryptjs`: https://github.com/kelektiv/node.bcrypt.js/issues/705
 import pool from '../config/database.js';
 import { emptyObjSchema, idSchema } from '../schemas/params.js';
-import { memberSchema, memberDetailedSchema } from '../schemas/members.js';
+import { memberSchema, memberDetailedSchema, memberXMLSchema } from '../schemas/members.js';
 import {
   getAllMembers,
   getAllMembersWithDetails,
@@ -219,7 +219,7 @@ memberController.post('/detailed', permit('Admin', 'Trainer', 'Member'), async (
     if (!memberDetailedSchema.safeParse(req.body).success) {
       return res.status(400).json({
         status: 400,
-        message: memberSchema.safeParse(req.body).error.issues,
+        message: memberDetailedSchema.safeParse(req.body).error.issues,
       });
     }
     const {
@@ -327,9 +327,8 @@ memberController.post(
       // NB After parsing, (1) empty text content within XML Elements becomes empty string, (2) left-out XML Elements
       //  becomes undefined
 
-      // [ ] Coerce pw, phone, age, postcode, etc. for schema validating XML, cuz XML is a bitch
       // [ ] Transaction loop
-      const hasInvalid = members.some(a => !memberDetailedSchema.safeParse(a).success);
+      const hasInvalid = members.some(a => !memberXMLSchema.safeParse(a).success);
       if (hasInvalid) {
         return res.status(400).json({
           status: 400,

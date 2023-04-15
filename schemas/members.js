@@ -37,6 +37,57 @@ export const memberDetailedSchema = z.object({
   country: countrySchema,
 });
 
+export const memberXMLSchema = z.object({
+  email: z.coerce
+    .string()
+    .min(1, { message: 'Email only accepts at least 1 character(s)' })
+    .email()
+    .max(45, { message: 'Email only accepts at most 45 character(s)' }),
+  password: z.coerce
+    .string()
+    .min(8, { message: 'Password only accepts at least 8 character(s)' })
+    .max(100, { message: 'Password exceeds maximum character allowance' }),
+  username: z.coerce
+    .string()
+    .regex(/^(?=.*[a-zA-Z]{1,})(?=.*[\d]{0,})[a-zA-Z0-9]+$/, {
+      message: 'Username only accepts English letters and numbers, and must include at least 1 letter',
+    })
+    .max(45, { message: 'Username only accepts at most 45 character(s)' }),
+  firstName: z.coerce
+    .string()
+    .min(1, { message: 'Name only accepts at least 1 character(s)' })
+    .regex(/^[a-zA-Z]+$/, {
+      message: 'Name only accepts English letters',
+    })
+    .max(45),
+  lastName: z.coerce
+    .string()
+    .min(1, { message: 'Name only accepts at least 1 character(s)' })
+    .regex(/^[a-zA-Z]+$/, {
+      message: 'Name only accepts English letters',
+    })
+    .max(45),
+  phone: z.coerce
+    .string()
+    .min(1, { message: 'Phone only accepts at least 1 character(s)' })
+    .regex(/\+?\d{1,4}?[-.\s]?\(?\d{1,3}?\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9}/, {
+      message: 'Invalid phone number format',
+    })
+    .max(45),
+  age: z.coerce
+    .number({ message: 'Age only accepts numbers' })
+    .nonnegative()
+    .max(999, { message: 'Age only accepts at most 3 digits' })
+    .nullable(),
+  gender: z.coerce.enum(['Female', 'Male', 'Other', '']).nullable(),
+  lineOne: z.coerce.string().max(45),
+  lineTwo: z.coerce.string().max(45),
+  suburb: z.coerce.string().max(45),
+  postcode: z.coerce.string().max(45),
+  state: z.coerce.string().max(45),
+  country: z.coerce.string().max(45),
+});
+
 // NB Based on tests, `nullable()` won't let undefined pass, but will let null and empty string pass => PREFERRED
 //  `optional()` won't let null pass, but will let undefined and empty string pass; when `enum()` is involved, both
 //  won't accept empty string unless specified within `enum()`
