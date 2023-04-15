@@ -418,6 +418,7 @@ memberController.post(
           `,
           [loginId, firstName, lastName, phone, addressId, age, gender]
         );
+        return null;
       });
       await Promise.all(mapMemberPromises);
 

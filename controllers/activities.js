@@ -151,7 +151,11 @@ activityController.post(
           durationMinutes,
           price,
         } = Object.keys(a).reduce((acc, cv) => {
-          a[cv] === '' ? (acc[cv] = null) : (acc[cv] = a[cv]);
+          if (a[cv] === '') {
+            acc[cv] = null;
+          } else {
+            acc[cv] = a[cv];
+          }
           return acc;
         }, {});
 
