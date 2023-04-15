@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { emailSchema, passwordSchema, usernameSchema, firstNameSchema, lastNameSchema, phoneSchema } from './users.js';
+import { lineOneSchema, lineTwoSchema, suburbSchema, postcodeSchema, stateSchema, countrySchema } from './addresses.js';
 
 export const adminSchema = z.object({
   email: emailSchema,
@@ -17,10 +18,10 @@ export const adminDetailedSchema = z.object({
   firstName: firstNameSchema,
   lastName: lastNameSchema,
   phone: phoneSchema,
-  lineOne: z.string().max(45).nullable(),
-  lineTwo: z.string().max(45).nullable(),
-  suburb: z.string().max(45).nullable(),
-  postcode: z.string().max(10).nullable(),
-  state: z.string().max(45).nullable(),
-  country: z.string().max(45).nullable(),
+  lineOne: lineOneSchema,
+  lineTwo: lineTwoSchema,
+  suburb: suburbSchema,
+  postcode: postcodeSchema,
+  state: stateSchema,
+  country: countrySchema,
 });

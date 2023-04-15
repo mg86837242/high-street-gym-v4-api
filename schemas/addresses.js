@@ -1,12 +1,17 @@
 import { z } from 'zod';
 
-const addressSchema = z.object({
-  lineOne: z.string().max(45).nullable(),
-  lineTwo: z.string().max(45).nullable(),
-  suburb: z.string().max(45).nullable(),
-  postcode: z.string().max(10).nullable(),
-  state: z.string().max(45).nullable(),
-  country: z.string().max(45).nullable(),
-});
+export const lineOneSchema = z.string().max(45);
+export const lineTwoSchema = z.string().max(45);
+export const suburbSchema = z.string().max(45);
+export const postcodeSchema = z.string().max(10);
+export const stateSchema = z.string().max(45);
+export const countrySchema = z.string().max(45);
 
-export default addressSchema;
+export const addressSchema = z.object({
+  lineOne: lineOneSchema,
+  lineTwo: lineTwoSchema,
+  suburb: suburbSchema,
+  postcode: postcodeSchema,
+  state: stateSchema,
+  country: countrySchema,
+});

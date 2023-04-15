@@ -3,7 +3,7 @@ import { XMLParser } from 'fast-xml-parser';
 import bcrypt from 'bcryptjs'; // reason to use `bcryptjs`: https://github.com/kelektiv/node.bcrypt.js/issues/705
 import pool from '../config/database.js';
 import { emptyObjSchema, idSchema } from '../schemas/params.js';
-import { signupSchema, memberSchema, memberDetailedSchema } from '../schemas/members.js';
+import { memberSchema, memberDetailedSchema } from '../schemas/members.js';
 import {
   getAllMembers,
   getAllMembersWithDetails,
@@ -135,10 +135,10 @@ memberController.get('/:id/detailed', permit('Admin', 'Trainer', 'Member'), asyn
 memberController.post('/signup', async (req, res) => {
   let conn = null;
   try {
-    if (!signupSchema.safeParse(req.body).success) {
+    if (!memberSchema.safeParse(req.body).success) {
       return res.status(400).json({
         status: 400,
-        message: signupSchema.safeParse(req.body).error.issues,
+        message: memberSchema.safeParse(req.body).error.issues,
       });
     }
     // PS1 `req.body` does NOT explicitly contain `loginId` that is necessary for `createCustomer()` function, however,
@@ -213,10 +213,10 @@ memberController.post('/signup', async (req, res) => {
   }
 });
 
-memberController.post('/', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
+memberController.post('/detailed', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
   let conn = null;
   try {
-    if (!memberSchema.safeParse(req.body).success) {
+    if (!memberDetailedSchema.safeParse(req.body).success) {
       return res.status(400).json({
         status: 400,
         message: memberSchema.safeParse(req.body).error.issues,

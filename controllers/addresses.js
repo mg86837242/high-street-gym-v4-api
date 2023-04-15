@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { emptyObjSchema, idSchema } from '../schemas/params.js';
-import addressSchema from '../schemas/addresses.js';
+import { addressSchema } from '../schemas/addresses.js';
 import {
   getAllAddresses,
   getAddressesById,

@@ -1,23 +1,13 @@
 import { z } from 'zod';
 import { emailSchema, passwordSchema, usernameSchema, firstNameSchema, lastNameSchema, phoneSchema } from './users.js';
+import { lineOneSchema, lineTwoSchema, suburbSchema, postcodeSchema, stateSchema, countrySchema } from './addresses.js';
 
 export const ageSchema = z
   .number({ message: 'Age only accepts numbers' })
   .nonnegative()
-  .max(999, { message: 'Age must have at most 3 digits' })
+  .max(999, { message: 'Age only accepts at most 3 digits' })
   .nullable();
 export const genderSchema = z.enum(['Female', 'Male', 'Other', '']).nullable();
-
-export const signupSchema = z.object({
-  email: emailSchema,
-  password: passwordSchema,
-  username: usernameSchema,
-  firstName: firstNameSchema,
-  lastName: lastNameSchema,
-  phone: phoneSchema,
-  age: ageSchema,
-  gender: genderSchema,
-});
 
 export const memberSchema = z.object({
   email: emailSchema,
@@ -39,12 +29,12 @@ export const memberDetailedSchema = z.object({
   phone: phoneSchema,
   age: ageSchema,
   gender: genderSchema,
-  lineOne: z.string().max(45).nullable(),
-  lineTwo: z.string().max(45).nullable(),
-  suburb: z.string().max(45).nullable(),
-  postcode: z.string().max(10).nullable(),
-  state: z.string().max(45).nullable(),
-  country: z.string().max(45).nullable(),
+  lineOne: lineOneSchema,
+  lineTwo: lineTwoSchema,
+  suburb: suburbSchema,
+  postcode: postcodeSchema,
+  state: stateSchema,
+  country: countrySchema,
 });
 
 // NB Based on tests, `nullable()` won't let undefined pass, but will let null and empty string pass => PREFERRED
