@@ -318,6 +318,7 @@ memberController.post(
   upload.single('new-member-xml'),
   // permit('Admin', 'Trainer'),
   async (req, res) => {
+    let conn = null;
     try {
       const xmlStr = req?.file?.buffer?.toString();
       const parser = new XMLParser();
@@ -334,6 +335,10 @@ memberController.post(
           message: 'Invalid member record detected',
         });
       }
+
+      // Manually acquire a connection from the pool & start a TRANSACTION
+      conn = await pool.getConnection();
+      await conn.beginTransaction();
 
       const mapMemberPromises = members.map(async m => {
         const {
@@ -361,19 +366,76 @@ memberController.post(
           }
           return acc;
         }, {});
-        return email;
+
+        // Find if there's a login row with identical email – referring to the parent table `Logins`
+        const [[emailExists]] = await conn.query('SELECT * FROM Logins WHERE email = ?', [email]);
+        if (emailExists) {
+          // -- Return error if exists
+          return res.status(409).json({
+            status: 409,
+            message: 'Email has already been used',
+          });
+        }
+        // -- Create login row if NOT exists
+        const hashedPassword = await bcrypt.hash(password, 6);
+        const [createLoginResult] = await conn.query(
+          `
+          INSERT INTO Logins (email, password, username, role)
+          VALUES (?, ?, ?, ?)
+          `,
+          [email, hashedPassword, username, 'Member']
+        );
+        const loginId = createLoginResult.insertId;
+
+        // Find if there's an identical address row – referring to the parent table `Addresses`
+        let addressId = null;
+        if (lineOne && suburb && postcode && state && country) {
+          const [[addressExists]] = await conn.query(
+            'SELECT * FROM Addresses WHERE lineOne = ? AND lineTwo = ? AND suburb = ? AND postcode = ? AND state = ? AND country = ?',
+            [lineOne, lineTwo, suburb, postcode, state, country]
+          );
+          if (addressExists) {
+            // -- Use the found address row's PK if exists
+            addressId = addressExists.id;
+          } else {
+            // -- Create address row if NOT exists
+            const [createAddressResult] = await conn.query(
+              `
+              INSERT INTO Addresses
+              (lineOne, lineTwo, suburb, postcode, state, country)
+              VALUES (?, ?, ?, ?, ?, ?)
+              `,
+              [lineOne, lineTwo, suburb, postcode, state, country]
+            );
+            addressId = createAddressResult.insertId;
+          }
+        }
+
+        // Create member row with 2 FKs
+        await conn.query(
+          `
+          INSERT INTO Members (loginId, firstName, lastName, phone, addressId, age, gender)
+          VALUES (?, ?, ?, ?, ?, ?, ?)
+          `,
+          [loginId, firstName, lastName, phone, addressId, age, gender]
+        );
       });
       await Promise.all(mapMemberPromises);
 
+      await conn.commit();
       return res.status(200).json({
         status: 200,
         message: 'Member(s) successfully created',
       });
     } catch (error) {
+      if (conn) await conn.rollback();
+      console.error(error);
       return res.status(500).json({
         status: 500,
         message: 'Database or server error',
       });
+    } finally {
+      if (conn) conn.release();
     }
   }
 );
