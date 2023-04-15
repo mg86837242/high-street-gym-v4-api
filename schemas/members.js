@@ -37,7 +37,7 @@ export const memberDetailedSchema = z.object({
   country: countrySchema,
 });
 
-export const memberXMLSchema = z.object({
+export const memberDetailedXMLSchema = z.object({
   email: z.coerce
     .string()
     .min(1, { message: 'Email only accepts at least 1 character(s)' })
@@ -79,7 +79,7 @@ export const memberXMLSchema = z.object({
     .nonnegative()
     .max(999, { message: 'Age only accepts at most 3 digits' })
     .nullable(),
-  gender: z.coerce.enum(['Female', 'Male', 'Other', '']).nullable(),
+  gender: z.enum(['Female', 'Male', 'Other', '']).nullable(),
   lineOne: z.coerce.string().max(45),
   lineTwo: z.coerce.string().max(45),
   suburb: z.coerce.string().max(45),

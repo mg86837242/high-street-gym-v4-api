@@ -3,7 +3,7 @@ import { XMLParser } from 'fast-xml-parser';
 import bcrypt from 'bcryptjs'; // reason to use `bcryptjs`: https://github.com/kelektiv/node.bcrypt.js/issues/705
 import pool from '../config/database.js';
 import { emptyObjSchema, idSchema } from '../schemas/params.js';
-import { memberSchema, memberDetailedSchema, memberXMLSchema } from '../schemas/members.js';
+import { memberSchema, memberDetailedSchema, memberDetailedXMLSchema } from '../schemas/members.js';
 import {
   getAllMembers,
   getAllMembersWithDetails,
@@ -327,8 +327,7 @@ memberController.post(
       // NB After parsing, (1) empty text content within XML Elements becomes empty string, (2) left-out XML Elements
       //  becomes undefined
 
-      // [ ] Transaction loop
-      const hasInvalid = members.some(a => !memberXMLSchema.safeParse(a).success);
+      const hasInvalid = members.some(a => !memberDetailedXMLSchema.safeParse(a).success);
       if (hasInvalid) {
         return res.status(400).json({
           status: 400,
@@ -336,31 +335,20 @@ memberController.post(
         });
       }
 
-      // const mapMemberPromises = members.map(
-      //   async ({
-      //     name,
-      //     category,
-      //     description,
-      //     intensityLevel,
-      //     maxPeopleAllowed,
-      //     requirementOne,
-      //     requirementTwo,
-      //     durationMinutes,
-      //     price,
-      //   }) =>
-      //     createMember(
-      //       name,
-      //       category,
-      //       description,
-      //       intensityLevel,
-      //       maxPeopleAllowed,
-      //       requirementOne,
-      //       requirementTwo,
-      //       durationMinutes,
-      //       price
-      //     )
-      // );
-      // await Promise.all(mapMemberPromises);
+      console.log('working on sanitization');
+      const sanitizedMembers = members.map(m => {
+        return Object.keys(m).reduce((acc, curr) => {
+          if (curr === 'lineTwo') {
+            acc[curr] = m[curr];
+          } else if (m[curr] === '') {
+            acc[curr] = null;
+          } else {
+            acc[curr] = m[curr];
+          }
+          return acc, {};
+        });
+      });
+      console.log(sanitizedMembers);
 
       return res.status(200).json({
         status: 200,
@@ -370,7 +358,6 @@ memberController.post(
       return res.status(500).json({
         status: 500,
         message: 'Database or server error',
-        error,
       });
     }
   }

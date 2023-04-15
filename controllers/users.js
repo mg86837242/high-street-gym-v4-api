@@ -219,7 +219,6 @@ userController.get(
       return res.status(500).json({
         status: 500,
         message: 'Database or server error',
-        error,
       });
     }
   }

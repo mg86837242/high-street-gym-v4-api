@@ -34,7 +34,6 @@ activityController.get('/', permit('Admin', 'Trainer', 'Member'), async (req, re
     return res.status(500).json({
       status: 500,
       message: 'Database or server error',
-      error,
     });
   }
 });
@@ -173,7 +172,6 @@ activityController.post(
       return res.status(500).json({
         status: 500,
         message: 'Database or server error',
-        error,
       });
     }
   }
