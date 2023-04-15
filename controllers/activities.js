@@ -128,7 +128,8 @@ activityController.post(
       const {
         activityList: { activity: activities },
       } = parser.parse(xmlStr);
-      // NB Empty text content within XML Elements becomes empty string after parsing
+      // NB After parsing, (1) empty text content within XML Elements becomes empty string, (2) left-out XML Elements
+      //  becomes undefined
 
       const hasInvalid = activities.some(a => !activitySchema.safeParse(a).success);
       if (hasInvalid) {

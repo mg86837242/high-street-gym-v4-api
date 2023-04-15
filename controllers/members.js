@@ -1,4 +1,5 @@
 import { Router } from 'express';
+import { XMLParser } from 'fast-xml-parser';
 import bcrypt from 'bcryptjs'; // reason to use `bcryptjs`: https://github.com/kelektiv/node.bcrypt.js/issues/705
 import pool from '../config/database.js';
 import { emptyObjSchema, idSchema } from '../schemas/params.js';
@@ -11,6 +12,7 @@ import {
   deleteMemberById,
 } from '../models/members.js';
 import permit from '../middleware/rbac.js';
+import upload from '../middleware/multer.js';
 
 const memberController = Router();
 
@@ -306,6 +308,67 @@ memberController.post('/', permit('Admin', 'Trainer', 'Member'), async (req, res
     if (conn) conn.release();
   }
 });
+
+memberController.post(
+  '/upload/xml',
+  upload.single('new-member-xml'),
+  // permit('Admin', 'Trainer'),
+  async (req, res) => {
+    try {
+      const xmlStr = req?.file?.buffer?.toString();
+      const parser = new XMLParser();
+      const {
+        memberList: { member: members },
+      } = parser.parse(xmlStr);
+      // NB After parsing, (1) empty text content within XML Elements becomes empty string, (2) left-out XML Elements
+      //  becomes undefined
+
+      // const hasInvalid = members.some(a => !memberSchema.safeParse(a).success);
+      // if (hasInvalid) {
+      //   return res.status(400).json({
+      //     status: 400,
+      //     message: 'Invalid member record detected',
+      //   });
+      // }
+      // const mapMemberPromises = members.map(
+      //   async ({
+      //     name,
+      //     category,
+      //     description,
+      //     intensityLevel,
+      //     maxPeopleAllowed,
+      //     requirementOne,
+      //     requirementTwo,
+      //     durationMinutes,
+      //     price,
+      //   }) =>
+      //     createMember(
+      //       name,
+      //       category,
+      //       description,
+      //       intensityLevel,
+      //       maxPeopleAllowed,
+      //       requirementOne,
+      //       requirementTwo,
+      //       durationMinutes,
+      //       price
+      //     )
+      // );
+      // await Promise.all(mapMemberPromises);
+
+      return res.status(200).json({
+        status: 200,
+        message: 'Member(s) successfully created',
+      });
+    } catch (error) {
+      return res.status(500).json({
+        status: 500,
+        message: 'Database or server error',
+        error,
+      });
+    }
+  }
+);
 
 // Update Member
 // PS1 Depending on the business logic, it's possible to update login and address info separately in their respective routers, e.g., GitHub
