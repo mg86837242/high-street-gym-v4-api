@@ -356,9 +356,7 @@ memberController.post(
           state,
           country,
         } = Object.keys(m).reduce((acc, cv) => {
-          if (cv === 'lineTwo') {
-            acc[cv] = m[cv];
-          } else if (m[cv] === '') {
+          if (m[cv] === '' && cv !== 'lineTwo') {
             acc[cv] = null;
           } else {
             acc[cv] = m[cv];
