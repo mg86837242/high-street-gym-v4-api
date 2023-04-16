@@ -3,9 +3,9 @@ import { emailSchema, passwordSchema, usernameSchema, firstNameSchema, lastNameS
 import { lineOneSchema, lineTwoSchema, suburbSchema, postcodeSchema, stateSchema, countrySchema } from './addresses.js';
 
 export const ageSchema = z
-  .number({ message: 'Age only accepts numbers' })
+  .number({ message: 'Age must be a number' })
   .nonnegative()
-  .max(999, { message: 'Age only accepts at most 3 digits' })
+  .max(999, { message: 'Age must have at most 3 digits' })
   .nullable();
 export const genderSchema = z.enum(['Female', 'Male', 'Other', '']).nullable();
 
@@ -41,49 +41,52 @@ export const memberDetailedXMLSchema = z.object({
   email: z.coerce
     .string()
     .trim()
-    .min(1, { message: 'Email only accepts at least 1 character(s)' })
-    .email()
-    .max(45, { message: 'Email only accepts at most 45 character(s)' }),
+    .min(1, { message: 'Email must be at least 1 character(s)' })
+    .max(45, { message: 'Email must be at most 45 character(s)' })
+    .email(),
   password: z.coerce
     .string()
-    .trim()
-    .min(8, { message: 'Password only accepts at least 8 character(s)' })
-    .max(100, { message: 'Password exceeds maximum character allowance' }),
+    .min(8, { message: 'Password must be at least 8 character(s)' })
+    .max(100, { message: 'Password exceeds maximum character allowance' })
+    .regex(/^((?=\S*?[a-zA-Z])(?=\S*?[0-9]).+)\S$/, {
+      message: 'Password must have at least 1 letter, and 1 number with no spaces',
+    }),
   username: z.coerce
     .string()
     .trim()
+    .min(1, { message: 'Username must be at least 1 character(s)' })
+    .max(45, { message: 'Username must be at most 45 character(s)' })
     .regex(/^(?=.*[a-zA-Z]{1,})(?=.*[\d]{0,})[a-zA-Z0-9]+$/, {
-      message: 'Username only accepts English letters and numbers, and must include at least 1 letter',
-    })
-    .max(45, { message: 'Username only accepts at most 45 character(s)' }),
+      message: 'Username must be English letters and/or numbers, and include at least 1 letter',
+    }),
   firstName: z.coerce
     .string()
     .trim()
-    .min(1, { message: 'Name only accepts at least 1 character(s)' })
+    .min(1, { message: 'Name must be at least 1 character(s)' })
+    .max(45)
     .regex(/^[a-zA-Z]+$/, {
-      message: 'Name only accepts English letters',
-    })
-    .max(45),
+      message: 'Name must have only English letters',
+    }),
   lastName: z.coerce
     .string()
     .trim()
-    .min(1, { message: 'Name only accepts at least 1 character(s)' })
+    .min(1, { message: 'Name must be at least 1 character(s)' })
+    .max(45)
     .regex(/^[a-zA-Z]+$/, {
-      message: 'Name only accepts English letters',
-    })
-    .max(45),
+      message: 'Name must have only English letters',
+    }),
   phone: z.coerce
     .string()
     .trim()
-    .min(1, { message: 'Phone only accepts at least 1 character(s)' })
+    .min(1, { message: 'Phone must be at least 1 character(s)' })
+    .max(45)
     .regex(/\+?\d{1,4}?[-.\s]?\(?\d{1,3}?\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9}/, {
       message: 'Invalid phone number format',
-    })
-    .max(45),
+    }),
   age: z.coerce
-    .number({ message: 'Age only accepts numbers' })
+    .number({ message: 'Age must be numbers' })
     .nonnegative()
-    .max(999, { message: 'Age only accepts at most 3 digits' })
+    .max(999, { message: 'Age must be at most 3 digits' })
     .nullable(),
   gender: z.enum(['Female', 'Male', 'Other', '']).nullable(),
   lineOne: z.coerce.string().trim().max(45),
@@ -104,3 +107,10 @@ export const memberDetailedXMLSchema = z.object({
 //  (2) `FormData.append()` converts field's value to a string in most cases:
 //  -- https://developer.mozilla.org/en-US/docs/Web/API/FormData/Using_FormData_Objects#creating_a_formdata_object_from_scratch
 //  (3) If it's a curl/Postman test, field that is not included within the JSON `req.body` is considered as `undefined`
+
+// NB Empty string within the `enum()` is for the "Choose ..." option in case the user wants to intentionally leave it
+//  blank
+
+// NB Empty input of "type='number" will be deemed as NaN during the validation by React Hook Form (or resolver), thus
+//  this union type (however, will be converted to empty string after being returned from `handleSubmit()`), see this
+//  Github post for alternative solution: https://github.com/orgs/react-hook-form/discussions/6980
