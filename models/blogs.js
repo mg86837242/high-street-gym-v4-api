@@ -4,7 +4,7 @@ import pool from '../config/database.js';
 export function getAllBlogs() {
   return pool.query(
     `
-    SELECT b.id, b.title, b.body, b.createdAt, b.updatedAt,
+    SELECT b.id, b.title, b.body, b.loginId, b.createdAt, b.updatedAt,
     l.username, l.role
     FROM Blogs b
     INNER JOIN Logins l on b.loginId = l.id
