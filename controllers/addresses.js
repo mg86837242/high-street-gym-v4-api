@@ -140,7 +140,7 @@ addressController.patch('/:id', permit('Admin', 'Trainer', 'Member'), async (req
 
 addressController.patch('/by/admin_id/:admin_id', permit('Admin'), async (req, res) => {
   try {
-    const { adminid: adminId } = req.params;
+    const { admin_id: adminId } = req.params;
     if (!idSchema.safeParse(adminId).success) {
       return res.status(400).json({
         status: 400,
