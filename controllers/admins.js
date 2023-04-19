@@ -138,28 +138,18 @@ adminController.post('/detailed', permit('Admin'), async (req, res) => {
     );
     const loginId = createLoginResult.insertId;
 
-    // Find if there's an identical address row – referring to the parent table `Addresses`
+    // Create address row – referring to the parent table `Addresses`
     let addressId = null;
     if (lineOne && suburb && postcode && state && country) {
-      const [[addressExists]] = await conn.query(
-        'SELECT * FROM Addresses WHERE lineOne = ? AND lineTwo = ? AND suburb = ? AND postcode = ? AND state = ? AND country = ?',
-        [lineOne, null, suburb, postcode, state, country]
-      );
-      if (addressExists) {
-        // -- Use the found address row's PK if exists
-        addressId = addressExists.id;
-      } else {
-        // -- Create address row if NOT exists
-        const [createAddressResult] = await conn.query(
-          `
+      const [createAddressResult] = await conn.query(
+        `
           INSERT INTO Addresses
           (lineOne, lineTwo, suburb, postcode, state, country)
           VALUES (?, ?, ?, ?, ?, ?)
           `,
-          [lineOne, lineTwo, suburb, postcode, state, country]
-        );
-        addressId = createAddressResult.insertId;
-      }
+        [lineOne, lineTwo, suburb, postcode, state, country]
+      );
+      addressId = createAddressResult.insertId;
     }
 
     // Create admin row with 2 FKs
@@ -234,7 +224,7 @@ adminController.patch('/:id', permit('Admin'), async (req, res) => {
       [email, hashedPassword, username, loginId]
     );
 
-    // Update admin row with 2 FKs
+    // Update admin row with `loginId` FK
     const [{ affectedRows }] = await conn.query(
       `
       UPDATE Admins
@@ -318,26 +308,16 @@ adminController.patch('/:id/detailed', permit('Admin'), async (req, res) => {
       [email, hashedPassword, username, loginId]
     );
 
-    // Find if there's an identical address row
-    let [[addressId]] = await conn.query('SELECT addressId FROM Admins WHERE id = ?', [id]);
-    const [[addressExists]] = await conn.query(
-      'SELECT * FROM Addresses WHERE lineOne = ? AND lineTwo = ? AND suburb = ? AND postcode = ? AND state = ? AND country = ?',
-      [lineOne, lineTwo, suburb, postcode, state, country]
-    );
-    if (addressExists) {
-      // -- Use the found address row's PK if exists
-      addressId = addressExists.id;
-    } else {
-      // -- Update address row if NOT exists
-      await conn.query(
-        `
+    // Update address row – referring to the parent table `Addresses`
+    let [[{ addressId }]] = await conn.query('SELECT addressId FROM Admins WHERE id = ?', [id]);
+    await conn.query(
+      `
         UPDATE Addresses
         SET lineOne = ?, lineTwo = ?, suburb = ?, postcode = ?, state = ?, country = ?
         WHERE id = ?
         `,
-        [lineOne, lineTwo, suburb, postcode, state, country, addressId]
-      );
-    }
+      [lineOne, lineTwo, suburb, postcode, state, country, addressId]
+    );
 
     // Update admin row with 2 FKs
     const [{ affectedRows }] = await conn.query(
