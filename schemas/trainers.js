@@ -5,8 +5,7 @@ import { lineOneSchema, lineTwoSchema, suburbSchema, postcodeSchema, stateSchema
 const descriptionSchema = z.string().trim().max(255).nullable();
 const specialtySchema = z.string().trim().max(45).nullable();
 const certificateSchema = z.string().trim().max(45).nullable();
-// ??? Triggering server/backend 400 (e.g., change this union type) will cause session loss, which requires refresh and Effect to restore session
-const imageUrlSchema = z.string().trim().url().nullable();
+const imageUrlSchema = z.string().trim().url();
 
 export const trainerSchema = z.object({
   email: emailSchema,
