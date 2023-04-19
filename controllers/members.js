@@ -616,6 +616,7 @@ memberController.delete('/:id', permit('Admin', 'Trainer', 'Member'), async (req
         message: idSchema.safeParse(id).error.issues,
       });
     }
+    // [ ] Delete corresponding login row before deleting member row
     const [{ affectedRows }] = await deleteMemberById(id);
 
     if (!affectedRows) {
