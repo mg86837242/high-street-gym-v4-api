@@ -124,7 +124,13 @@ activityController.post(
   async (req, res) => {
     try {
       const xmlStr = req?.file?.buffer?.toString();
-      const parser = new XMLParser();
+      const parser = new XMLParser({
+        numberParseOptions: {
+          leadingZeros: false,
+          hex: false,
+          eNotation: false,
+        },
+      });
       const {
         activityList: { activity: activities },
       } = parser.parse(xmlStr);

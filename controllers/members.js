@@ -314,7 +314,13 @@ memberController.post(
     let conn = null;
     try {
       const xmlStr = req?.file?.buffer?.toString();
-      const parser = new XMLParser();
+      const parser = new XMLParser({
+        numberParseOptions: {
+          leadingZeros: false,
+          hex: false,
+          eNotation: false,
+        },
+      });
       const {
         memberList: { member: members },
       } = parser.parse(xmlStr);
