@@ -5,7 +5,7 @@ import { lineOneSchema, lineTwoSchema, suburbSchema, postcodeSchema, stateSchema
 const descriptionSchema = z.string().trim().max(255).nullable();
 const specialtySchema = z.string().trim().max(45).nullable();
 const certificateSchema = z.string().trim().max(45).nullable();
-const imageUrlSchema = z.string().trim().url();
+const imageUrlSchema = z.string().trim().url().nullable();
 
 export const trainerSchema = z.object({
   email: emailSchema,
