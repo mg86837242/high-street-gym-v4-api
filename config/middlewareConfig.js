@@ -27,7 +27,7 @@ export default function (app) {
       secret: constants.SESSION_SECRET,
       resave: false,
       saveUninitialized: false,
-      // rolling: true, // TODO Could be the culprit of losing session
+      // rolling: true,
       cookie: {
         secure: false,
         httpOnly: true,

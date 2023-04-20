@@ -145,10 +145,10 @@ adminController.post('/detailed', permit('Admin'), async (req, res) => {
     if (lineOne && suburb && postcode && state && country) {
       const [createAddressResult] = await conn.query(
         `
-          INSERT INTO Addresses
-          (lineOne, lineTwo, suburb, postcode, state, country)
-          VALUES (?, ?, ?, ?, ?, ?)
-          `,
+        INSERT INTO Addresses
+        (lineOne, lineTwo, suburb, postcode, state, country)
+        VALUES (?, ?, ?, ?, ?, ?)
+        `,
         [lineOne, lineTwo, suburb, postcode, state, country]
       );
       addressId = createAddressResult.insertId;
@@ -324,10 +324,10 @@ adminController.patch('/:id/detailed', permit('Admin'), async (req, res) => {
     const [[{ addressId }]] = await conn.query('SELECT addressId FROM Admins WHERE id = ?', [id]);
     await conn.query(
       `
-        UPDATE Addresses
-        SET lineOne = ?, lineTwo = ?, suburb = ?, postcode = ?, state = ?, country = ?
-        WHERE id = ?
-        `,
+      UPDATE Addresses
+      SET lineOne = ?, lineTwo = ?, suburb = ?, postcode = ?, state = ?, country = ?
+      WHERE id = ?
+      `,
       [lineOne, lineTwo, suburb, postcode, state, country, addressId]
     );
 

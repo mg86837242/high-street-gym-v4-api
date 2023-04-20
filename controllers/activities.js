@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import { XMLParser } from 'fast-xml-parser'; // reason to use `fast-xml-parser` i/o `xml2js`: no need to (1) deep clone or `JSON.parse(JSON.stringify(parsedResult))` to clean up the `[Object null prototype]`, nor (2) tinker `explicitArray` option to explicitly tell the parser to not output the obj value as an array
+import pool from '../config/database.js';
 import { emptyObjSchema, idSchema } from '../schemas/params.js';
 import { activitySchema, activityXMLSchema } from '../schemas/activities.js';
 import {
@@ -122,6 +123,7 @@ activityController.post(
   upload.single('new-activity-xml'),
   permit('Admin', 'Trainer'),
   async (req, res) => {
+    let conn = null;
     try {
       const xmlStr = req?.file?.buffer?.toString();
       const parser = new XMLParser({
@@ -137,7 +139,19 @@ activityController.post(
       // NB After parsing, (1) empty text content within XML Elements becomes empty string, (2) left-out XML Elements
       //  becomes undefined
 
-      const hasInvalid = activities.some(a => !activityXMLSchema.safeParse(a).success);
+      const sanitizeActivityPromises = activities.map(async a =>
+        Object.keys(a).reduce((acc, cv) => {
+          if (a[cv] === '') {
+            acc[cv] = null;
+          } else {
+            acc[cv] = a[cv];
+          }
+          return acc;
+        }, {})
+      );
+      const sanitizedActivities = await Promise.all(sanitizeActivityPromises);
+
+      const hasInvalid = sanitizedActivities.some(a => !activityXMLSchema.safeParse(a).success);
       if (hasInvalid) {
         return res.status(400).json({
           status: 400,
@@ -145,8 +159,12 @@ activityController.post(
         });
       }
 
-      const mapActivityPromises = activities.map(async a => {
-        const {
+      // Manually acquire a connection from the pool & start a TRANSACTION
+      conn = await pool.getConnection();
+      await conn.beginTransaction();
+
+      const createActivityPromises = sanitizedActivities.map(
+        async ({
           name,
           category,
           description,
@@ -156,39 +174,43 @@ activityController.post(
           requirementTwo,
           durationMinutes,
           price,
-        } = Object.keys(a).reduce((acc, cv) => {
-          if (a[cv] === '') {
-            acc[cv] = null;
-          } else {
-            acc[cv] = a[cv];
-          }
-          return acc;
-        }, {});
+        }) => {
+          await conn.query(
+            `
+              INSERT INTO Activities
+              (name, category, description, intensityLevel, maxPeopleAllowed, requirementOne, requirementTwo, durationMinutes, price)
+              VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+            `,
+            [
+              name,
+              category,
+              description,
+              intensityLevel,
+              maxPeopleAllowed,
+              requirementOne,
+              requirementTwo,
+              durationMinutes,
+              price,
+            ]
+          );
+        }
+      );
+      await Promise.all(createActivityPromises);
 
-        await createActivity(
-          name,
-          category,
-          description,
-          intensityLevel,
-          maxPeopleAllowed,
-          requirementOne,
-          requirementTwo,
-          durationMinutes,
-          price
-        );
-      });
-      await Promise.all(mapActivityPromises);
-
+      await conn.commit();
       return res.status(200).json({
         status: 200,
         message: 'Activity(-ies) successfully created',
       });
     } catch (error) {
+      if (conn) await conn.rollback();
       console.error(error);
       return res.status(500).json({
         status: 500,
         message: 'Database or server error',
       });
+    } finally {
+      if (conn) conn.release();
     }
   }
 );

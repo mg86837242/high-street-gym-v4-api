@@ -271,10 +271,10 @@ memberController.post('/detailed', permit('Admin', 'Trainer', 'Member'), async (
     if (lineOne && suburb && postcode && state && country) {
       const [createAddressResult] = await conn.query(
         `
-          INSERT INTO Addresses
-          (lineOne, lineTwo, suburb, postcode, state, country)
-          VALUES (?, ?, ?, ?, ?, ?)
-          `,
+        INSERT INTO Addresses
+        (lineOne, lineTwo, suburb, postcode, state, country)
+        VALUES (?, ?, ?, ?, ?, ?)
+        `,
         [lineOne, lineTwo, suburb, postcode, state, country]
       );
       addressId = createAddressResult.insertId;
@@ -327,7 +327,19 @@ memberController.post(
       // NB After parsing, (1) empty text content within XML Elements becomes empty string, (2) left-out XML Elements
       //  becomes undefined
 
-      const hasInvalid = members.some(a => !memberDetailedXMLSchema.safeParse(a).success);
+      const sanitizeMemberPromises = members.map(async m =>
+        Object.keys(m).reduce((acc, cv) => {
+          if (m[cv] === '' && cv !== 'lineTwo') {
+            acc[cv] = null;
+          } else {
+            acc[cv] = m[cv];
+          }
+          return acc;
+        }, {})
+      );
+      const sanitizedMembers = await Promise.all(sanitizeMemberPromises);
+
+      const hasInvalid = sanitizedMembers.some(a => !memberDetailedXMLSchema.safeParse(a).success);
       if (hasInvalid) {
         return res.status(400).json({
           status: 400,
@@ -339,8 +351,8 @@ memberController.post(
       conn = await pool.getConnection();
       await conn.beginTransaction();
 
-      const mapMemberPromises = members.map(async m => {
-        const {
+      const createMemberPromises = sanitizedMembers.map(
+        async ({
           email,
           password,
           username,
@@ -355,61 +367,54 @@ memberController.post(
           postcode,
           state,
           country,
-        } = Object.keys(m).reduce((acc, cv) => {
-          if (m[cv] === '' && cv !== 'lineTwo') {
-            acc[cv] = null;
-          } else {
-            acc[cv] = m[cv];
+        }) => {
+          // Find if there's a login row with identical email – referring to the parent table `Logins`
+          const [[emailExists]] = await conn.query('SELECT * FROM Logins WHERE email = ?', [email]);
+          if (emailExists) {
+            // -- Return error if exists
+            return res.status(409).json({
+              status: 409,
+              message: 'Email has already been used',
+            });
           }
-          return acc;
-        }, {});
-
-        // Find if there's a login row with identical email – referring to the parent table `Logins`
-        const [[emailExists]] = await conn.query('SELECT * FROM Logins WHERE email = ?', [email]);
-        if (emailExists) {
-          // -- Return error if exists
-          return res.status(409).json({
-            status: 409,
-            message: 'Email has already been used',
-          });
-        }
-        // -- Create login row if NOT exists
-        const hashedPassword = await bcrypt.hash(password, 6);
-        const [createLoginResult] = await conn.query(
-          `
-          INSERT INTO Logins (email, password, username, role)
-          VALUES (?, ?, ?, ?)
-          `,
-          [email, hashedPassword, username, 'Member']
-        );
-        const loginId = createLoginResult.insertId;
-
-        // Create address row – referring to the parent table `Addresses`
-        let addressId = null;
-        if (lineOne && suburb && postcode && state && country) {
-          // -- Create address row if NOT exists
-          const [createAddressResult] = await conn.query(
+          // -- Create login row if NOT exists
+          const hashedPassword = await bcrypt.hash(password, 6);
+          const [createLoginResult] = await conn.query(
             `
+            INSERT INTO Logins (email, password, username, role)
+            VALUES (?, ?, ?, ?)
+            `,
+            [email, hashedPassword, username, 'Member']
+          );
+          const loginId = createLoginResult.insertId;
+
+          // Create address row – referring to the parent table `Addresses`
+          let addressId = null;
+          if (lineOne && suburb && postcode && state && country) {
+            // -- Create address row if NOT exists
+            const [createAddressResult] = await conn.query(
+              `
               INSERT INTO Addresses
               (lineOne, lineTwo, suburb, postcode, state, country)
               VALUES (?, ?, ?, ?, ?, ?)
               `,
-            [lineOne, lineTwo, suburb, postcode, state, country]
-          );
-          addressId = createAddressResult.insertId;
-        }
+              [lineOne, lineTwo, suburb, postcode, state, country]
+            );
+            addressId = createAddressResult.insertId;
+          }
 
-        // Create member row with 2 FKs
-        await conn.query(
-          `
-          INSERT INTO Members (loginId, firstName, lastName, phone, addressId, age, gender)
-          VALUES (?, ?, ?, ?, ?, ?, ?)
-          `,
-          [loginId, firstName, lastName, phone, addressId, age, gender]
-        );
-        return null;
-      });
-      await Promise.all(mapMemberPromises);
+          // Create member row with 2 FKs
+          await conn.query(
+            `
+            INSERT INTO Members (loginId, firstName, lastName, phone, addressId, age, gender)
+            VALUES (?, ?, ?, ?, ?, ?, ?)
+            `,
+            [loginId, firstName, lastName, phone, addressId, age, gender]
+          );
+          return undefined;
+        }
+      );
+      await Promise.all(createMemberPromises);
 
       await conn.commit();
       return res.status(200).json({
@@ -583,10 +588,10 @@ memberController.patch('/:id/detailed', permit('Admin', 'Trainer', 'Member'), as
     const [[{ addressId }]] = await conn.query('SELECT addressId FROM Members WHERE id = ?', [id]);
     await conn.query(
       `
-        UPDATE Addresses
-        SET lineOne = ?, lineTwo = ?, suburb = ?, postcode = ?, state = ?, country = ?
-        WHERE id = ?
-        `,
+      UPDATE Addresses
+      SET lineOne = ?, lineTwo = ?, suburb = ?, postcode = ?, state = ?, country = ?
+      WHERE id = ?
+      `,
       [lineOne, lineTwo, suburb, postcode, state, country, addressId]
     );
 

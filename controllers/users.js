@@ -3,7 +3,7 @@ import bcrypt from 'bcryptjs'; // reason to use `bcryptjs`: https://github.com/k
 import { v4 as uuid4 } from 'uuid';
 import { emptyObjSchema, uuidSchema } from '../schemas/params.js';
 import { loginSchema } from '../schemas/users.js';
-import { getAllEmails, getLoginsByAccessKey, getLoginsByEmail, updateLoginAccessKeyById } from '../models/users.js';
+import { getAllEmails, getLoginsByAccessKey, getLoginsByEmail, updateLoginAccessKeyById } from '../models/logins.js';
 import { getAdminsByLoginId, getAdminsWithDetailsByLoginId } from '../models/admins.js';
 import { getTrainersByLoginId, getTrainersWithDetailsByLoginId } from '../models/trainers.js';
 import { getMembersByLoginId, getMembersWithDetailsByLoginId } from '../models/members.js';
