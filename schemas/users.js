@@ -18,10 +18,10 @@ export const passwordSchema = z
 export const usernameSchema = z
   .string()
   .trim()
-  .min(1, { message: 'Username must be at least 1 character(s)' })
-  .max(45, { message: 'Username must be at most 45 character(s)' })
-  .regex(/^(?=.*[a-zA-Z]{1,})(?=.*[\d]{0,})[a-zA-Z0-9]+$/, {
-    message: 'Username must be English letters and/or numbers, and include at least 1 letter',
+  .min(3, { message: 'Username must be at least 3 character(s)' })
+  .max(15, { message: 'Username must be at most 15 character(s)' })
+  .regex(/^[a-zA-Z0-9_-]{3,15}$/, {
+    message: 'Username only allows letter(s), number(s), underscore(s)(_) and hyphen(s)(-)',
   });
 export const firstNameSchema = z
   .string()
