@@ -42,14 +42,15 @@ adminController.get('/:id', permit('Admin', 'Trainer', 'Member'), async (req, re
         message: idSchema.safeParse(id).error.issues,
       });
     }
-    const [[firstAdminResult]] = await getAdminsById(id);
 
+    const [[firstAdminResult]] = await getAdminsById(id);
     if (!firstAdminResult) {
       return res.status(404).json({
         status: 404,
         message: 'No admin found with the ID provided',
       });
     }
+
     return res.status(200).json({
       status: 200,
       message: 'Admin record successfully retrieved',
@@ -73,14 +74,15 @@ adminController.get('/:id/detailed', permit('Admin'), async (req, res) => {
         message: idSchema.safeParse(id).error.issues,
       });
     }
-    const [[firstAdminResult]] = await getAdminsWithDetailsById(id);
 
+    const [[firstAdminResult]] = await getAdminsWithDetailsById(id);
     if (!firstAdminResult) {
       return res.status(404).json({
         status: 404,
         message: 'No admin found with the ID provided',
       });
     }
+
     return res.status(200).json({
       status: 200,
       message: 'Admin record successfully retrieved',
@@ -198,6 +200,14 @@ adminController.patch('/:id', permit('Admin'), async (req, res) => {
     }
     const { email, password, username, firstName, lastName, phone } = req.body;
 
+    const [[firstAdminResult]] = await getAdminsById(id);
+    if (!firstAdminResult) {
+      return res.status(404).json({
+        status: 404,
+        message: 'No admin found with the ID provided',
+      });
+    }
+
     // Manually acquire a connection from the pool & start a TRANSACTION
     conn = await pool.getConnection();
     await conn.beginTransaction();
@@ -225,7 +235,7 @@ adminController.patch('/:id', permit('Admin'), async (req, res) => {
     );
 
     // Update admin row with `loginId` FK
-    const [{ affectedRows }] = await conn.query(
+    await conn.query(
       `
       UPDATE Admins
       SET loginId = ?, firstName = ?, lastName = ?, phone = ?
@@ -234,12 +244,6 @@ adminController.patch('/:id', permit('Admin'), async (req, res) => {
       [loginId, firstName, lastName, phone, id]
     );
 
-    if (!affectedRows) {
-      return res.status(404).json({
-        status: 404,
-        message: 'No admin found with the ID provided',
-      });
-    }
     await conn.commit();
     return res.status(200).json({
       status: 200,
@@ -282,6 +286,14 @@ adminController.patch('/:id/detailed', permit('Admin'), async (req, res) => {
       country,
     } = req.body;
 
+    const [[firstAdminResult]] = await getAdminsById(id);
+    if (!firstAdminResult) {
+      return res.status(404).json({
+        status: 404,
+        message: 'No admin found with the ID provided',
+      });
+    }
+
     // Manually acquire a connection from the pool & start a TRANSACTION
     conn = await pool.getConnection();
     await conn.beginTransaction();
@@ -320,7 +332,7 @@ adminController.patch('/:id/detailed', permit('Admin'), async (req, res) => {
     );
 
     // Update admin row with 2 FKs
-    const [{ affectedRows }] = await conn.query(
+    await conn.query(
       `
       UPDATE Admins
       SET loginId = ?, firstName = ?, lastName = ?, phone = ?, addressId = ?
@@ -329,12 +341,6 @@ adminController.patch('/:id/detailed', permit('Admin'), async (req, res) => {
       [loginId, firstName, lastName, phone, addressId, id]
     );
 
-    if (!affectedRows) {
-      return res.status(404).json({
-        status: 404,
-        message: 'No admin found with the ID provided',
-      });
-    }
     await conn.commit();
     return res.status(200).json({
       status: 200,
@@ -354,6 +360,7 @@ adminController.patch('/:id/detailed', permit('Admin'), async (req, res) => {
 
 // Delete Admin
 adminController.delete('/:id', permit('Admin'), async (req, res) => {
+  let conn = null;
   try {
     const { id } = req.params;
     if (!idSchema.safeParse(id).success) {
@@ -362,24 +369,37 @@ adminController.delete('/:id', permit('Admin'), async (req, res) => {
         message: idSchema.safeParse(id).error.issues,
       });
     }
-    const [{ affectedRows }] = await deleteAdminById(id);
 
-    if (!affectedRows) {
+    const [[firstAdminResult]] = await getAdminsById(id);
+    if (!firstAdminResult) {
       return res.status(404).json({
         status: 404,
         message: 'No admin found with the ID provided',
       });
     }
+
+    // Manually acquire a connection from the pool & start a TRANSACTION
+    conn = await pool.getConnection();
+    await conn.beginTransaction();
+
+    await conn.query('DELETE FROM Addresses WHERE id = ?', [firstAdminResult.addressId]);
+    await conn.query('DELETE FROM Logins WHERE id = ?', [firstAdminResult.loginId]);
+    await conn.query('DELETE FROM Admins WHERE id = ?', [firstAdminResult.id]);
+
+    await conn.commit();
     return res.status(200).json({
       status: 200,
       message: 'Admin successfully deleted',
     });
   } catch (error) {
+    if (conn) await conn.rollback();
     console.error(error);
     return res.status(500).json({
       status: 500,
       message: 'Database or server error',
     });
+  } finally {
+    if (conn) conn.release();
   }
 });
 

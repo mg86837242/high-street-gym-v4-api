@@ -9,7 +9,6 @@ import {
   getAllMembersWithDetails,
   getMembersById,
   getMembersWithDetailsById,
-  deleteMemberById,
 } from '../models/members.js';
 import permit from '../middleware/rbac.js';
 import upload from '../middleware/multer.js';
@@ -78,14 +77,15 @@ memberController.get('/:id', permit('Admin', 'Trainer', 'Member'), async (req, r
         message: idSchema.safeParse(id).error.issues,
       });
     }
-    const [[firstMemberResult]] = await getMembersById(id);
 
+    const [[firstMemberResult]] = await getMembersById(id);
     if (!firstMemberResult) {
       return res.status(404).json({
         status: 404,
         message: 'No member found with the ID provided',
       });
     }
+
     return res.status(200).json({
       status: 200,
       message: 'Member record successfully retrieved',
@@ -109,14 +109,15 @@ memberController.get('/:id/detailed', permit('Admin', 'Trainer', 'Member'), asyn
         message: idSchema.safeParse(id).error.issues,
       });
     }
-    const [[firstMemberResult]] = await getMembersWithDetailsById(id);
 
+    const [[firstMemberResult]] = await getMembersWithDetailsById(id);
     if (!firstMemberResult) {
       return res.status(404).json({
         status: 404,
         message: 'No member found with the ID provided',
       });
     }
+
     return res.status(200).json({
       status: 200,
       message: 'Member record successfully retrieved',
@@ -444,6 +445,14 @@ memberController.patch('/:id', permit('Admin', 'Trainer', 'Member'), async (req,
     }
     const { email, password, username, firstName, lastName, phone, age, gender } = req.body;
 
+    const [[firstMemberResult]] = await getMembersById(id);
+    if (!firstMemberResult) {
+      return res.status(404).json({
+        status: 404,
+        message: 'No member found with the ID provided',
+      });
+    }
+
     // Manually acquire a connection from the pool & start a TRANSACTION
     conn = await pool.getConnection();
     await conn.beginTransaction();
@@ -471,7 +480,7 @@ memberController.patch('/:id', permit('Admin', 'Trainer', 'Member'), async (req,
     );
 
     // Update member row with `loginId` FK
-    const [{ affectedRows }] = await conn.query(
+    await conn.query(
       `
       UPDATE Members
       SET loginId = ?, firstName = ?, lastName = ?, phone = ?, age = ?, gender = ?
@@ -480,12 +489,6 @@ memberController.patch('/:id', permit('Admin', 'Trainer', 'Member'), async (req,
       [loginId, firstName, lastName, phone, age, gender, id]
     );
 
-    if (!affectedRows) {
-      return res.status(404).json({
-        status: 404,
-        message: 'No member found with the ID provided',
-      });
-    }
     await conn.commit();
     return res.status(200).json({
       status: 200,
@@ -536,6 +539,14 @@ memberController.patch('/:id/detailed', permit('Admin', 'Trainer', 'Member'), as
       country,
     } = req.body;
 
+    const [[firstMemberResult]] = await getMembersById(id);
+    if (!firstMemberResult) {
+      return res.status(404).json({
+        status: 404,
+        message: 'No member found with the ID provided',
+      });
+    }
+
     // Manually acquire a connection from the pool & start a TRANSACTION
     conn = await pool.getConnection();
     await conn.beginTransaction();
@@ -574,7 +585,7 @@ memberController.patch('/:id/detailed', permit('Admin', 'Trainer', 'Member'), as
     );
 
     // Update member row with 2 FKs
-    const [{ affectedRows }] = await conn.query(
+    await conn.query(
       `
       UPDATE Members
       SET loginId = ?, firstName = ?, lastName = ?, phone = ?, addressId = ?, age = ?, gender = ?
@@ -583,12 +594,6 @@ memberController.patch('/:id/detailed', permit('Admin', 'Trainer', 'Member'), as
       [loginId, firstName, lastName, phone, addressId, age, gender, id]
     );
 
-    if (!affectedRows) {
-      return res.status(404).json({
-        status: 404,
-        message: 'No member found with the ID provided',
-      });
-    }
     await conn.commit();
     return res.status(200).json({
       status: 200,
@@ -608,6 +613,7 @@ memberController.patch('/:id/detailed', permit('Admin', 'Trainer', 'Member'), as
 
 // Delete Member
 memberController.delete('/:id', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
+  let conn = null;
   try {
     const { id } = req.params;
     if (!idSchema.safeParse(id).success) {
@@ -616,25 +622,37 @@ memberController.delete('/:id', permit('Admin', 'Trainer', 'Member'), async (req
         message: idSchema.safeParse(id).error.issues,
       });
     }
-    // [ ] Delete corresponding login row before deleting member row, extending to other controllers
-    const [{ affectedRows }] = await deleteMemberById(id);
 
-    if (!affectedRows) {
+    const [[firstMemberResult]] = await getMembersById(id);
+    if (!firstMemberResult) {
       return res.status(404).json({
         status: 404,
         message: 'No member found with the ID provided',
       });
     }
+
+    // Manually acquire a connection from the pool & start a TRANSACTION
+    conn = await pool.getConnection();
+    await conn.beginTransaction();
+
+    await conn.query('DELETE FROM Addresses WHERE id = ?', [firstMemberResult.addressId]);
+    await conn.query('DELETE FROM Logins WHERE id = ?', [firstMemberResult.loginId]);
+    await conn.query('DELETE FROM Members WHERE id = ?', [firstMemberResult.id]);
+
+    await conn.commit();
     return res.status(200).json({
       status: 200,
       message: 'Member successfully deleted',
     });
   } catch (error) {
+    if (conn) await conn.rollback();
     console.error(error);
     return res.status(500).json({
       status: 500,
       message: 'Database or server error',
     });
+  } finally {
+    if (conn) conn.release();
   }
 });
 

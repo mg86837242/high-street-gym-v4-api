@@ -3,7 +3,7 @@ import bcrypt from 'bcryptjs'; // reason to use `bcryptjs`: https://github.com/k
 import pool from '../config/database.js';
 import { emptyObjSchema, idSchema } from '../schemas/params.js';
 import { trainerSchema } from '../schemas/trainers.js';
-import { getAllTrainers, getTrainersById, getTrainersWithDetailsById, deleteTrainerById } from '../models/trainers.js';
+import { getAllTrainers, getTrainersById, getTrainersWithDetailsById } from '../models/trainers.js';
 import permit from '../middleware/rbac.js';
 
 const trainerController = Router();
@@ -42,14 +42,15 @@ trainerController.get('/:id', permit('Admin', 'Trainer', 'Member'), async (req, 
         message: idSchema.safeParse(id).error.issues,
       });
     }
-    const [[firstTrainerResult]] = await getTrainersById(id);
 
+    const [[firstTrainerResult]] = await getTrainersById(id);
     if (!firstTrainerResult) {
       return res.status(404).json({
         status: 404,
         message: 'No trainer found with the ID provided',
       });
     }
+
     return res.status(200).json({
       status: 200,
       message: 'Trainer record successfully retrieved',
@@ -73,14 +74,15 @@ trainerController.get('/:id/detailed', permit('Admin', 'Trainer'), async (req, r
         message: idSchema.safeParse(id).error.issues,
       });
     }
-    const [[firstTrainerResult]] = await getTrainersWithDetailsById(id);
 
+    const [[firstTrainerResult]] = await getTrainersWithDetailsById(id);
     if (!firstTrainerResult) {
       return res.status(404).json({
         status: 404,
         message: 'No trainer found with the ID provided',
       });
     }
+
     return res.status(200).json({
       status: 200,
       message: 'Trainer record successfully retrieved',
@@ -203,6 +205,14 @@ trainerController.patch('/:id', permit('Admin', 'Trainer'), async (req, res) => 
     const { email, password, username, firstName, lastName, phone, description, specialty, certificate, imageUrl } =
       req.body;
 
+    const [[firstTrainerResult]] = await getTrainersById(id);
+    if (!firstTrainerResult) {
+      return res.status(404).json({
+        status: 404,
+        message: 'No trainer found with the ID provided',
+      });
+    }
+
     // Manually acquire a connection from the pool & start a TRANSACTION
     conn = await pool.getConnection();
     await conn.beginTransaction();
@@ -230,7 +240,7 @@ trainerController.patch('/:id', permit('Admin', 'Trainer'), async (req, res) => 
     );
 
     // Update trainer row with `loginId` FK
-    const [{ affectedRows }] = await conn.query(
+    await conn.query(
       `
       UPDATE trainers
       SET loginId = ?, firstName = ?, lastName = ?, phone = ?, description = ?, specialty = ?, certificate = ?, imageUrl = ?
@@ -239,12 +249,6 @@ trainerController.patch('/:id', permit('Admin', 'Trainer'), async (req, res) => 
       [loginId, firstName, lastName, phone, description, specialty, certificate, imageUrl, id]
     );
 
-    if (!affectedRows) {
-      return res.status(404).json({
-        status: 404,
-        message: 'No trainer found with the ID provided',
-      });
-    }
     await conn.commit();
     return res.status(200).json({
       status: 200,
@@ -291,6 +295,14 @@ trainerController.patch('/:id/detailed', permit('Admin', 'Trainer'), async (req,
       country,
     } = req.body;
 
+    const [[firstTrainerResult]] = await getTrainersById(id);
+    if (!firstTrainerResult) {
+      return res.status(404).json({
+        status: 404,
+        message: 'No trainer found with the ID provided',
+      });
+    }
+
     // Manually acquire a connection from the pool & start a TRANSACTION
     conn = await pool.getConnection();
     await conn.beginTransaction();
@@ -329,7 +341,7 @@ trainerController.patch('/:id/detailed', permit('Admin', 'Trainer'), async (req,
     );
 
     // Update trainer row with 2 FKs
-    const [{ affectedRows }] = await conn.query(
+    await conn.query(
       `
       UPDATE Trainers
       SET loginId = ?, firstName = ?, lastName = ?, phone = ?, addressId = ?, description = ?, specialty = ?, certificate = ?. imageUrl = ?
@@ -338,12 +350,6 @@ trainerController.patch('/:id/detailed', permit('Admin', 'Trainer'), async (req,
       [loginId, firstName, lastName, phone, addressId, description, specialty, certificate, imageUrl, id]
     );
 
-    if (!affectedRows) {
-      return res.status(404).json({
-        status: 404,
-        message: 'No trainer found with the ID provided',
-      });
-    }
     await conn.commit();
     return res.status(200).json({
       status: 200,
@@ -363,6 +369,7 @@ trainerController.patch('/:id/detailed', permit('Admin', 'Trainer'), async (req,
 
 // Delete Trainer
 trainerController.delete('/:id', permit('Admin', 'Trainer'), async (req, res) => {
+  let conn = null;
   try {
     const { id } = req.params;
     if (!idSchema.safeParse(id).success) {
@@ -371,24 +378,37 @@ trainerController.delete('/:id', permit('Admin', 'Trainer'), async (req, res) =>
         message: idSchema.safeParse(id).error.issues,
       });
     }
-    const [{ affectedRows }] = await deleteTrainerById(id);
 
-    if (!affectedRows) {
+    const [[firstTrainerResult]] = await getTrainersById(id);
+    if (!firstTrainerResult) {
       return res.status(404).json({
         status: 404,
         message: 'No trainer found with the ID provided',
       });
     }
+
+    // Manually acquire a connection from the pool & start a TRANSACTION
+    conn = await pool.getConnection();
+    await conn.beginTransaction();
+
+    await conn.query('DELETE FROM Addresses WHERE id = ?', [firstTrainerResult.addressId]);
+    await conn.query('DELETE FROM Logins WHERE id = ?', [firstTrainerResult.loginId]);
+    await conn.query('DELETE FROM Trainers WHERE id = ?', [firstTrainerResult.id]);
+
+    await conn.commit();
     return res.status(200).json({
       status: 200,
       message: 'Trainer successfully deleted',
     });
   } catch (error) {
+    if (conn) await conn.rollback();
     console.error(error);
     return res.status(500).json({
       status: 500,
       message: 'Database or server error',
     });
+  } finally {
+    if (conn) conn.release();
   }
 });
 
