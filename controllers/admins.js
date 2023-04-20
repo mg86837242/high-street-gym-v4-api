@@ -3,7 +3,7 @@ import bcrypt from 'bcryptjs'; // reason to use `bcryptjs`: https://github.com/k
 import pool from '../config/database.js';
 import { emptyObjSchema, idSchema } from '../schemas/params.js';
 import { adminSchema } from '../schemas/admins.js';
-import { getAllAdmins, getAdminsById, getAdminsWithDetailsById, deleteAdminById } from '../models/admins.js';
+import { getAllAdmins, getAdminsById, getAdminsWithDetailsById } from '../models/admins.js';
 import permit from '../middleware/rbac.js';
 
 const adminController = Router();
@@ -321,7 +321,7 @@ adminController.patch('/:id/detailed', permit('Admin'), async (req, res) => {
     );
 
     // Update address row – referring to the parent table `Addresses`
-    let [[{ addressId }]] = await conn.query('SELECT addressId FROM Admins WHERE id = ?', [id]);
+    const [[{ addressId }]] = await conn.query('SELECT addressId FROM Admins WHERE id = ?', [id]);
     await conn.query(
       `
         UPDATE Addresses

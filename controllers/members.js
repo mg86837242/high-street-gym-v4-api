@@ -187,7 +187,7 @@ memberController.post(['/', '/signup'], async (req, res) => {
     const loginId = createLoginResult.insertId;
 
     // Leave the `addressId` FK null
-    let addressId = null;
+    const addressId = null;
 
     // Create member row with 2 FKs
     const [{ insertId }] = await conn.query(
@@ -580,7 +580,7 @@ memberController.patch('/:id/detailed', permit('Admin', 'Trainer', 'Member'), as
     );
 
     // Update address row – referring to the parent table `Addresses`
-    let [[{ addressId }]] = await conn.query('SELECT addressId FROM Members WHERE id = ?', [id]);
+    const [[{ addressId }]] = await conn.query('SELECT addressId FROM Members WHERE id = ?', [id]);
     await conn.query(
       `
         UPDATE Addresses

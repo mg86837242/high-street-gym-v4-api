@@ -330,7 +330,7 @@ trainerController.patch('/:id/detailed', permit('Admin', 'Trainer'), async (req,
     );
 
     // Update address row – referring to the parent table `Addresses`
-    let [[{ addressId }]] = await conn.query('SELECT addressId FROM Trainers WHERE id = ?', [id]);
+    const [[{ addressId }]] = await conn.query('SELECT addressId FROM Trainers WHERE id = ?', [id]);
     await conn.query(
       `
         UPDATE Addresses
