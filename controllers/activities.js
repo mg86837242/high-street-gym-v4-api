@@ -151,8 +151,9 @@ activityController.post(
       );
       const sanitizedActivities = await Promise.all(sanitizeActivityPromises);
 
-      const hasInvalid = sanitizedActivities.some(a => !activityXMLSchema.safeParse(a).success);
+      const hasInvalid = sanitizedActivities.find(a => !activityXMLSchema.safeParse(a).success);
       if (hasInvalid) {
+        console.log(activityXMLSchema.safeParse(hasInvalid).success)
         return res.status(400).json({
           status: 400,
           message: 'Invalid activity record detected',

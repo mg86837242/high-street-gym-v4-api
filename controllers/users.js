@@ -80,11 +80,11 @@ userController.post('/login', async (req, res) => {
 
     // Look up email
     const [loginResults] = await getLoginsByEmail(email);
-    // NB Error: `for` loop was originally used here i/o `forEach` for (1) short-circuiting, (2) using `async/await`
+    // NB Error: `for` loop was originally used here i/o `forEach` for (1) early return, (2) using `async/await`
     //  inside the loop, however, forbade by linting rules, see:
     // -- https://betterprogramming.pub/should-you-stop-using-foreach-in-your-javascript-code-efe1e86c78e5
     // -- https://www.designcise.com/web/tutorial/when-not-to-use-the-javascript-foreach-loop
-    //  DON'T use `async/await` within a loop, (use array method `find` instead if short-circuiting is needed), see:
+    //  DON'T use `async/await` within a loop, (use array method `find` instead if early return is needed), see:
     // -- https://blog.webdevsimplified.com/2021-11/async-await/
     //  `bcrypt.compare()` is ASYNC usage, which SHOULDN'T be used within `find()`, o/w the 1st elem of array will
     //  return, see:
