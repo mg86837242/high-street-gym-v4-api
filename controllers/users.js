@@ -56,7 +56,7 @@ userController.get('/by_key/:access_key', async (req, res) => {
 
     return res.status(200).json({
       status: 200,
-      message: 'Login record successfully retrieved',
+      message: 'User record successfully retrieved',
       user,
     });
   } catch (error) {
