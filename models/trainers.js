@@ -12,7 +12,7 @@ export function getTrainersById(id) {
 export function getTrainersWithDetailsById(id) {
   return pool.query(
     `
-    SELECT t.firstName, t.lastName, t.phone, t.description, t.specialty, t.certificate, t.imageUrl,
+    SELECT t.id, t.firstName, t.lastName, t.phone, t.description, t.specialty, t.certificate, t.imageUrl,
     l.email, l.password, l.username,
     a.lineOne, a.lineTwo, a.suburb, a.postcode, a.state, a.country
     FROM Trainers t
@@ -24,10 +24,14 @@ export function getTrainersWithDetailsById(id) {
   );
 }
 
+export function getTrainersByLoginId(loginId) {
+  return pool.query('SELECT * FROM Trainers WHERE loginId = ?', [loginId]);
+}
+
 export function getTrainersWithDetailsByLoginId(loginId) {
   return pool.query(
     `
-    SELECT t.firstName, t.lastName, t.phone, t.description, t.specialty, t.certificate, t.imageUrl,
+    SELECT t.id, t.firstName, t.lastName, t.phone, t.description, t.specialty, t.certificate, t.imageUrl,
     l.email, l.password, l.username,
     a.lineOne, a.lineTwo, a.suburb, a.postcode, a.state, a.country
     FROM Trainers t
@@ -37,10 +41,6 @@ export function getTrainersWithDetailsByLoginId(loginId) {
     `,
     [loginId]
   );
-}
-
-export function getTrainersByLoginId(loginId) {
-  return pool.query('SELECT * FROM Trainers WHERE loginId = ?', [loginId]);
 }
 
 export function getTrainersAddressesIdById(id) {

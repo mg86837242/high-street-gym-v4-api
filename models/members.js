@@ -37,10 +37,14 @@ export function getMembersWithDetailsById(id) {
   );
 }
 
+export function getMembersByLoginId(loginId) {
+  return pool.query('SELECT * FROM Members WHERE loginId = ?', [loginId]);
+}
+
 export function getMembersWithDetailsByLoginId(loginId) {
   return pool.query(
     `
-    SELECT m.firstName, m.lastName, m.phone, m.age, m.gender,
+    SELECT m.id, m.firstName, m.lastName, m.phone, m.age, m.gender,
     l.email, l.password, l.username,
     a.lineOne, a.lineTwo, a.suburb, a.postcode, a.state, a.country
     FROM Members m
@@ -50,10 +54,6 @@ export function getMembersWithDetailsByLoginId(loginId) {
   `,
     [loginId]
   );
-}
-
-export function getMembersByLoginId(loginId) {
-  return pool.query('SELECT * FROM Members WHERE loginId = ?', [loginId]);
 }
 
 export function getMembersAddressesIdById(id) {

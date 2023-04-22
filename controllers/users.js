@@ -169,60 +169,53 @@ userController.get('/all_emails', async (req, res) => {
   }
 });
 
-userController.get(
-  '/by_key/:access_key/detailed/with_all_emails',
-  permit('Admin', 'Trainer', 'Member'),
-  async (req, res) => {
-    try {
-      const { access_key: accessKey } = req.params;
-      if (!uuidSchema.safeParse(accessKey).success) {
-        return res.status(400).json({
-          status: 400,
-          message: uuidSchema.safeParse(accessKey).error.issues,
-        });
-      }
-
-      const [[firstLoginResult]] = await getLoginsByAccessKey(accessKey);
-      if (!firstLoginResult) {
-        return res.status(401).json({
-          status: 401,
-          message: 'Unauthorized access key',
-        });
-      }
-      let user = null;
-      switch (firstLoginResult?.role) {
-        case 'Admin':
-          [[user]] = await getAdminsWithDetailsByLoginId(firstLoginResult.id);
-          break;
-        case 'Trainer':
-          [[user]] = await getTrainersWithDetailsByLoginId(firstLoginResult.id);
-          break;
-        case 'Member':
-          [[user]] = await getMembersWithDetailsByLoginId(firstLoginResult.id);
-          break;
-        default:
-          return res.status(403).json({
-            status: 403,
-            message: 'Insufficient privilege',
-          });
-      }
-
-      const [emailResults] = await getAllEmails();
-
-      return res.status(200).json({
-        status: 200,
-        message: 'Login record successfully retrieved',
-        user,
-        emails: emailResults,
-      });
-    } catch (error) {
-      console.error(error);
-      return res.status(500).json({
-        status: 500,
-        message: 'Database or server error',
+userController.get('/by_key/:access_key/detailed', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
+  try {
+    const { access_key: accessKey } = req.params;
+    if (!uuidSchema.safeParse(accessKey).success) {
+      return res.status(400).json({
+        status: 400,
+        message: uuidSchema.safeParse(accessKey).error.issues,
       });
     }
+
+    const [[firstLoginResult]] = await getLoginsByAccessKey(accessKey);
+    if (!firstLoginResult) {
+      return res.status(401).json({
+        status: 401,
+        message: 'Unauthorized access key',
+      });
+    }
+    let firstResult = null;
+    switch (firstLoginResult?.role) {
+      case 'Admin':
+        [[firstResult]] = await getAdminsWithDetailsByLoginId(firstLoginResult.id);
+        break;
+      case 'Trainer':
+        [[firstResult]] = await getTrainersWithDetailsByLoginId(firstLoginResult.id);
+        break;
+      case 'Member':
+        [[firstResult]] = await getMembersWithDetailsByLoginId(firstLoginResult.id);
+        break;
+      default:
+        return res.status(403).json({
+          status: 403,
+          message: 'Insufficient privilege',
+        });
+    }
+
+    return res.status(200).json({
+      status: 200,
+      message: 'Login record successfully retrieved',
+      user: firstResult,
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({
+      status: 500,
+      message: 'Database or server error',
+    });
   }
-);
+});
 
 export default userController;
