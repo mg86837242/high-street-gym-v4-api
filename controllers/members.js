@@ -341,7 +341,7 @@ memberController.post(
 
       const hasInvalid = sanitizedMembers.find(a => !memberDetailedXMLSchema.safeParse(a).success);
       if (hasInvalid) {
-        console.log(memberDetailedXMLSchema.safeParse(hasInvalid).success)
+        console.log(memberDetailedXMLSchema.safeParse(hasInvalid).error.issues);
         return res.status(400).json({
           status: 400,
           message: 'Invalid member record detected',

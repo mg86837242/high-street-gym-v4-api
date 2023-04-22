@@ -153,7 +153,7 @@ activityController.post(
 
       const hasInvalid = sanitizedActivities.find(a => !activityXMLSchema.safeParse(a).success);
       if (hasInvalid) {
-        console.log(activityXMLSchema.safeParse(hasInvalid).success)
+        console.log(activityXMLSchema.safeParse(hasInvalid).error.issues);
         return res.status(400).json({
           status: 400,
           message: 'Invalid activity record detected',
