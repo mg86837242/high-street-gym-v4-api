@@ -81,7 +81,7 @@ export const memberDetailedXMLSchema = z.object({
     .min(1, { message: 'Phone must be at least 1 character(s)' })
     .max(45)
     .regex(/\+?\d{1,4}?[-.\s]?\(?\d{1,3}?\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9}/, {
-      message: 'Invalid phone number format',
+      message: 'Invalid phone number',
     }),
   age: z.coerce
     .number({ message: 'Age must be numbers' })
