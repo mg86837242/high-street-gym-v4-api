@@ -1,9 +1,9 @@
 import { Router } from 'express';
 import bcrypt from 'bcryptjs'; // reason to use `bcryptjs`: https://github.com/kelektiv/node.bcrypt.js/issues/705
 import { v4 as uuid4 } from 'uuid';
-import { emptyObjSchema, uuidSchema } from '../schemas/params.js';
+import { uuidSchema } from '../schemas/params.js';
 import { loginSchema } from '../schemas/users.js';
-import { getAllEmails, getLoginsByAccessKey, getLoginsByEmail, updateLoginAccessKeyById } from '../models/logins.js';
+import { getLoginsByAccessKey, getLoginsByEmail, updateLoginAccessKeyById } from '../models/logins.js';
 import { getAdminsByLoginId, getAdminsWithDetailsByLoginId } from '../models/admins.js';
 import { getTrainersByLoginId, getTrainersWithDetailsByLoginId } from '../models/trainers.js';
 import { getMembersByLoginId, getMembersWithDetailsByLoginId } from '../models/members.js';
@@ -17,7 +17,7 @@ userController.get('/by_key/:access_key', async (req, res) => {
     if (!uuidSchema.safeParse(accessKey).success) {
       return res.status(400).json({
         status: 400,
-        message: uuidSchema.safeParse(accessKey).error.issues,
+        message: 'Invalid credentials',
       });
     }
 
@@ -26,7 +26,7 @@ userController.get('/by_key/:access_key', async (req, res) => {
     if (!id) {
       return res.status(401).json({
         status: 401,
-        message: 'Unauthorized access key',
+        message: 'Unauthorized credentials',
       });
     }
     // Get necessary info from respective child table
@@ -73,7 +73,7 @@ userController.post('/login', async (req, res) => {
     if (!loginSchema.safeParse(req.body).success) {
       return res.status(400).json({
         status: 400,
-        message: loginSchema.safeParse(req.body).error.issues,
+        message: 'Invalid credentials',
       });
     }
     const { email = null, password = null } = req.body;
@@ -95,7 +95,7 @@ userController.post('/login', async (req, res) => {
     if (!match) {
       return res.status(401).json({
         status: 401,
-        message: 'Invalid login credentials',
+        message: 'Login credentials do not match',
       });
     }
     // -- If there's a match found, generate an access key and update the key in the match's login row and session
@@ -123,7 +123,7 @@ userController.post('/logout', async (req, res) => {
     if (!uuidSchema.safeParse(accessKey).success) {
       return res.status(400).json({
         status: 400,
-        message: uuidSchema.safeParse(accessKey).error.issues,
+        message: 'Invalid credentials',
       });
     }
 
@@ -145,37 +145,13 @@ userController.post('/logout', async (req, res) => {
   }
 });
 
-userController.get('/all_emails', async (req, res) => {
-  try {
-    if (!emptyObjSchema.safeParse(req.body).success) {
-      return res.status(400).json({
-        status: 400,
-        message: emptyObjSchema.safeParse(req.body).error.issues,
-      });
-    }
-    const [emailResults] = await getAllEmails();
-
-    return res.status(200).json({
-      status: 200,
-      message: 'Email records successfully retrieved',
-      emails: emailResults,
-    });
-  } catch (error) {
-    console.error(error);
-    return res.status(500).json({
-      status: 500,
-      message: 'Database or server error',
-    });
-  }
-});
-
 userController.get('/by_key/:access_key/detailed', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
   try {
     const { access_key: accessKey } = req.params;
     if (!uuidSchema.safeParse(accessKey).success) {
       return res.status(400).json({
         status: 400,
-        message: uuidSchema.safeParse(accessKey).error.issues,
+        message: 'Invalid credentials',
       });
     }
 
@@ -183,7 +159,7 @@ userController.get('/by_key/:access_key/detailed', permit('Admin', 'Trainer', 'M
     if (!firstLoginResult) {
       return res.status(401).json({
         status: 401,
-        message: 'Unauthorized access key',
+        message: 'Unauthorized credentials',
       });
     }
     let firstResult = null;
@@ -206,7 +182,7 @@ userController.get('/by_key/:access_key/detailed', permit('Admin', 'Trainer', 'M
 
     return res.status(200).json({
       status: 200,
-      message: 'Login record successfully retrieved',
+      message: 'User record successfully retrieved',
       user: firstResult,
     });
   } catch (error) {
