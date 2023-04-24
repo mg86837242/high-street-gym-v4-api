@@ -2,7 +2,7 @@ import { Router } from 'express';
 import { XMLParser } from 'fast-xml-parser'; // reason to use `fast-xml-parser` i/o `xml2js`: no need to (1) deep clone or `JSON.parse(JSON.stringify(parsedResult))` to clean up the `[Object null prototype]`, nor (2) tinker `explicitArray` option to explicitly tell the parser to not output the obj value as an array
 import pool from '../config/database.js';
 import { emptyObjSchema, idSchema } from '../schemas/params.js';
-import { activitySchema, activityXMLSchema } from '../schemas/activities.js';
+import activitySchema from '../schemas/activities.js';
 import {
   getAllActivities,
   getActivitiesById,
@@ -139,21 +139,69 @@ activityController.post(
       // NB After parsing, (1) empty text content within XML Elements becomes empty string, (2) left-out XML Elements
       //  becomes undefined
 
-      const sanitizeActivityPromises = activities.map(async a =>
-        Object.keys(a).reduce((acc, cv) => {
-          if (a[cv] === '') {
-            acc[cv] = null;
-          } else {
-            acc[cv] = a[cv];
-          }
-          return acc;
-        }, {})
+      class Activity {
+        constructor(
+          name,
+          category,
+          description,
+          intensityLevel,
+          maxPeopleAllowed,
+          requirementOne,
+          requirementTwo,
+          durationMinutes,
+          price
+        ) {
+          this.name = name.toString();
+          this.category = category.toString();
+          this.description = description;
+          this.intensityLevel = intensityLevel.toString();
+          this.maxPeopleAllowed = isNaN(parseInt(maxPeopleAllowed, 10)) ? null : parseInt(maxPeopleAllowed, 10);
+          this.requirementOne = requirementOne.toString();
+          this.requirementTwo = requirementTwo.toString();
+          this.durationMinutes = isNaN(parseInt(durationMinutes, 10)) ? null : parseInt(durationMinutes, 10);
+          this.price = isNaN(parseFloat(price)) ? null : parseFloat(price);
+        }
+      }
+
+      const sanitizeActivityPromises = activities.map(
+        async ({
+          name,
+          category,
+          description,
+          intensityLevel,
+          maxPeopleAllowed,
+          requirementOne,
+          requirementTwo,
+          durationMinutes,
+          price,
+        }) => {
+          const coercedActivity = new Activity(
+            name,
+            category,
+            description,
+            intensityLevel,
+            maxPeopleAllowed,
+            requirementOne,
+            requirementTwo,
+            durationMinutes,
+            price
+          );
+
+          return Object.keys(coercedActivity).reduce((acc, cv) => {
+            if (coercedActivity[cv] === '') {
+              acc[cv] = null;
+            } else {
+              acc[cv] = coercedActivity[cv];
+            }
+            return acc;
+          }, {});
+        }
       );
       const sanitizedActivities = await Promise.all(sanitizeActivityPromises);
 
-      const hasInvalid = sanitizedActivities.find(a => !activityXMLSchema.safeParse(a).success);
+      const hasInvalid = sanitizedActivities.find(a => !activitySchema.safeParse(a).success);
       if (hasInvalid) {
-        console.log(activityXMLSchema.safeParse(hasInvalid).error.issues);
+        console.log(activitySchema.safeParse(hasInvalid).error.issues);
         return res.status(400).json({
           status: 400,
           message: 'Invalid activity record detected',

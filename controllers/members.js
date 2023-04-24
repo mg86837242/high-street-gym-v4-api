@@ -3,7 +3,7 @@ import { XMLParser } from 'fast-xml-parser';
 import bcrypt from 'bcryptjs'; // reason to use `bcryptjs`: https://github.com/kelektiv/node.bcrypt.js/issues/705
 import pool from '../config/database.js';
 import { emptyObjSchema, idSchema } from '../schemas/params.js';
-import { memberSchema, memberDetailedSchema, memberDetailedXMLSchema } from '../schemas/members.js';
+import { memberSchema, memberDetailedSchema } from '../schemas/members.js';
 import {
   getAllMembers,
   getAllMembersWithDetails,
@@ -327,21 +327,89 @@ memberController.post(
       // NB After parsing, (1) empty text content within XML Elements becomes empty string, (2) left-out XML Elements
       //  becomes undefined
 
-      const sanitizeMemberPromises = members.map(async m =>
-        Object.keys(m).reduce((acc, cv) => {
-          if (m[cv] === '' && cv !== 'lineTwo') {
-            acc[cv] = null;
-          } else {
-            acc[cv] = m[cv];
-          }
-          return acc;
-        }, {})
+      class Member {
+        constructor(
+          email,
+          password,
+          username,
+          firstName,
+          lastName,
+          phone,
+          age,
+          gender,
+          lineOne,
+          lineTwo,
+          suburb,
+          postcode,
+          state,
+          country
+        ) {
+          this.email = email.toString();
+          this.password = password.toString();
+          this.username = username.toString();
+          this.firstName = firstName.toString();
+          this.lastName = lastName.toString();
+          this.phone = phone.toString();
+          this.age = isNaN(parseInt(age, 10)) ? null : parseInt(age, 10);
+          this.gender = gender.toString();
+          this.lineOne = lineOne.toString();
+          this.lineTwo = lineTwo.toString();
+          this.suburb = suburb.toString();
+          this.postcode = postcode.toString();
+          this.state = state.toString();
+          this.country = country.toString();
+        }
+      }
+
+      const sanitizeMemberPromises = members.map(
+        async ({
+          email,
+          password,
+          username,
+          firstName,
+          lastName,
+          phone,
+          age,
+          gender,
+          lineOne,
+          lineTwo,
+          suburb,
+          postcode,
+          state,
+          country,
+        }) => {
+          const coercedMember = new Member(
+            email,
+            password,
+            username,
+            firstName,
+            lastName,
+            phone,
+            age,
+            gender,
+            lineOne,
+            lineTwo,
+            suburb,
+            postcode,
+            state,
+            country
+          );
+
+          return Object.keys(coercedMember).reduce((acc, cv) => {
+            if (coercedMember[cv] === '' && cv !== 'lineTwo') {
+              acc[cv] = null;
+            } else {
+              acc[cv] = coercedMember[cv];
+            }
+            return acc;
+          }, {});
+        }
       );
       const sanitizedMembers = await Promise.all(sanitizeMemberPromises);
 
       const hasInvalid = sanitizedMembers.find(m => !memberDetailedSchema.safeParse(m).success);
       if (hasInvalid) {
-        console.log(memberDetailedXMLSchema.safeParse(hasInvalid).error.issues);
+        console.log(memberDetailedSchema.safeParse(hasInvalid).error.issues);
         return res.status(400).json({
           status: 400,
           message: 'Invalid member record detected',
