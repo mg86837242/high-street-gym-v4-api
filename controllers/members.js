@@ -339,7 +339,7 @@ memberController.post(
       );
       const sanitizedMembers = await Promise.all(sanitizeMemberPromises);
 
-      const hasInvalid = sanitizedMembers.find(a => !memberDetailedXMLSchema.safeParse(a).success);
+      const hasInvalid = sanitizedMembers.find(m => !memberDetailedSchema.safeParse(m).success);
       if (hasInvalid) {
         console.log(memberDetailedXMLSchema.safeParse(hasInvalid).error.issues);
         return res.status(400).json({
