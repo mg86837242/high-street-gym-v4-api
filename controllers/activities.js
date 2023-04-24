@@ -153,7 +153,7 @@ activityController.post(
         ) {
           this.name = name.toString();
           this.category = category.toString();
-          this.description = description;
+          this.description = description.toString();
           this.intensityLevel = intensityLevel.toString();
           this.maxPeopleAllowed = isNaN(parseInt(maxPeopleAllowed, 10)) ? null : parseInt(maxPeopleAllowed, 10);
           this.requirementOne = requirementOne.toString();
