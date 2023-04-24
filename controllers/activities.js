@@ -2,7 +2,7 @@ import { Router } from 'express';
 import { XMLParser } from 'fast-xml-parser'; // reason to use `fast-xml-parser` i/o `xml2js`: no need to (1) deep clone or `JSON.parse(JSON.stringify(parsedResult))` to clean up the `[Object null prototype]`, nor (2) tinker `explicitArray` option to explicitly tell the parser to not output the obj value as an array
 import pool from '../config/database.js';
 import { emptyObjSchema, idSchema } from '../schemas/params.js';
-import activitySchema from '../schemas/activities.js';
+import { activitySchema, activityXMLSchema } from '../schemas/activities.js';
 import {
   getAllActivities,
   getActivitiesById,
@@ -151,9 +151,9 @@ activityController.post(
       );
       const sanitizedActivities = await Promise.all(sanitizeActivityPromises);
 
-      const hasInvalid = sanitizedActivities.find(a => !activitySchema.safeParse(a).success);
+      const hasInvalid = sanitizedActivities.find(a => !activityXMLSchema.safeParse(a).success);
       if (hasInvalid) {
-        console.log(activitySchema.safeParse(hasInvalid).error.issues);
+        console.log(activityXMLSchema.safeParse(hasInvalid).error.issues);
         return res.status(400).json({
           status: 400,
           message: 'Invalid activity record detected',
