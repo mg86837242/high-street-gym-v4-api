@@ -175,7 +175,7 @@ activityController.post(
           durationMinutes,
           price,
         }) => {
-          const coercedActivity = new Activity(
+          const castActivity = new Activity(
             name,
             category,
             description,
@@ -187,11 +187,11 @@ activityController.post(
             price
           );
 
-          return Object.keys(coercedActivity).reduce((acc, cv) => {
-            if (coercedActivity[cv] === '') {
+          return Object.keys(castActivity).reduce((acc, cv) => {
+            if (castActivity[cv] === '') {
               acc[cv] = null;
             } else {
-              acc[cv] = coercedActivity[cv];
+              acc[cv] = castActivity[cv];
             }
             return acc;
           }, {});

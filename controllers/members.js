@@ -378,7 +378,7 @@ memberController.post(
           state,
           country,
         }) => {
-          const coercedMember = new Member(
+          const castMember = new Member(
             email,
             password,
             username,
@@ -395,11 +395,11 @@ memberController.post(
             country
           );
 
-          return Object.keys(coercedMember).reduce((acc, cv) => {
-            if (coercedMember[cv] === '' && cv !== 'lineTwo') {
+          return Object.keys(castMember).reduce((acc, cv) => {
+            if (castMember[cv] === '' && cv !== 'lineTwo') {
               acc[cv] = null;
             } else {
-              acc[cv] = coercedMember[cv];
+              acc[cv] = castMember[cv];
             }
             return acc;
           }, {});
