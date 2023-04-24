@@ -37,66 +37,6 @@ export const memberDetailedSchema = z.object({
   country: countrySchema,
 });
 
-export const memberDetailedXMLSchema = z.object({
-  email: z.coerce
-    .string()
-    .trim()
-    .min(1, { message: 'Email must be at least 1 character(s)' })
-    .max(45, { message: 'Email must be at most 45 character(s)' })
-    .email(),
-  password: z.coerce
-    .string()
-    .min(8, { message: 'Password must be at least 8 character(s)' })
-    .max(100, { message: 'Password exceeds maximum character allowance' })
-    .regex(/^((?=\S*?[a-zA-Z])(?=\S*?[0-9]).+)\S$/, {
-      message: 'Password must have at least 1 letter, and 1 number with no spaces',
-    }),
-  username: z.coerce
-    .string()
-    .trim()
-    .min(3, { message: 'Username must be at least 3 character(s)' })
-    .max(15, { message: 'Username must be at most 15 character(s)' })
-    .regex(/^[a-zA-Z0-9_-]{3,15}$/, {
-      message: 'Username only allows letter(s), number(s), underscore(s)(_) and hyphen(s)(-)',
-    }),
-  firstName: z.coerce
-    .string()
-    .trim()
-    .min(1, { message: 'Name must be at least 1 character(s)' })
-    .max(45)
-    .regex(/^[a-zA-Z]+$/, {
-      message: 'Name must have only English letters',
-    }),
-  lastName: z.coerce
-    .string()
-    .trim()
-    .min(1, { message: 'Name must be at least 1 character(s)' })
-    .max(45)
-    .regex(/^[a-zA-Z]+$/, {
-      message: 'Name must have only English letters',
-    }),
-  phone: z.coerce
-    .string()
-    .trim()
-    .min(1, { message: 'Phone must be at least 1 character(s)' })
-    .max(45)
-    .regex(/\+?\d{1,4}?[-.\s]?\(?\d{1,3}?\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9}/, {
-      message: 'Invalid phone number',
-    }),
-  age: z.coerce
-    .number({ message: 'Age must be numbers' })
-    .nonnegative()
-    .max(999, { message: 'Age must be at most 3 digits' })
-    .nullable(),
-  gender: z.enum(['Female', 'Male', 'Other', '']).nullable(),
-  lineOne: z.coerce.string().trim().max(45),
-  lineTwo: z.coerce.string().trim().max(45),
-  suburb: z.coerce.string().trim().max(45),
-  postcode: z.coerce.string().trim().max(45),
-  state: z.coerce.string().trim().max(45),
-  country: z.coerce.string().trim().max(45),
-});
-
 // NB Based on tests, `nullable()` won't let undefined pass, but will let null and empty string pass => PREFERRED
 //  `optional()` won't let null pass, but will let undefined and empty string pass; when `enum()` is involved, both
 //  won't accept empty string unless specified within `enum()`

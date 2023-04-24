@@ -3,7 +3,7 @@ import { XMLParser } from 'fast-xml-parser';
 import bcrypt from 'bcryptjs'; // reason to use `bcryptjs`: https://github.com/kelektiv/node.bcrypt.js/issues/705
 import pool from '../config/database.js';
 import { emptyObjSchema, idSchema } from '../schemas/params.js';
-import { memberSchema, memberDetailedSchema, memberDetailedXMLSchema } from '../schemas/members.js';
+import { memberSchema, memberDetailedSchema } from '../schemas/members.js';
 import {
   getAllMembers,
   getAllMembersWithDetails,
@@ -339,9 +339,9 @@ memberController.post(
       );
       const sanitizedMembers = await Promise.all(sanitizeMemberPromises);
 
-      const hasInvalid = sanitizedMembers.find(a => !memberDetailedXMLSchema.safeParse(a).success);
+      const hasInvalid = sanitizedMembers.find(a => !memberDetailedSchema.safeParse(a).success);
       if (hasInvalid) {
-        console.log(memberDetailedXMLSchema.safeParse(hasInvalid).error.issues);
+        console.log(memberDetailedSchema.safeParse(hasInvalid).error.issues);
         return res.status(400).json({
           status: 400,
           message: 'Invalid member record detected',
