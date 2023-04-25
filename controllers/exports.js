@@ -1,4 +1,4 @@
-import fs from 'node:fs';
+import * as fs from 'node:fs';
 import ejs from 'ejs';
 import { Router } from 'express';
 import { emptyObjSchema } from '../schemas/params.js';
