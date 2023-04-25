@@ -15,7 +15,7 @@ exportController.get('/member_list', async (req, res) => {
     if (!emptyObjSchema.safeParse(req.body).success) {
       return res.status(400).json({
         status: 400,
-        message: emptyObjSchema.safeParse(req.body).error.issues,
+        message: JSON.stringify(emptyObjSchema.safeParse(req.body).error.flatten()),
       });
     }
     // Build an array of member objs from relational data
@@ -56,7 +56,7 @@ exportController.get('/activity_list', async (req, res) => {
     if (!emptyObjSchema.safeParse(req.body).success) {
       return res.status(400).json({
         status: 400,
-        message: emptyObjSchema.safeParse(req.body).error.issues,
+        message: JSON.stringify(emptyObjSchema.safeParse(req.body).error.flatten()),
       });
     }
     // Build an array of activity objs from relational data

@@ -4,14 +4,13 @@ import { addressSchema } from '../schemas/addresses.js';
 import {
   getAllAddresses,
   getAddressesById,
-  getAddressesByDetails,
   createAddress,
   updateAddressById,
   deleteAddressById,
 } from '../models/addresses.js';
-import { getAdminsAddressesIdById, updateAdminsAddressIdById } from '../models/admins.js';
-import { getTrainersAddressesIdById, updateTrainersAddressIdById } from '../models/trainers.js';
-import { getMembersAddressesIdById, updateMembersAddressIdById } from '../models/members.js';
+import { getAdminsAddressesIdById } from '../models/admins.js';
+import { getTrainersAddressesIdById } from '../models/trainers.js';
+import { getMembersAddressesIdById } from '../models/members.js';
 import permit from '../middleware/rbac.js';
 
 const addressController = Router();
@@ -19,10 +18,13 @@ const addressController = Router();
 // Read Address
 addressController.get('/', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
   try {
+    // FIXME Refactor by using zod's spa(), or by functional approach - using helper functions to abstract the
+    //  validation process (but this functional approach requires to define schema for Express request object,
+    //  incl. both params and body, which is too much work), extending to other endpoints
     if (!emptyObjSchema.safeParse(req.body).success) {
       return res.status(400).json({
         status: 400,
-        message: emptyObjSchema.safeParse(req.body).error.issues,
+        message: JSON.stringify(emptyObjSchema.safeParse(req.body).error.flatten()),
       });
     }
     const [addressResults] = await getAllAddresses();
@@ -43,11 +45,11 @@ addressController.get('/', permit('Admin', 'Trainer', 'Member'), async (req, res
 
 addressController.get('/:id', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
   try {
-    const id = req.params.id;
+    const { id } = req.params;
     if (!idSchema.safeParse(id).success) {
       return res.status(400).json({
         status: 400,
-        message: idSchema.safeParse(id).error.issues,
+        message: JSON.stringify(idSchema.safeParse(id).error.flatten()),
       });
     }
     const [[firstAddressResult]] = await getAddressesById(id);
@@ -78,7 +80,7 @@ addressController.post('/', permit('Admin', 'Trainer', 'Member'), async (req, re
     if (!addressSchema.safeParse(req.body).success) {
       return res.status(400).json({
         status: 400,
-        message: addressSchema.safeParse(req.body).error.issues,
+        message: JSON.stringify(addressSchema.safeParse(req.body).error.flatten()),
       });
     }
     const { lineOne, lineTwo, suburb, postcode, state, country } = req.body;
@@ -102,17 +104,17 @@ addressController.post('/', permit('Admin', 'Trainer', 'Member'), async (req, re
 // Update Address
 addressController.patch('/:id', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
   try {
-    const id = req.params.id;
+    const { id } = req.params;
     if (!idSchema.safeParse(id).success) {
       return res.status(400).json({
         status: 400,
-        message: idSchema.safeParse(id).error.issues,
+        message: JSON.stringify(idSchema.safeParse(id).error.flatten()),
       });
     }
     if (!addressSchema.safeParse(req.body).success) {
       return res.status(400).json({
         status: 400,
-        message: addressSchema.safeParse(req.body).error.issues,
+        message: JSON.stringify(addressSchema.safeParse(req.body).error.flatten()),
       });
     }
     const { lineOne, lineTwo, suburb, postcode, state, country } = req.body;
@@ -140,45 +142,29 @@ addressController.patch('/:id', permit('Admin', 'Trainer', 'Member'), async (req
 
 addressController.patch('/by/admin_id/:admin_id', permit('Admin'), async (req, res) => {
   try {
-    const { admin_id: adminId } = req.params;
+    const { admin_id: adminId } = req.params.admin_id;
     if (!idSchema.safeParse(adminId).success) {
       return res.status(400).json({
         status: 400,
-        message: idSchema.safeParse(adminId).error.issues,
+        message: JSON.stringify(idSchema.safeParse(adminId).error.flatten()),
       });
     }
     if (!addressSchema.safeParse(req.body).success) {
       return res.status(400).json({
         status: 400,
-        message: addressSchema.safeParse(req.body).error.issues,
+        message: JSON.stringify(addressSchema.safeParse(req.body).error.flatten()),
       });
     }
     const { lineOne, lineTwo, suburb, postcode, state, country } = req.body;
 
-    // Find if there's an identical address row
-    let [[{ addressId }]] = await getAdminsAddressesIdById(adminId);
-    const [[addressExists]] = await getAddressesByDetails(lineOne, lineTwo, suburb, postcode, state, country);
-    if (addressExists) {
-      // -- Use the found address row's PK if exists, then update admin row
-      addressId = addressExists.id;
-      const [{ affectedRows }] = await updateAdminsAddressIdById(adminId, addressId);
+    const [[{ addressId }]] = await getAdminsAddressesIdById(adminId);
+    const [{ affectedRows }] = await updateAddressById(addressId, lineOne, lineTwo, suburb, postcode, state, country);
 
-      if (!affectedRows) {
-        return res.status(404).json({
-          status: 404,
-          message: 'No addresses found with the ID provided',
-        });
-      }
-    } else {
-      // -- Update address row if NOT exists
-      const [{ affectedRows }] = await updateAddressById(addressId, lineOne, lineTwo, suburb, postcode, state, country);
-
-      if (!affectedRows) {
-        return res.status(404).json({
-          status: 404,
-          message: 'No addresses found with the ID provided',
-        });
-      }
+    if (!affectedRows) {
+      return res.status(404).json({
+        status: 404,
+        message: 'No addresses found with the ID provided',
+      });
     }
 
     return res.status(200).json({
@@ -200,41 +186,25 @@ addressController.patch('/by/trainer_id/:trainer_id', permit('Admin', 'Trainer')
     if (!idSchema.safeParse(trainerId).success) {
       return res.status(400).json({
         status: 400,
-        message: idSchema.safeParse(trainerId).error.issues,
+        message: JSON.stringify(idSchema.safeParse(trainerId).error.flatten()),
       });
     }
     if (!addressSchema.safeParse(req.body).success) {
       return res.status(400).json({
         status: 400,
-        message: addressSchema.safeParse(req.body).error.issues,
+        message: JSON.stringify(addressSchema.safeParse(req.body).error.flatten()),
       });
     }
     const { lineOne, lineTwo, suburb, postcode, state, country } = req.body;
 
-    // Find if there's an identical address row
-    let [[{ addressId }]] = await getTrainersAddressesIdById(trainerId);
-    const [[addressExists]] = await getAddressesByDetails(lineOne, lineTwo, suburb, postcode, state, country);
-    if (addressExists) {
-      // -- Use the found address row's PK if exists, then update trainer row
-      addressId = addressExists.id;
-      const [{ affectedRows }] = await updateTrainersAddressIdById(trainerId, addressId);
+    const [[{ addressId }]] = await getTrainersAddressesIdById(trainerId);
+    const [{ affectedRows }] = await updateAddressById(addressId, lineOne, lineTwo, suburb, postcode, state, country);
 
-      if (!affectedRows) {
-        return res.status(404).json({
-          status: 404,
-          message: 'No addresses found with the ID provided',
-        });
-      }
-    } else {
-      // -- Update address row if NOT exists
-      const [{ affectedRows }] = await updateAddressById(addressId, lineOne, lineTwo, suburb, postcode, state, country);
-
-      if (!affectedRows) {
-        return res.status(404).json({
-          status: 404,
-          message: 'No addresses found with the ID provided',
-        });
-      }
+    if (!affectedRows) {
+      return res.status(404).json({
+        status: 404,
+        message: 'No addresses found with the ID provided',
+      });
     }
 
     return res.status(200).json({
@@ -256,41 +226,25 @@ addressController.patch('/by/member_id/:member_id', permit('Admin', 'Trainer', '
     if (!idSchema.safeParse(memberId).success) {
       return res.status(400).json({
         status: 400,
-        message: idSchema.safeParse(memberId).error.issues,
+        message: JSON.stringify(idSchema.safeParse(memberId).error.flatten()),
       });
     }
     if (!addressSchema.safeParse(req.body).success) {
       return res.status(400).json({
         status: 400,
-        message: addressSchema.safeParse(req.body).error.issues,
+        message: JSON.stringify(addressSchema.safeParse(req.body).error.flatten()),
       });
     }
     const { lineOne, lineTwo, suburb, postcode, state, country } = req.body;
 
-    // Find if there's an identical address row
-    let [[{ addressId }]] = await getMembersAddressesIdById(memberId);
-    const [[addressExists]] = await getAddressesByDetails(lineOne, lineTwo, suburb, postcode, state, country);
-    if (addressExists) {
-      // -- Use the found address row's PK if exists, then update member row
-      addressId = addressExists.id;
-      const [{ affectedRows }] = await updateMembersAddressIdById(memberId, addressId);
+    const [[{ addressId }]] = await getMembersAddressesIdById(memberId);
+    const [{ affectedRows }] = await updateAddressById(addressId, lineOne, lineTwo, suburb, postcode, state, country);
 
-      if (!affectedRows) {
-        return res.status(404).json({
-          status: 404,
-          message: 'No addresses found with the ID provided',
-        });
-      }
-    } else {
-      // -- Update address row if NOT exists
-      const [{ affectedRows }] = await updateAddressById(addressId, lineOne, lineTwo, suburb, postcode, state, country);
-
-      if (!affectedRows) {
-        return res.status(404).json({
-          status: 404,
-          message: 'No addresses found with the ID provided',
-        });
-      }
+    if (!affectedRows) {
+      return res.status(404).json({
+        status: 404,
+        message: 'No addresses found with the ID provided',
+      });
     }
 
     return res.status(200).json({
@@ -309,11 +263,11 @@ addressController.patch('/by/member_id/:member_id', permit('Admin', 'Trainer', '
 // Delete Address
 addressController.delete('/:id', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
   try {
-    const id = req.params.id;
+    const { id } = req.params;
     if (!idSchema.safeParse(id).success) {
       return res.status(400).json({
         status: 400,
-        message: idSchema.safeParse(id).error.issues,
+        message: JSON.stringify(idSchema.safeParse(id).error.flatten()),
       });
     }
     const [{ affectedRows }] = await deleteAddressById(id);

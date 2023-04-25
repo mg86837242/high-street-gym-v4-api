@@ -21,7 +21,7 @@ memberController.get('/', permit('Admin', 'Trainer', 'Member'), async (req, res)
     if (!emptyObjSchema.safeParse(req.body).success) {
       return res.status(400).json({
         status: 400,
-        message: emptyObjSchema.safeParse(req.body).error.issues,
+        message: JSON.stringify(emptyObjSchema.safeParse(req.body).error.flatten()),
       });
     }
     const [memberResults] = await getAllMembers();
@@ -48,7 +48,7 @@ memberController.get(
       if (!emptyObjSchema.safeParse(req.body).success) {
         return res.status(400).json({
           status: 400,
-          message: emptyObjSchema.safeParse(req.body).error.issues,
+          message: JSON.stringify(emptyObjSchema.safeParse(req.body).error.flatten()),
         });
       }
       const [memberResults] = await getAllMembersWithDetails();
@@ -70,11 +70,11 @@ memberController.get(
 
 memberController.get('/:id', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
   try {
-    const id = req.params.id;
+    const { id } = req.params;
     if (!idSchema.safeParse(id).success) {
       return res.status(400).json({
         status: 400,
-        message: idSchema.safeParse(id).error.issues,
+        message: JSON.stringify(idSchema.safeParse(id).error.flatten()),
       });
     }
 
@@ -102,11 +102,11 @@ memberController.get('/:id', permit('Admin', 'Trainer', 'Member'), async (req, r
 
 memberController.get('/:id/detailed', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
   try {
-    const id = req.params.id;
+    const { id } = req.params;
     if (!idSchema.safeParse(id).success) {
       return res.status(400).json({
         status: 400,
-        message: idSchema.safeParse(id).error.issues,
+        message: JSON.stringify(idSchema.safeParse(id).error.flatten()),
       });
     }
 
@@ -139,7 +139,7 @@ memberController.post(['/', '/signup'], async (req, res) => {
     if (!memberSchema.safeParse(req.body).success) {
       return res.status(400).json({
         status: 400,
-        message: memberSchema.safeParse(req.body).error.issues,
+        message: JSON.stringify(memberSchema.safeParse(req.body).error.flatten()),
       });
     }
     // PS1 `req.body` does NOT explicitly contain `loginId` that is necessary for `createCustomer()` function, however,
@@ -222,7 +222,7 @@ memberController.post('/detailed', permit('Admin', 'Trainer', 'Member'), async (
     if (!memberDetailedSchema.safeParse(req.body).success) {
       return res.status(400).json({
         status: 400,
-        message: memberDetailedSchema.safeParse(req.body).error.issues,
+        message: JSON.stringify(memberDetailedSchema.safeParse(req.body).error.flatten()),
       });
     }
     const {
@@ -354,7 +354,7 @@ memberController.post(
           this.firstName = firstName.toString();
           this.lastName = lastName.toString();
           this.phone = phone.toString();
-          this.age = isNaN(parseInt(age, 10)) ? null : parseInt(age, 10);
+          this.age = Number.isNaN(parseInt(age, 10)) ? null : parseInt(age, 10);
           this.gender = gender.toString();
           this.lineOne = lineOne.toString();
           this.lineTwo = lineTwo.toString();
@@ -514,17 +514,17 @@ memberController.post(
 memberController.patch('/:id', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
   let conn = null;
   try {
-    const id = req.params.id;
+    const { id } = req.params;
     if (!idSchema.safeParse(id).success) {
       return res.status(400).json({
         status: 400,
-        message: idSchema.safeParse(id).error.issues,
+        message: JSON.stringify(idSchema.safeParse(id).error.flatten()),
       });
     }
     if (!memberSchema.safeParse(req.body).success) {
       return res.status(400).json({
         status: 400,
-        message: memberSchema.safeParse(req.body).error.issues,
+        message: JSON.stringify(memberSchema.safeParse(req.body).error.flatten()),
       });
     }
     const { email, password, username, firstName, lastName, phone, age, gender } = req.body;
@@ -593,17 +593,17 @@ memberController.patch('/:id', permit('Admin', 'Trainer', 'Member'), async (req,
 memberController.patch('/:id/detailed', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
   let conn = null;
   try {
-    const id = req.params.id;
+    const { id } = req.params;
     if (!idSchema.safeParse(id).success) {
       return res.status(400).json({
         status: 400,
-        message: idSchema.safeParse(id).error.issues,
+        message: JSON.stringify(idSchema.safeParse(id).error.flatten()),
       });
     }
     if (!memberDetailedSchema.safeParse(req.body).success) {
       return res.status(400).json({
         status: 400,
-        message: memberDetailedSchema.safeParse(req.body).error.issues,
+        message: JSON.stringify(memberDetailedSchema.safeParse(req.body).error.flatten()),
       });
     }
     const {
@@ -699,11 +699,11 @@ memberController.patch('/:id/detailed', permit('Admin', 'Trainer', 'Member'), as
 memberController.delete('/:id', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
   let conn = null;
   try {
-    const id = req.params.id;
+    const { id } = req.params;
     if (!idSchema.safeParse(id).success) {
       return res.status(400).json({
         status: 400,
-        message: idSchema.safeParse(id).error.issues,
+        message: JSON.stringify(idSchema.safeParse(id).error.flatten()),
       });
     }
 

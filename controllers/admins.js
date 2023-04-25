@@ -14,7 +14,7 @@ adminController.get('/', permit('Admin', 'Trainer', 'Member'), async (req, res) 
     if (!emptyObjSchema.safeParse(req.body).success) {
       return res.status(400).json({
         status: 400,
-        message: emptyObjSchema.safeParse(req.body).error.issues,
+        message: JSON.stringify(emptyObjSchema.safeParse(req.body).error.flatten()),
       });
     }
     const [adminResults] = await getAllAdmins();
@@ -35,11 +35,11 @@ adminController.get('/', permit('Admin', 'Trainer', 'Member'), async (req, res) 
 
 adminController.get('/:id', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
   try {
-    const id = req.params.id;
+    const { id } = req.params;
     if (!idSchema.safeParse(id).success) {
       return res.status(400).json({
         status: 400,
-        message: idSchema.safeParse(id).error.issues,
+        message: JSON.stringify(idSchema.safeParse(id).error.flatten()),
       });
     }
 
@@ -67,11 +67,11 @@ adminController.get('/:id', permit('Admin', 'Trainer', 'Member'), async (req, re
 
 adminController.get('/:id/detailed', permit('Admin'), async (req, res) => {
   try {
-    const id = req.params.id;
+    const { id } = req.params;
     if (!idSchema.safeParse(id).success) {
       return res.status(400).json({
         status: 400,
-        message: idSchema.safeParse(id).error.issues,
+        message: JSON.stringify(idSchema.safeParse(id).error.flatten()),
       });
     }
 
@@ -185,17 +185,17 @@ adminController.post('/detailed', permit('Admin'), async (req, res) => {
 adminController.patch('/:id', permit('Admin'), async (req, res) => {
   let conn = null;
   try {
-    const id = req.params.id;
+    const { id } = req.params;
     if (!idSchema.safeParse(id).success) {
       return res.status(400).json({
         status: 400,
-        message: idSchema.safeParse(id).error.issues,
+        message: JSON.stringify(idSchema.safeParse(id).error.flatten()),
       });
     }
     if (!adminSchema.safeParse(req.body).success) {
       return res.status(400).json({
         status: 400,
-        message: adminSchema.safeParse(req.body).error.issues,
+        message: JSON.stringify(adminSchema.safeParse(req.body).error.flatten()),
       });
     }
     const { email, password, username, firstName, lastName, phone } = req.body;
@@ -264,11 +264,11 @@ adminController.patch('/:id', permit('Admin'), async (req, res) => {
 adminController.patch('/:id/detailed', permit('Admin'), async (req, res) => {
   let conn = null;
   try {
-    const id = req.params.id;
+    const { id } = req.params;
     if (!idSchema.safeParse(id).success) {
       return res.status(400).json({
         status: 400,
-        message: idSchema.safeParse(id).error.issues,
+        message: JSON.stringify(idSchema.safeParse(id).error.flatten()),
       });
     }
     const {
@@ -362,11 +362,11 @@ adminController.patch('/:id/detailed', permit('Admin'), async (req, res) => {
 adminController.delete('/:id', permit('Admin'), async (req, res) => {
   let conn = null;
   try {
-    const id = req.params.id;
+    const { id } = req.params;
     if (!idSchema.safeParse(id).success) {
       return res.status(400).json({
         status: 400,
-        message: idSchema.safeParse(id).error.issues,
+        message: JSON.stringify(idSchema.safeParse(id).error.flatten()),
       });
     }
 

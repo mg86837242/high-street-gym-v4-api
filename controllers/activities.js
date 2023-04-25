@@ -160,11 +160,11 @@ activityController.post(
           this.category = category.toString();
           this.description = description.toString();
           this.intensityLevel = intensityLevel.toString();
-          this.maxPeopleAllowed = isNaN(parseInt(maxPeopleAllowed, 10)) ? null : parseInt(maxPeopleAllowed, 10);
+          this.maxPeopleAllowed = Number.isNaN(parseInt(maxPeopleAllowed, 10)) ? null : parseInt(maxPeopleAllowed, 10);
           this.requirementOne = requirementOne.toString();
           this.requirementTwo = requirementTwo.toString();
-          this.durationMinutes = isNaN(parseInt(durationMinutes, 10)) ? null : parseInt(durationMinutes, 10);
-          this.price = isNaN(parseFloat(price)) ? null : parseFloat(price);
+          this.durationMinutes = Number.isNaN(parseInt(durationMinutes, 10)) ? null : parseInt(durationMinutes, 10);
+          this.price = Number.isNaN(parseFloat(price)) ? null : parseFloat(price);
         }
       }
 
