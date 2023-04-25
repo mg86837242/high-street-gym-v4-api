@@ -105,7 +105,7 @@ addressController.post('/', permit('Admin', 'Trainer', 'Member'), async (req, re
 addressController.patch('/:id', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
   try {
     // FIXME Need to use one schema to parse the entire Express `req` (incl. both params and body) and get data by
-    //  destructuring `result.data` extending to other endpoints
+    //  destructuring `result.data`, extending to other endpoints
     const { id } = req.params;
     const result = await idSchema.spa(id);
     if (!result.success) {
