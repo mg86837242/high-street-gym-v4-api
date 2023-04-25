@@ -144,6 +144,10 @@ activityController.post(
       // NB After parsing, (1) empty text content within XML Elements becomes empty string, (2) left-out XML Elements
       //  becomes undefined
 
+      // NB Bug: after configuring the `numberParseOptions` of the parser as shown above, and properly sanitizing the
+      //  element with empty content (w/ falsy value), the JS obj (generated from parsing XML string) is still
+      //  considered invalid by the schema (designed in accordance with the database constraints) => Solution: write a
+      //  constructor to type cast the member obj during the sanitization
       class Activity {
         constructor(
           name,
