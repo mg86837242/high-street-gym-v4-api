@@ -70,17 +70,6 @@ export function updateAdminById(id, loginId, firstName, lastName, phone, address
   );
 }
 
-export function updateAdminsAddressIdById(id, addressId) {
-  return pool.query(
-    `
-    UPDATE Admins
-    SET addressId = ?
-    WHERE id = ?
-    `,
-    [addressId, id]
-  );
-}
-
 // Delete Admin
 export function deleteAdminById(id) {
   return pool.query('DELETE FROM Admins WHERE id = ?', [id]);

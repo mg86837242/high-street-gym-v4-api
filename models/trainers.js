@@ -91,17 +91,6 @@ export function updateTrainerById(
   );
 }
 
-export function updateTrainersAddressIdById(id, addressId) {
-  return pool.query(
-    `
-    UPDATE Trainers
-    SET addressId = ?
-    WHERE id = ?
-    `,
-    [addressId, id]
-  );
-}
-
 // Delete Trainer
 export function deleteTrainerById(id) {
   return pool.query('DELETE FROM Trainers WHERE id = ?', [id]);

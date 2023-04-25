@@ -83,17 +83,6 @@ export function updateMemberById(id, loginId, firstName, lastName, phone, addres
   );
 }
 
-export function updateMembersAddressIdById(id, addressId) {
-  return pool.query(
-    `
-    UPDATE Members
-    SET addressId = ?
-    WHERE id = ?
-    `,
-    [addressId, id]
-  );
-}
-
 // Delete Member
 export function deleteMemberById(id) {
   return pool.query('DELETE FROM Members WHERE id = ?', [id]);
