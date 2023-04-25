@@ -35,7 +35,7 @@ adminController.get('/', permit('Admin', 'Trainer', 'Member'), async (req, res) 
 
 adminController.get('/:id', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
   try {
-    const { id } = req.params;
+    const id = req.params.id;
     if (!idSchema.safeParse(id).success) {
       return res.status(400).json({
         status: 400,
@@ -67,7 +67,7 @@ adminController.get('/:id', permit('Admin', 'Trainer', 'Member'), async (req, re
 
 adminController.get('/:id/detailed', permit('Admin'), async (req, res) => {
   try {
-    const { id } = req.params;
+    const id = req.params.id;
     if (!idSchema.safeParse(id).success) {
       return res.status(400).json({
         status: 400,
@@ -185,7 +185,7 @@ adminController.post('/detailed', permit('Admin'), async (req, res) => {
 adminController.patch('/:id', permit('Admin'), async (req, res) => {
   let conn = null;
   try {
-    const { id } = req.params;
+    const id = req.params.id;
     if (!idSchema.safeParse(id).success) {
       return res.status(400).json({
         status: 400,
@@ -264,7 +264,7 @@ adminController.patch('/:id', permit('Admin'), async (req, res) => {
 adminController.patch('/:id/detailed', permit('Admin'), async (req, res) => {
   let conn = null;
   try {
-    const { id } = req.params;
+    const id = req.params.id;
     if (!idSchema.safeParse(id).success) {
       return res.status(400).json({
         status: 400,
@@ -362,7 +362,7 @@ adminController.patch('/:id/detailed', permit('Admin'), async (req, res) => {
 adminController.delete('/:id', permit('Admin'), async (req, res) => {
   let conn = null;
   try {
-    const { id } = req.params;
+    const id = req.params.id;
     if (!idSchema.safeParse(id).success) {
       return res.status(400).json({
         status: 400,

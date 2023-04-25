@@ -2,7 +2,7 @@ import { Router } from 'express';
 import { XMLParser } from 'fast-xml-parser'; // reason to use `fast-xml-parser` i/o `xml2js`: no need to (1) deep clone or `JSON.parse(JSON.stringify(parsedResult))` to clean up the `[Object null prototype]`, nor (2) tinker `explicitArray` option to explicitly tell the parser to not output the obj value as an array
 import pool from '../config/database.js';
 import { emptyObjSchema, idSchema } from '../schemas/params.js';
-import activitySchema from '../schemas/activities.js';
+import { activitySchema, updateActivitySchema } from '../schemas/activities.js';
 import {
   getAllActivities,
   getActivitiesById,
@@ -18,12 +18,14 @@ const activityController = Router();
 // Read Activity
 activityController.get('/', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
   try {
-    if (!emptyObjSchema.safeParse(req.body).success) {
+    const result = await emptyObjSchema.spa(req.body);
+    if (!result.success) {
       return res.status(400).json({
         status: 400,
-        message: emptyObjSchema.safeParse(req.body).error.issues,
+        message: JSON.stringify(result.error.flatten()),
       });
     }
+
     const [activityResults] = await getAllActivities();
 
     return res.status(200).json({
@@ -42,13 +44,15 @@ activityController.get('/', permit('Admin', 'Trainer', 'Member'), async (req, re
 
 activityController.get('/:id', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
   try {
-    const { id } = req.params;
-    if (!idSchema.safeParse(id).success) {
+    const result = await idSchema.spa(req.params.id);
+    if (!result.success) {
       return res.status(400).json({
         status: 400,
-        message: idSchema.safeParse(id).error.issues,
+        message: JSON.stringify(result.error.flatten()),
       });
     }
+    const id = result.data;
+
     const [[firstActivityResult]] = await getActivitiesById(id);
 
     if (!firstActivityResult) {
@@ -74,10 +78,11 @@ activityController.get('/:id', permit('Admin', 'Trainer', 'Member'), async (req,
 // Create Activity
 activityController.post('/', permit('Admin', 'Trainer'), async (req, res) => {
   try {
-    if (!activitySchema.safeParse(req.body).success) {
+    const result = await activitySchema.spa(req.body);
+    if (!result.success) {
       return res.status(400).json({
         status: 400,
-        message: activitySchema.safeParse(req.body).error.issues,
+        message: JSON.stringify(result.error.flatten()),
       });
     }
     const {
@@ -90,7 +95,7 @@ activityController.post('/', permit('Admin', 'Trainer'), async (req, res) => {
       requirementTwo,
       durationMinutes,
       price,
-    } = req.body;
+    } = result.data;
 
     const [{ insertId }] = await createActivity(
       name,
@@ -201,10 +206,10 @@ activityController.post(
 
       const hasInvalid = sanitizedActivities.find(a => !activitySchema.safeParse(a).success);
       if (hasInvalid) {
-        console.log(activitySchema.safeParse(hasInvalid).error.issues);
+        const result = await activitySchema.spa(hasInvalid);
         return res.status(400).json({
           status: 400,
-          message: 'Invalid activity record detected',
+          message: JSON.stringify(result.error.flatten()),
         });
       }
 
@@ -267,30 +272,30 @@ activityController.post(
 // Update Activity
 activityController.patch('/:id', permit('Admin', 'Trainer'), async (req, res) => {
   try {
-    const { id } = req.params;
-    if (!idSchema.safeParse(id).success) {
+    const result = await updateActivitySchema.spa({
+      params: req.params,
+      body: req.body,
+    });
+    if (!result.success) {
       return res.status(400).json({
         status: 400,
-        message: idSchema.safeParse(id).error.issues,
-      });
-    }
-    if (!activitySchema.safeParse(req.body).success) {
-      return res.status(400).json({
-        status: 400,
-        message: activitySchema.safeParse(req.body).error.issues,
+        message: JSON.stringify(result.error.flatten()),
       });
     }
     const {
-      name,
-      category,
-      description,
-      intensityLevel,
-      maxPeopleAllowed,
-      requirementOne,
-      requirementTwo,
-      durationMinutes,
-      price,
-    } = req.body;
+      params: { id },
+      body: {
+        name,
+        category,
+        description,
+        intensityLevel,
+        maxPeopleAllowed,
+        requirementOne,
+        requirementTwo,
+        durationMinutes,
+        price,
+      },
+    } = result.data;
 
     const [{ affectedRows }] = await updateActivityById(
       id,
@@ -327,13 +332,15 @@ activityController.patch('/:id', permit('Admin', 'Trainer'), async (req, res) =>
 // Delete Activity
 activityController.delete('/:id', permit('Admin', 'Trainer'), async (req, res) => {
   try {
-    const { id } = req.params;
-    if (!idSchema.safeParse(id).success) {
+    const result = await idSchema.spa(req.params.id);
+    if (!result.success) {
       return res.status(400).json({
         status: 400,
-        message: idSchema.safeParse(id).error.issues,
+        message: JSON.stringify(result.error.flatten()),
       });
     }
+    const id = result.data;
+
     const [{ affectedRows }] = await deleteActivityById(id);
 
     if (!affectedRows) {

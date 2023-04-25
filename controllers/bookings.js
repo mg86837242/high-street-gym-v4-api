@@ -123,7 +123,7 @@ bookingController.get('/by/date/:date', async (req, res) => {
 
 bookingController.get('/:id', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
   try {
-    const { id } = req.params;
+    const id = req.params.id;
     if (!idSchema.safeParse(id).success) {
       return res.status(400).json({
         status: 400,
@@ -154,7 +154,7 @@ bookingController.get('/:id', permit('Admin', 'Trainer', 'Member'), async (req, 
 
 bookingController.get('/:id/with_options', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
   try {
-    const { id } = req.params;
+    const id = req.params.id;
     if (!idSchema.safeParse(id).success) {
       return res.status(400).json({
         status: 400,
@@ -240,7 +240,7 @@ bookingController.post('/', permit('Admin', 'Trainer', 'Member'), async (req, re
 // Update Booking
 bookingController.patch('/:id', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
   try {
-    const { id } = req.params;
+    const id = req.params.id;
     if (!idSchema.safeParse(id).success) {
       return res.status(400).json({
         status: 400,
@@ -305,7 +305,7 @@ bookingController.patch('/:id', permit('Admin', 'Trainer', 'Member'), async (req
 // Delete Booking
 bookingController.delete('/:id', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
   try {
-    const { id } = req.params;
+    const id = req.params.id;
     if (!idSchema.safeParse(id).success) {
       return res.status(400).json({
         status: 400,

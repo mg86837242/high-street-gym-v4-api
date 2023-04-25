@@ -43,7 +43,7 @@ addressController.get('/', permit('Admin', 'Trainer', 'Member'), async (req, res
 
 addressController.get('/:id', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
   try {
-    const { id } = req.params;
+    const id = req.params.id;
     if (!idSchema.safeParse(id).success) {
       return res.status(400).json({
         status: 400,
@@ -102,7 +102,7 @@ addressController.post('/', permit('Admin', 'Trainer', 'Member'), async (req, re
 // Update Address
 addressController.patch('/:id', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
   try {
-    const { id } = req.params;
+    const id = req.params.id;
     if (!idSchema.safeParse(id).success) {
       return res.status(400).json({
         status: 400,
@@ -309,7 +309,7 @@ addressController.patch('/by/member_id/:member_id', permit('Admin', 'Trainer', '
 // Delete Address
 addressController.delete('/:id', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
   try {
-    const { id } = req.params;
+    const id = req.params.id;
     if (!idSchema.safeParse(id).success) {
       return res.status(400).json({
         status: 400,

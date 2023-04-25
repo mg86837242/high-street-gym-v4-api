@@ -70,7 +70,7 @@ memberController.get(
 
 memberController.get('/:id', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
   try {
-    const { id } = req.params;
+    const id = req.params.id;
     if (!idSchema.safeParse(id).success) {
       return res.status(400).json({
         status: 400,
@@ -102,7 +102,7 @@ memberController.get('/:id', permit('Admin', 'Trainer', 'Member'), async (req, r
 
 memberController.get('/:id/detailed', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
   try {
-    const { id } = req.params;
+    const id = req.params.id;
     if (!idSchema.safeParse(id).success) {
       return res.status(400).json({
         status: 400,
@@ -514,7 +514,7 @@ memberController.post(
 memberController.patch('/:id', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
   let conn = null;
   try {
-    const { id } = req.params;
+    const id = req.params.id;
     if (!idSchema.safeParse(id).success) {
       return res.status(400).json({
         status: 400,
@@ -593,7 +593,7 @@ memberController.patch('/:id', permit('Admin', 'Trainer', 'Member'), async (req,
 memberController.patch('/:id/detailed', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
   let conn = null;
   try {
-    const { id } = req.params;
+    const id = req.params.id;
     if (!idSchema.safeParse(id).success) {
       return res.status(400).json({
         status: 400,
@@ -699,7 +699,7 @@ memberController.patch('/:id/detailed', permit('Admin', 'Trainer', 'Member'), as
 memberController.delete('/:id', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
   let conn = null;
   try {
-    const { id } = req.params;
+    const id = req.params.id;
     if (!idSchema.safeParse(id).success) {
       return res.status(400).json({
         status: 400,
