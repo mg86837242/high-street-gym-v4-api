@@ -11,10 +11,11 @@ const trainerController = Router();
 // Read Trainer
 trainerController.get('/', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
   try {
-    if (!emptyObjSchema.safeParse(req.body).success) {
+    const result = await emptyObjSchema.spa(req.body);
+    if (!result.success) {
       return res.status(400).json({
         status: 400,
-        message: JSON.stringify(emptyObjSchema.safeParse(req.body).error.flatten()),
+        message: JSON.stringify(result.error.flatten()),
       });
     }
     const [trainerResults] = await getAllTrainers();
@@ -36,10 +37,11 @@ trainerController.get('/', permit('Admin', 'Trainer', 'Member'), async (req, res
 trainerController.get('/:id', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
   try {
     const { id } = req.params;
-    if (!idSchema.safeParse(id).success) {
+    const result = await idSchema.spa(id);
+    if (!result.success) {
       return res.status(400).json({
         status: 400,
-        message: JSON.stringify(idSchema.safeParse(id).error.flatten()),
+        message: JSON.stringify(result.error.flatten()),
       });
     }
 
@@ -68,10 +70,11 @@ trainerController.get('/:id', permit('Admin', 'Trainer', 'Member'), async (req, 
 trainerController.get('/:id/detailed', permit('Admin', 'Trainer'), async (req, res) => {
   try {
     const { id } = req.params;
-    if (!idSchema.safeParse(id).success) {
+    const result = await idSchema.spa(id);
+    if (!result.success) {
       return res.status(400).json({
         status: 400,
-        message: JSON.stringify(idSchema.safeParse(id).error.flatten()),
+        message: JSON.stringify(result.error.flatten()),
       });
     }
 
@@ -190,16 +193,18 @@ trainerController.patch('/:id', permit('Admin', 'Trainer'), async (req, res) => 
   let conn = null;
   try {
     const { id } = req.params;
-    if (!idSchema.safeParse(id).success) {
+    const result = await idSchema.spa(id);
+    if (!result.success) {
       return res.status(400).json({
         status: 400,
-        message: JSON.stringify(idSchema.safeParse(id).error.flatten()),
+        message: JSON.stringify(result.error.flatten()),
       });
     }
-    if (!trainerSchema.safeParse(req.body).success) {
+    const result2 = await trainerSchema.spa(req.body);
+    if (!result2.success) {
       return res.status(400).json({
         status: 400,
-        message: JSON.stringify(trainerSchema.safeParse(req.body).error.flatten()),
+        message: JSON.stringify(result2.error.flatten()),
       });
     }
     const { email, password, username, firstName, lastName, phone, description, specialty, certificate, imageUrl } =
@@ -270,10 +275,11 @@ trainerController.patch('/:id/detailed', permit('Admin', 'Trainer'), async (req,
   let conn = null;
   try {
     const { id } = req.params;
-    if (!idSchema.safeParse(id).success) {
+    const result = await idSchema.spa(id);
+    if (!result.success) {
       return res.status(400).json({
         status: 400,
-        message: JSON.stringify(idSchema.safeParse(id).error.flatten()),
+        message: JSON.stringify(result.error.flatten()),
       });
     }
     const {
@@ -372,10 +378,11 @@ trainerController.delete('/:id', permit('Admin', 'Trainer'), async (req, res) =>
   let conn = null;
   try {
     const { id } = req.params;
-    if (!idSchema.safeParse(id).success) {
+    const result = await idSchema.spa(id);
+    if (!result.success) {
       return res.status(400).json({
         status: 400,
-        message: JSON.stringify(idSchema.safeParse(id).error.flatten()),
+        message: JSON.stringify(result.error.flatten()),
       });
     }
 

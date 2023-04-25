@@ -23,10 +23,11 @@ const bookingController = Router();
 // Read Booking
 bookingController.get('/', async (req, res) => {
   try {
-    if (!emptyObjSchema.safeParse(req.body).success) {
+    const result = await emptyObjSchema.spa(req.body);
+    if (!result.success) {
       return res.status(400).json({
         status: 400,
-        message: JSON.stringify(emptyObjSchema.safeParse(req.body).error.flatten()),
+        message: JSON.stringify(result.error.flatten()),
       });
     }
     const [bookingResults] = await getAllBookings();
@@ -47,10 +48,11 @@ bookingController.get('/', async (req, res) => {
 
 bookingController.get('/options', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
   try {
-    if (!emptyObjSchema.safeParse(req.body).success) {
+    const result = await emptyObjSchema.spa(req.body);
+    if (!result.success) {
       return res.status(400).json({
         status: 400,
-        message: JSON.stringify(emptyObjSchema.safeParse(req.body).error.flatten()),
+        message: JSON.stringify(result.error.flatten()),
       });
     }
     const [memberResults] = await getAllMembers();
@@ -79,10 +81,11 @@ bookingController.get('/by/date/:date', async (req, res) => {
     //  the WHERE clause is also a string, however, needs to be formatted like this `YYYY-MM-DD` in the SQL query, this is found out by writing raw
     //  queries in MySQL Workbench
     const { date } = req.params;
-    if (!dateSchema.safeParse(date).success) {
+    const result = await dateSchema.spa(date);
+    if (!result.success) {
       return res.status(400).json({
         status: 400,
-        message: JSON.stringify(dateSchema.safeParse(date).error.flatten()),
+        message: JSON.stringify(result.error.flatten()),
       });
     }
     const [bookingResults] = await getBookingsWithDetailsByDate(date);
@@ -124,10 +127,11 @@ bookingController.get('/by/date/:date', async (req, res) => {
 bookingController.get('/:id', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
   try {
     const { id } = req.params;
-    if (!idSchema.safeParse(id).success) {
+    const result = await idSchema.spa(id);
+    if (!result.success) {
       return res.status(400).json({
         status: 400,
-        message: JSON.stringify(idSchema.safeParse(id).error.flatten()),
+        message: JSON.stringify(result.error.flatten()),
       });
     }
     const [[firstBookingResult]] = await getBookingsWithDetailsById(id);
@@ -155,10 +159,11 @@ bookingController.get('/:id', permit('Admin', 'Trainer', 'Member'), async (req, 
 bookingController.get('/:id/with_options', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
   try {
     const { id } = req.params;
-    if (!idSchema.safeParse(id).success) {
+    const result = await idSchema.spa(id);
+    if (!result.success) {
       return res.status(400).json({
         status: 400,
-        message: JSON.stringify(idSchema.safeParse(id).error.flatten()),
+        message: JSON.stringify(result.error.flatten()),
       });
     }
     const [[firstBookingResult]] = await getBookingsById(id);
@@ -193,10 +198,11 @@ bookingController.get('/:id/with_options', permit('Admin', 'Trainer', 'Member'),
 // Create Booking
 bookingController.post('/', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
   try {
-    if (!bookingSchema.safeParse(req.body).success) {
+    const result = await bookingSchema.spa(req.body);
+    if (!result.success) {
       return res.status(400).json({
         status: 400,
-        message: JSON.stringify(bookingSchema.safeParse(req.body).error.flatten()),
+        message: JSON.stringify(result.error.flatten()),
       });
     }
     const { memberId, trainerId, activityId, date, time } = req.body;
@@ -241,16 +247,18 @@ bookingController.post('/', permit('Admin', 'Trainer', 'Member'), async (req, re
 bookingController.patch('/:id', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
   try {
     const { id } = req.params;
-    if (!idSchema.safeParse(id).success) {
+    const result = await idSchema.spa(id);
+    if (!result.success) {
       return res.status(400).json({
         status: 400,
-        message: JSON.stringify(idSchema.safeParse(id).error.flatten()),
+        message: JSON.stringify(result.error.flatten()),
       });
     }
-    if (!bookingSchema.safeParse(req.body).success) {
+    const result2 = await bookingSchema.spa(req.body);
+    if (!result2.success) {
       return res.status(400).json({
         status: 400,
-        message: JSON.stringify(bookingSchema.safeParse(req.body).error.flatten()),
+        message: JSON.stringify(result2.error.flatten()),
       });
     }
     const { memberId, trainerId, activityId, date, time } = req.body;
@@ -306,10 +314,11 @@ bookingController.patch('/:id', permit('Admin', 'Trainer', 'Member'), async (req
 bookingController.delete('/:id', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
   try {
     const { id } = req.params;
-    if (!idSchema.safeParse(id).success) {
+    const result = await idSchema.spa(id);
+    if (!result.success) {
       return res.status(400).json({
         status: 400,
-        message: JSON.stringify(idSchema.safeParse(id).error.flatten()),
+        message: JSON.stringify(result.error.flatten()),
       });
     }
     const [{ affectedRows }] = await deleteBookingById(id);

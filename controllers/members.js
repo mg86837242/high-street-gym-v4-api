@@ -18,10 +18,11 @@ const memberController = Router();
 // Read Member
 memberController.get('/', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
   try {
-    if (!emptyObjSchema.safeParse(req.body).success) {
+    const result = await emptyObjSchema.spa(req.body);
+    if (!result.success) {
       return res.status(400).json({
         status: 400,
-        message: JSON.stringify(emptyObjSchema.safeParse(req.body).error.flatten()),
+        message: JSON.stringify(result.error.flatten()),
       });
     }
     const [memberResults] = await getAllMembers();
@@ -45,10 +46,11 @@ memberController.get(
   // permit('Admin', 'Trainer', 'Member'),
   async (req, res) => {
     try {
-      if (!emptyObjSchema.safeParse(req.body).success) {
+      const result = await emptyObjSchema.spa(req.body);
+      if (!result.success) {
         return res.status(400).json({
           status: 400,
-          message: JSON.stringify(emptyObjSchema.safeParse(req.body).error.flatten()),
+          message: JSON.stringify(result.error.flatten()),
         });
       }
       const [memberResults] = await getAllMembersWithDetails();
@@ -71,10 +73,11 @@ memberController.get(
 memberController.get('/:id', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
   try {
     const { id } = req.params;
-    if (!idSchema.safeParse(id).success) {
+    const result = await idSchema.spa(id);
+    if (!result.success) {
       return res.status(400).json({
         status: 400,
-        message: JSON.stringify(idSchema.safeParse(id).error.flatten()),
+        message: JSON.stringify(result.error.flatten()),
       });
     }
 
@@ -103,10 +106,11 @@ memberController.get('/:id', permit('Admin', 'Trainer', 'Member'), async (req, r
 memberController.get('/:id/detailed', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
   try {
     const { id } = req.params;
-    if (!idSchema.safeParse(id).success) {
+    const result = await idSchema.spa(id);
+    if (!result.success) {
       return res.status(400).json({
         status: 400,
-        message: JSON.stringify(idSchema.safeParse(id).error.flatten()),
+        message: JSON.stringify(result.error.flatten()),
       });
     }
 
@@ -136,10 +140,11 @@ memberController.get('/:id/detailed', permit('Admin', 'Trainer', 'Member'), asyn
 memberController.post(['/', '/signup'], async (req, res) => {
   let conn = null;
   try {
-    if (!memberSchema.safeParse(req.body).success) {
+    const result = await memberSchema.spa(req.body);
+    if (!result.success) {
       return res.status(400).json({
         status: 400,
-        message: JSON.stringify(memberSchema.safeParse(req.body).error.flatten()),
+        message: JSON.stringify(result.error.flatten()),
       });
     }
     // PS1 `req.body` does NOT explicitly contain `loginId` that is necessary for `createCustomer()` function, however,
@@ -219,10 +224,11 @@ memberController.post(['/', '/signup'], async (req, res) => {
 memberController.post('/detailed', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
   let conn = null;
   try {
-    if (!memberDetailedSchema.safeParse(req.body).success) {
+    const result = await memberDetailedSchema.spa(req.body);
+    if (!result.success) {
       return res.status(400).json({
         status: 400,
-        message: JSON.stringify(memberDetailedSchema.safeParse(req.body).error.flatten()),
+        message: JSON.stringify(result.error.flatten()),
       });
     }
     const {
@@ -413,10 +419,10 @@ memberController.post(
 
       const hasInvalid = sanitizedMembers.find(m => !memberDetailedSchema.safeParse(m).success);
       if (hasInvalid) {
-        console.log(memberDetailedSchema.safeParse(hasInvalid).error.issues);
+        const result = await memberDetailedSchema.spa(hasInvalid);
         return res.status(400).json({
           status: 400,
-          message: 'Invalid member record detected',
+          message: JSON.stringify(result.error.flatten()),
         });
       }
 
@@ -515,16 +521,18 @@ memberController.patch('/:id', permit('Admin', 'Trainer', 'Member'), async (req,
   let conn = null;
   try {
     const { id } = req.params;
-    if (!idSchema.safeParse(id).success) {
+    const result = await idSchema.spa(id);
+    if (!result.success) {
       return res.status(400).json({
         status: 400,
-        message: JSON.stringify(idSchema.safeParse(id).error.flatten()),
+        message: JSON.stringify(result.error.flatten()),
       });
     }
-    if (!memberSchema.safeParse(req.body).success) {
+    const result2 = await memberSchema.spa(req.body);
+    if (!result2.success) {
       return res.status(400).json({
         status: 400,
-        message: JSON.stringify(memberSchema.safeParse(req.body).error.flatten()),
+        message: JSON.stringify(result2.error.flatten()),
       });
     }
     const { email, password, username, firstName, lastName, phone, age, gender } = req.body;
@@ -594,16 +602,18 @@ memberController.patch('/:id/detailed', permit('Admin', 'Trainer', 'Member'), as
   let conn = null;
   try {
     const { id } = req.params;
-    if (!idSchema.safeParse(id).success) {
+    const result = await idSchema.spa(id);
+    if (!result.success) {
       return res.status(400).json({
         status: 400,
-        message: JSON.stringify(idSchema.safeParse(id).error.flatten()),
+        message: JSON.stringify(result.error.flatten()),
       });
     }
-    if (!memberDetailedSchema.safeParse(req.body).success) {
+    const result2 = await memberDetailedSchema.spa(req.body);
+    if (!result2.success) {
       return res.status(400).json({
         status: 400,
-        message: JSON.stringify(memberDetailedSchema.safeParse(req.body).error.flatten()),
+        message: JSON.stringify(result2.error.flatten()),
       });
     }
     const {
@@ -700,10 +710,11 @@ memberController.delete('/:id', permit('Admin', 'Trainer', 'Member'), async (req
   let conn = null;
   try {
     const { id } = req.params;
-    if (!idSchema.safeParse(id).success) {
+    const result = await idSchema.spa(id);
+    if (!result.success) {
       return res.status(400).json({
         status: 400,
-        message: JSON.stringify(idSchema.safeParse(id).error.flatten()),
+        message: JSON.stringify(result.error.flatten()),
       });
     }
 

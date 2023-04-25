@@ -14,7 +14,8 @@ const userController = Router();
 userController.get('/by_key/:access_key', async (req, res) => {
   try {
     const { access_key: accessKey } = req.params;
-    if (!uuidSchema.safeParse(accessKey).success) {
+    const result = await uuidSchema.spa(accessKey);
+    if (!result.success) {
       return res.status(400).json({
         status: 400,
         message: 'Invalid credentials',
@@ -70,7 +71,8 @@ userController.get('/by_key/:access_key', async (req, res) => {
 
 userController.post('/login', async (req, res) => {
   try {
-    if (!loginSchema.safeParse(req.body).success) {
+    const result = await loginSchema.spa(req.body);
+    if (!result.success) {
       return res.status(400).json({
         status: 400,
         message: 'Invalid credentials',
@@ -120,7 +122,8 @@ userController.post('/login', async (req, res) => {
 userController.post('/logout', async (req, res) => {
   try {
     const { accessKey } = req.body;
-    if (!uuidSchema.safeParse(accessKey).success) {
+    const result = await uuidSchema.spa(accessKey);
+    if (!result.success) {
       return res.status(400).json({
         status: 400,
         message: 'Invalid credentials',
@@ -148,7 +151,8 @@ userController.post('/logout', async (req, res) => {
 userController.get('/by_key/:access_key/detailed', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
   try {
     const { access_key: accessKey } = req.params;
-    if (!uuidSchema.safeParse(accessKey).success) {
+    const result = await uuidSchema.spa(accessKey);
+    if (!result.success) {
       return res.status(400).json({
         status: 400,
         message: 'Invalid credentials',

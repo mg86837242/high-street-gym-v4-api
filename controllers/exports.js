@@ -12,10 +12,11 @@ const exportController = Router();
 
 exportController.get('/member_list', async (req, res) => {
   try {
-    if (!emptyObjSchema.safeParse(req.body).success) {
+    const result = await emptyObjSchema.spa(req.body);
+    if (!result.success) {
       return res.status(400).json({
         status: 400,
-        message: JSON.stringify(emptyObjSchema.safeParse(req.body).error.flatten()),
+        message: JSON.stringify(result.error.flatten()),
       });
     }
     // Build an array of member objs from relational data
@@ -53,10 +54,11 @@ exportController.get('/member_list', async (req, res) => {
 
 exportController.get('/activity_list', async (req, res) => {
   try {
-    if (!emptyObjSchema.safeParse(req.body).success) {
+    const result = await emptyObjSchema.spa(req.body);
+    if (!result.success) {
       return res.status(400).json({
         status: 400,
-        message: JSON.stringify(emptyObjSchema.safeParse(req.body).error.flatten()),
+        message: JSON.stringify(result.error.flatten()),
       });
     }
     // Build an array of activity objs from relational data

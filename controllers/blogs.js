@@ -9,10 +9,11 @@ const blogController = Router();
 // Read Blog
 blogController.get('/', async (req, res) => {
   try {
-    if (!emptyObjSchema.safeParse(req.body).success) {
+    const result = await emptyObjSchema.spa(req.body);
+    if (!result.success) {
       return res.status(400).json({
         status: 400,
-        message: JSON.stringify(emptyObjSchema.safeParse(req.body).error.flatten()),
+        message: JSON.stringify(result.error.flatten()),
       });
     }
     const [blogResults] = await getAllBlogs();
@@ -34,10 +35,11 @@ blogController.get('/', async (req, res) => {
 blogController.get('/:id', async (req, res) => {
   try {
     const { id } = req.params;
-    if (!idSchema.safeParse(id).success) {
+    const result = await idSchema.spa(id);
+    if (!result.success) {
       return res.status(400).json({
         status: 400,
-        message: JSON.stringify(idSchema.safeParse(id).error.flatten()),
+        message: JSON.stringify(result.error.flatten()),
       });
     }
     const [[firstBlogResult]] = await getBlogsById(id);
@@ -65,10 +67,11 @@ blogController.get('/:id', async (req, res) => {
 // Create Blog
 blogController.post('/', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
   try {
-    if (!blogSchema.safeParse(req.body).success) {
+    const result = await blogSchema.spa(req.body);
+    if (!result.success) {
       return res.status(400).json({
         status: 400,
-        message: JSON.stringify(blogSchema.safeParse(req.body).error.flatten()),
+        message: JSON.stringify(result.error.flatten()),
       });
     }
     const { title, body, loginId } = req.body;
@@ -93,16 +96,18 @@ blogController.post('/', permit('Admin', 'Trainer', 'Member'), async (req, res) 
 blogController.patch('/:id', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
   try {
     const { id } = req.params;
-    if (!idSchema.safeParse(id).success) {
+    const result = await idSchema.spa(id);
+    if (!result.success) {
       return res.status(400).json({
         status: 400,
-        message: JSON.stringify(idSchema.safeParse(id).error.flatten()),
+        message: JSON.stringify(result.error.flatten()),
       });
     }
-    if (!blogSchema.safeParse(req.body).success) {
+    const result2 = await blogSchema.spa(req.body);
+    if (!result2.success) {
       return res.status(400).json({
         status: 400,
-        message: JSON.stringify(blogSchema.safeParse(req.body).error.flatten()),
+        message: JSON.stringify(result2.error.flatten()),
       });
     }
     const { title, body, loginId } = req.body;
@@ -132,10 +137,11 @@ blogController.patch('/:id', permit('Admin', 'Trainer', 'Member'), async (req, r
 blogController.delete('/:id', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
   try {
     const { id } = req.params;
-    if (!idSchema.safeParse(id).success) {
+    const result = await idSchema.spa(id);
+    if (!result.success) {
       return res.status(400).json({
         status: 400,
-        message: JSON.stringify(idSchema.safeParse(id).error.flatten()),
+        message: JSON.stringify(result.error.flatten()),
       });
     }
     const [{ affectedRows }] = await deleteBlogById(id);

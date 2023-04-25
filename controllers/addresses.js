@@ -18,13 +18,11 @@ const addressController = Router();
 // Read Address
 addressController.get('/', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
   try {
-    // FIXME Refactor by using zod's spa(), or by functional approach - using helper functions to abstract the
-    //  validation process (but this functional approach requires to define schema for Express request object,
-    //  incl. both params and body, which is too much work), extending to other endpoints
-    if (!emptyObjSchema.safeParse(req.body).success) {
+    const result = await emptyObjSchema.spa(req.body);
+    if (!result.success) {
       return res.status(400).json({
         status: 400,
-        message: JSON.stringify(emptyObjSchema.safeParse(req.body).error.flatten()),
+        message: JSON.stringify(result.error.flatten()),
       });
     }
     const [addressResults] = await getAllAddresses();
@@ -46,10 +44,11 @@ addressController.get('/', permit('Admin', 'Trainer', 'Member'), async (req, res
 addressController.get('/:id', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
   try {
     const { id } = req.params;
-    if (!idSchema.safeParse(id).success) {
+    const result = await idSchema.spa(id);
+    if (!result.success) {
       return res.status(400).json({
         status: 400,
-        message: JSON.stringify(idSchema.safeParse(id).error.flatten()),
+        message: JSON.stringify(result.error.flatten()),
       });
     }
     const [[firstAddressResult]] = await getAddressesById(id);
@@ -77,10 +76,11 @@ addressController.get('/:id', permit('Admin', 'Trainer', 'Member'), async (req, 
 // Create Address
 addressController.post('/', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
   try {
-    if (!addressSchema.safeParse(req.body).success) {
+    const result = await addressSchema.spa(req.body);
+    if (!result.success) {
       return res.status(400).json({
         status: 400,
-        message: JSON.stringify(addressSchema.safeParse(req.body).error.flatten()),
+        message: JSON.stringify(result.error.flatten()),
       });
     }
     const { lineOne, lineTwo, suburb, postcode, state, country } = req.body;
@@ -104,17 +104,21 @@ addressController.post('/', permit('Admin', 'Trainer', 'Member'), async (req, re
 // Update Address
 addressController.patch('/:id', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
   try {
+    // FIXME Using one schema to parse the entire Express `req` (incl. both params and body) and destructure `result.
+    //  data` extending to other endpoints
     const { id } = req.params;
-    if (!idSchema.safeParse(id).success) {
+    const result = await idSchema.spa(id);
+    if (!result.success) {
       return res.status(400).json({
         status: 400,
-        message: JSON.stringify(idSchema.safeParse(id).error.flatten()),
+        message: JSON.stringify(result.error.flatten()),
       });
     }
-    if (!addressSchema.safeParse(req.body).success) {
+    const result2 = await addressSchema.spa(req.body);
+    if (!result2.success) {
       return res.status(400).json({
         status: 400,
-        message: JSON.stringify(addressSchema.safeParse(req.body).error.flatten()),
+        message: JSON.stringify(result2.error.flatten()),
       });
     }
     const { lineOne, lineTwo, suburb, postcode, state, country } = req.body;
@@ -143,16 +147,18 @@ addressController.patch('/:id', permit('Admin', 'Trainer', 'Member'), async (req
 addressController.patch('/by/admin_id/:admin_id', permit('Admin'), async (req, res) => {
   try {
     const { admin_id: adminId } = req.params.admin_id;
-    if (!idSchema.safeParse(adminId).success) {
+    const result = await idSchema.spa(adminId);
+    if (!result.success) {
       return res.status(400).json({
         status: 400,
-        message: JSON.stringify(idSchema.safeParse(adminId).error.flatten()),
+        message: JSON.stringify(result.error.flatten()),
       });
     }
-    if (!addressSchema.safeParse(req.body).success) {
+    const result2 = await addressSchema.spa(req.body);
+    if (!result2.success) {
       return res.status(400).json({
         status: 400,
-        message: JSON.stringify(addressSchema.safeParse(req.body).error.flatten()),
+        message: JSON.stringify(result2.error.flatten()),
       });
     }
     const { lineOne, lineTwo, suburb, postcode, state, country } = req.body;
@@ -183,16 +189,18 @@ addressController.patch('/by/admin_id/:admin_id', permit('Admin'), async (req, r
 addressController.patch('/by/trainer_id/:trainer_id', permit('Admin', 'Trainer'), async (req, res) => {
   try {
     const { trainer_id: trainerId } = req.params;
-    if (!idSchema.safeParse(trainerId).success) {
+    const result = await idSchema.spa(trainerId);
+    if (!result.success) {
       return res.status(400).json({
         status: 400,
-        message: JSON.stringify(idSchema.safeParse(trainerId).error.flatten()),
+        message: JSON.stringify(result.error.flatten()),
       });
     }
-    if (!addressSchema.safeParse(req.body).success) {
+    const result2 = await addressSchema.spa(req.body);
+    if (!result2.success) {
       return res.status(400).json({
         status: 400,
-        message: JSON.stringify(addressSchema.safeParse(req.body).error.flatten()),
+        message: JSON.stringify(result2.error.flatten()),
       });
     }
     const { lineOne, lineTwo, suburb, postcode, state, country } = req.body;
@@ -223,16 +231,18 @@ addressController.patch('/by/trainer_id/:trainer_id', permit('Admin', 'Trainer')
 addressController.patch('/by/member_id/:member_id', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
   try {
     const { member_id: memberId } = req.params;
-    if (!idSchema.safeParse(memberId).success) {
+    const result = await idSchema.spa(memberId);
+    if (!result.success) {
       return res.status(400).json({
         status: 400,
-        message: JSON.stringify(idSchema.safeParse(memberId).error.flatten()),
+        message: JSON.stringify(result.error.flatten()),
       });
     }
-    if (!addressSchema.safeParse(req.body).success) {
+    const result2 = await addressSchema.spa(req.body);
+    if (!result2.success) {
       return res.status(400).json({
         status: 400,
-        message: JSON.stringify(addressSchema.safeParse(req.body).error.flatten()),
+        message: JSON.stringify(result2.error.flatten()),
       });
     }
     const { lineOne, lineTwo, suburb, postcode, state, country } = req.body;
@@ -264,10 +274,11 @@ addressController.patch('/by/member_id/:member_id', permit('Admin', 'Trainer', '
 addressController.delete('/:id', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
   try {
     const { id } = req.params;
-    if (!idSchema.safeParse(id).success) {
+    const result = await idSchema.spa(id);
+    if (!result.success) {
       return res.status(400).json({
         status: 400,
-        message: JSON.stringify(idSchema.safeParse(id).error.flatten()),
+        message: JSON.stringify(result.error.flatten()),
       });
     }
     const [{ affectedRows }] = await deleteAddressById(id);
