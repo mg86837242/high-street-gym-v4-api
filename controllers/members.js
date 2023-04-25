@@ -327,6 +327,10 @@ memberController.post(
       // NB After parsing, (1) empty text content within XML Elements becomes empty string, (2) left-out XML Elements
       //  becomes undefined
 
+      // NB Bug: after configuring the `numberParseOptions` of the parser as shown above, and properly sanitizing the
+      //  field with a falsy value, the JS object (generated from parsing XML string) is still considered invalid by
+      //  the schema (designed in accordance with the database constraints) => Solution: write a constructor to type
+      //  cast the member object during sanitization
       class Member {
         constructor(
           email,
