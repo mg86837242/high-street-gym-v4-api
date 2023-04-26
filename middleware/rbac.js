@@ -30,6 +30,9 @@ export default function permit(...permittedRoles) {
   };
 }
 
+// NB Bug: `Error [ERR_HTTP_HEADERS_SENT]: Cannot set headers after they are sent to the client` => https://
+//  stackoverflow.com/questions/7042340
+
 // References:
 // -- https://gist.github.com/joshnuss/37ebaf958fe65a18d4ff: exemplar code snippet of Express.js role-based permissions
 //  middleware
