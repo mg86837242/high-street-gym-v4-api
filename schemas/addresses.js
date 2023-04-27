@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { idSchema } from './params';
 
 export const lineOneSchema = z.string().trim().max(45);
 export const lineTwoSchema = z.string().trim().max(45);
@@ -14,4 +15,9 @@ export const addressSchema = z.object({
   postcode: postcodeSchema,
   state: stateSchema,
   country: countrySchema,
+});
+
+export const updateAddressSchema = z.object({
+  params: z.object({ id: idSchema }),
+  body: addressSchema,
 });

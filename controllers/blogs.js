@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { emptyObjSchema, idSchema } from '../schemas/params.js';
-import blogSchema from '../schemas/blogs.js';
+import { blogSchema, updateBlogSchema } from '../schemas/blogs.js';
 import { getAllBlogs, getBlogsById, createBlog, updateBlogById, deleteBlogById } from '../models/blogs.js';
 import permit from '../middleware/rbac.js';
 
@@ -16,6 +16,7 @@ blogController.get('/', async (req, res) => {
         message: JSON.stringify(result.error.flatten()),
       });
     }
+
     const [blogResults] = await getAllBlogs();
 
     return res.status(200).json({
@@ -34,14 +35,15 @@ blogController.get('/', async (req, res) => {
 
 blogController.get('/:id', async (req, res) => {
   try {
-    const { id } = req.params;
-    const result = await idSchema.spa(id);
+    const result = await idSchema.spa(req.params.id);
     if (!result.success) {
       return res.status(400).json({
         status: 400,
         message: JSON.stringify(result.error.flatten()),
       });
     }
+    const id = result.data;
+
     const [[firstBlogResult]] = await getBlogsById(id);
 
     if (!firstBlogResult) {
@@ -74,7 +76,7 @@ blogController.post('/', permit('Admin', 'Trainer', 'Member'), async (req, res) 
         message: JSON.stringify(result.error.flatten()),
       });
     }
-    const { title, body, loginId } = req.body;
+    const { title, body, loginId } = result.data;
 
     const [{ insertId }] = await createBlog(title, body, loginId);
 
@@ -95,22 +97,20 @@ blogController.post('/', permit('Admin', 'Trainer', 'Member'), async (req, res) 
 // Update Blog
 blogController.patch('/:id', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
   try {
-    const { id } = req.params;
-    const result = await idSchema.spa(id);
+    const result = await updateBlogSchema.spa({
+      params: req.params,
+      body: req.body,
+    });
     if (!result.success) {
       return res.status(400).json({
         status: 400,
         message: JSON.stringify(result.error.flatten()),
       });
     }
-    const result2 = await blogSchema.spa(req.body);
-    if (!result2.success) {
-      return res.status(400).json({
-        status: 400,
-        message: JSON.stringify(result2.error.flatten()),
-      });
-    }
-    const { title, body, loginId } = req.body;
+    const {
+      params: { id },
+      body: { title, body, loginId },
+    } = result.data;
 
     const [{ affectedRows }] = await updateBlogById(id, title, body, loginId);
 
@@ -136,14 +136,15 @@ blogController.patch('/:id', permit('Admin', 'Trainer', 'Member'), async (req, r
 // Delete Blog
 blogController.delete('/:id', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
   try {
-    const { id } = req.params;
-    const result = await idSchema.spa(id);
+    const result = await idSchema.spa(req.params.id);
     if (!result.success) {
       return res.status(400).json({
         status: 400,
         message: JSON.stringify(result.error.flatten()),
       });
     }
+    const id = result.data;
+
     const [{ affectedRows }] = await deleteBlogById(id);
 
     if (!affectedRows) {

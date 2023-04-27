@@ -29,8 +29,7 @@ exportController.get('/member_list', async (req, res) => {
       // NB Error: `Assignment to property of function parameter 'm'` => Solution: (1) declare a new constant, and (2)
       //  use spread syntax in obj literals `{...}`, the combination of which will create a shallow clone and avoid
       //  mutation, see MDN's article for explanation
-      const appendedM = { ...m, address };
-      return appendedM;
+      return { ...m, address };
     });
     const appendedMembers = await Promise.all(mapMemberPromises);
 
@@ -71,12 +70,10 @@ exportController.get('/activity_list', async (req, res) => {
         const [[member]] = await getMembersById(b.memberId);
         // Append a trainer  obj as the value to the `trainer` key for each booking obj
         const [[trainer]] = await getTrainersById(b.trainerId);
-        const appendedB = { ...b, member, trainer };
-        return appendedB;
+        return { ...b, member, trainer };
       });
       const appendedBookings = await Promise.all(mapBookingPromises);
-      const appendedA = { ...a, bookings: appendedBookings };
-      return appendedA;
+      return { ...a, bookings: appendedBookings };
     });
     const appendedActivities = await Promise.all(mapActivityPromises);
 

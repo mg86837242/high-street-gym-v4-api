@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { emptyObjSchema, idSchema, dateSchema } from '../schemas/params.js';
-import bookingSchema from '../schemas/bookings.js';
+import { bookingSchema, updateBookingSchema } from '../schemas/bookings.js';
 import {
   getAllBookings,
   getBookingsWithDetailsByDate,
@@ -30,6 +30,7 @@ bookingController.get('/', async (req, res) => {
         message: JSON.stringify(result.error.flatten()),
       });
     }
+
     const [bookingResults] = await getAllBookings();
 
     return res.status(200).json({
@@ -55,6 +56,7 @@ bookingController.get('/options', permit('Admin', 'Trainer', 'Member'), async (r
         message: JSON.stringify(result.error.flatten()),
       });
     }
+
     const [memberResults] = await getAllMembers();
     const [trainerResults] = await getAllTrainers();
     const [activityResults] = await getAllActivities();
@@ -80,14 +82,15 @@ bookingController.get('/by/date/:date', async (req, res) => {
     // NB `req.params.date` is a string, see: https://reactrouter.com/en/main/start/concepts#route-matches; the data type expected to be used in
     //  the WHERE clause is also a string, however, needs to be formatted like this `YYYY-MM-DD` in the SQL query, this is found out by writing raw
     //  queries in MySQL Workbench
-    const { date } = req.params;
-    const result = await dateSchema.spa(date);
+    const result = await dateSchema.spa(req.params.date);
     if (!result.success) {
       return res.status(400).json({
         status: 400,
         message: JSON.stringify(result.error.flatten()),
       });
     }
+    const date = result.data;
+
     const [bookingResults] = await getBookingsWithDetailsByDate(date);
     // #region un-foldable
     // NB Bug: query result `bookingResults.dateTime` is in UTC format i/o intended local time format (DATETIME type)
@@ -126,14 +129,15 @@ bookingController.get('/by/date/:date', async (req, res) => {
 
 bookingController.get('/:id', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
   try {
-    const { id } = req.params;
-    const result = await idSchema.spa(id);
+    const result = await idSchema.spa(req.params.id);
     if (!result.success) {
       return res.status(400).json({
         status: 400,
         message: JSON.stringify(result.error.flatten()),
       });
     }
+    const id = result.data;
+
     const [[firstBookingResult]] = await getBookingsWithDetailsById(id);
 
     if (!firstBookingResult) {
@@ -158,14 +162,15 @@ bookingController.get('/:id', permit('Admin', 'Trainer', 'Member'), async (req, 
 
 bookingController.get('/:id/with_options', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
   try {
-    const { id } = req.params;
-    const result = await idSchema.spa(id);
+    const result = await idSchema.spa(req.params.id);
     if (!result.success) {
       return res.status(400).json({
         status: 400,
         message: JSON.stringify(result.error.flatten()),
       });
     }
+    const id = result.data;
+
     const [[firstBookingResult]] = await getBookingsById(id);
 
     if (!firstBookingResult) {
@@ -205,7 +210,7 @@ bookingController.post('/', permit('Admin', 'Trainer', 'Member'), async (req, re
         message: JSON.stringify(result.error.flatten()),
       });
     }
-    const { memberId, trainerId, activityId, date, time } = req.body;
+    const { memberId, trainerId, activityId, date, time } = result.data;
     const dateTime = [date, time].join(' ');
 
     // Find if either of the parties involved is available at given date and time
@@ -246,22 +251,20 @@ bookingController.post('/', permit('Admin', 'Trainer', 'Member'), async (req, re
 // Update Booking
 bookingController.patch('/:id', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
   try {
-    const { id } = req.params;
-    const result = await idSchema.spa(id);
+    const result = await updateBookingSchema.spa({
+      params: req.params,
+      body: req.body,
+    });
     if (!result.success) {
       return res.status(400).json({
         status: 400,
         message: JSON.stringify(result.error.flatten()),
       });
     }
-    const result2 = await bookingSchema.spa(req.body);
-    if (!result2.success) {
-      return res.status(400).json({
-        status: 400,
-        message: JSON.stringify(result2.error.flatten()),
-      });
-    }
-    const { memberId, trainerId, activityId, date, time } = req.body;
+    const {
+      params: { id },
+      body: { memberId, trainerId, activityId, date, time },
+    } = result.data;
     const dateTime = [date, time].join(' ');
 
     // Find if either of the parties involved is available at given date and time
@@ -313,14 +316,15 @@ bookingController.patch('/:id', permit('Admin', 'Trainer', 'Member'), async (req
 // Delete Booking
 bookingController.delete('/:id', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
   try {
-    const { id } = req.params;
-    const result = await idSchema.spa(id);
+    const result = await idSchema.spa(req.params.id);
     if (!result.success) {
       return res.status(400).json({
         status: 400,
         message: JSON.stringify(result.error.flatten()),
       });
     }
+    const id = result.data;
+
     const [{ affectedRows }] = await deleteBookingById(id);
 
     if (!affectedRows) {

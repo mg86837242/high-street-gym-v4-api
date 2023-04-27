@@ -13,14 +13,14 @@ const userController = Router();
 
 userController.get('/by_key/:access_key', async (req, res) => {
   try {
-    const { access_key: accessKey } = req.params;
-    const result = await uuidSchema.spa(accessKey);
+    const result = await uuidSchema.spa(req.params.access_key);
     if (!result.success) {
       return res.status(400).json({
         status: 400,
         message: 'Invalid credentials',
       });
     }
+    const accessKey = result.data;
 
     // Get info from the login row
     const [[{ id, username, role }]] = await getLoginsByAccessKey(accessKey);
@@ -78,7 +78,7 @@ userController.post('/login', async (req, res) => {
         message: 'Invalid credentials',
       });
     }
-    const { email = null, password = null } = req.body;
+    const { email = null, password = null } = result.data;
 
     // Look up email
     const [loginResults] = await getLoginsByEmail(email);
@@ -121,14 +121,14 @@ userController.post('/login', async (req, res) => {
 
 userController.post('/logout', async (req, res) => {
   try {
-    const { accessKey } = req.body;
-    const result = await uuidSchema.spa(accessKey);
+    const result = await uuidSchema.spa(req.body.accessKey);
     if (!result.success) {
       return res.status(400).json({
         status: 400,
         message: 'Invalid credentials',
       });
     }
+    const accessKey = result.data;
 
     // Get the target login row by `accesskey` and nullify its `accessKey` column and session
     const [[{ id }]] = await getLoginsByAccessKey(accessKey);
@@ -150,14 +150,14 @@ userController.post('/logout', async (req, res) => {
 
 userController.get('/by_key/:access_key/detailed', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
   try {
-    const { access_key: accessKey } = req.params;
-    const result = await uuidSchema.spa(accessKey);
+    const result = await uuidSchema.spa(req.params.access_key);
     if (!result.success) {
       return res.status(400).json({
         status: 400,
         message: 'Invalid credentials',
       });
     }
+    const accessKey = result.data;
 
     const [[firstLoginResult]] = await getLoginsByAccessKey(accessKey);
     if (!firstLoginResult) {

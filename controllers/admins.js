@@ -2,7 +2,7 @@ import { Router } from 'express';
 import bcrypt from 'bcryptjs'; // reason to use `bcryptjs`: https://github.com/kelektiv/node.bcrypt.js/issues/705
 import pool from '../config/database.js';
 import { emptyObjSchema, idSchema } from '../schemas/params.js';
-import { adminSchema } from '../schemas/admins.js';
+import { adminDetailedSchema, updateAdminSchema, updateAdminDetailedSchema } from '../schemas/admins.js';
 import { getAllAdmins, getAdminsById, getAdminsWithDetailsById } from '../models/admins.js';
 import permit from '../middleware/rbac.js';
 
@@ -18,6 +18,7 @@ adminController.get('/', permit('Admin', 'Trainer', 'Member'), async (req, res) 
         message: JSON.stringify(result.error.flatten()),
       });
     }
+
     const [adminResults] = await getAllAdmins();
 
     return res.status(200).json({
@@ -36,14 +37,14 @@ adminController.get('/', permit('Admin', 'Trainer', 'Member'), async (req, res) 
 
 adminController.get('/:id', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
   try {
-    const { id } = req.params;
-    const result = await idSchema.spa(id);
+    const result = await idSchema.spa(req.params.id);
     if (!result.success) {
       return res.status(400).json({
         status: 400,
         message: JSON.stringify(result.error.flatten()),
       });
     }
+    const id = result.data;
 
     const [[firstAdminResult]] = await getAdminsById(id);
     if (!firstAdminResult) {
@@ -69,14 +70,14 @@ adminController.get('/:id', permit('Admin', 'Trainer', 'Member'), async (req, re
 
 adminController.get('/:id/detailed', permit('Admin'), async (req, res) => {
   try {
-    const { id } = req.params;
-    const result = await idSchema.spa(id);
+    const result = await idSchema.spa(req.params.id);
     if (!result.success) {
       return res.status(400).json({
         status: 400,
         message: JSON.stringify(result.error.flatten()),
       });
     }
+    const id = result.data;
 
     const [[firstAdminResult]] = await getAdminsWithDetailsById(id);
     if (!firstAdminResult) {
@@ -104,6 +105,13 @@ adminController.get('/:id/detailed', permit('Admin'), async (req, res) => {
 adminController.post('/detailed', permit('Admin'), async (req, res) => {
   let conn = null;
   try {
+    const result = await adminDetailedSchema.spa(req.body);
+    if (!result.success) {
+      return res.status(400).json({
+        status: 400,
+        message: JSON.stringify(result.error.flatten()),
+      });
+    }
     const {
       email,
       password,
@@ -117,7 +125,7 @@ adminController.post('/detailed', permit('Admin'), async (req, res) => {
       postcode,
       state,
       country,
-    } = req.body;
+    } = result.data;
 
     // Manually acquire a connection from the pool & start a TRANSACTION
     conn = await pool.getConnection();
@@ -188,22 +196,20 @@ adminController.post('/detailed', permit('Admin'), async (req, res) => {
 adminController.patch('/:id', permit('Admin'), async (req, res) => {
   let conn = null;
   try {
-    const { id } = req.params;
-    const result = await idSchema.spa(id);
+    const result = await updateAdminSchema.spa({
+      params: req.params,
+      body: req.body,
+    });
     if (!result.success) {
       return res.status(400).json({
         status: 400,
         message: JSON.stringify(result.error.flatten()),
       });
     }
-    const result2 = await adminSchema.spa(req.body);
-    if (!result2.success) {
-      return res.status(400).json({
-        status: 400,
-        message: JSON.stringify(result2.error.flatten()),
-      });
-    }
-    const { email, password, username, firstName, lastName, phone } = req.body;
+    const {
+      params: { id },
+      body: { email, password, username, firstName, lastName, phone },
+    } = result.data;
 
     const [[firstAdminResult]] = await getAdminsById(id);
     if (!firstAdminResult) {
@@ -269,8 +275,10 @@ adminController.patch('/:id', permit('Admin'), async (req, res) => {
 adminController.patch('/:id/detailed', permit('Admin'), async (req, res) => {
   let conn = null;
   try {
-    const { id } = req.params;
-    const result = await idSchema.spa(id);
+    const result = await updateAdminDetailedSchema.spa({
+      params: req.params,
+      body: req.body,
+    });
     if (!result.success) {
       return res.status(400).json({
         status: 400,
@@ -278,19 +286,22 @@ adminController.patch('/:id/detailed', permit('Admin'), async (req, res) => {
       });
     }
     const {
-      email,
-      password,
-      username,
-      firstName,
-      lastName,
-      phone,
-      lineOne,
-      lineTwo,
-      suburb,
-      postcode,
-      state,
-      country,
-    } = req.body;
+      params: { id },
+      body: {
+        email,
+        password,
+        username,
+        firstName,
+        lastName,
+        phone,
+        lineOne,
+        lineTwo,
+        suburb,
+        postcode,
+        state,
+        country,
+      },
+    } = result.data;
 
     const [[firstAdminResult]] = await getAdminsById(id);
     if (!firstAdminResult) {
@@ -368,14 +379,14 @@ adminController.patch('/:id/detailed', permit('Admin'), async (req, res) => {
 adminController.delete('/:id', permit('Admin'), async (req, res) => {
   let conn = null;
   try {
-    const { id } = req.params;
-    const result = await idSchema.spa(id);
+    const result = await idSchema.spa(req.params.id);
     if (!result.success) {
       return res.status(400).json({
         status: 400,
         message: JSON.stringify(result.error.flatten()),
       });
     }
+    const id = result.data;
 
     const [[firstAdminResult]] = await getAdminsById(id);
     if (!firstAdminResult) {

@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { idSchema, dateSchema } from './params.js';
 
-const bookingSchema = z.object({
+export const bookingSchema = z.object({
   memberId: idSchema,
   trainerId: idSchema,
   activityId: idSchema,
@@ -12,4 +12,7 @@ const bookingSchema = z.object({
     .regex(/^\d{2}:00:00$/),
 });
 
-export default bookingSchema;
+export const updateBookingSchema = z.object({
+  params: z.object({ id: idSchema }),
+  body: bookingSchema,
+});

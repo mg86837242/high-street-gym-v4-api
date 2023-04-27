@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { emptyObjSchema, idSchema } from '../schemas/params.js';
-import { addressSchema } from '../schemas/addresses.js';
+import { addressSchema, updateAddressSchema } from '../schemas/addresses.js';
 import {
   getAllAddresses,
   getAddressesById,
@@ -25,6 +25,7 @@ addressController.get('/', permit('Admin', 'Trainer', 'Member'), async (req, res
         message: JSON.stringify(result.error.flatten()),
       });
     }
+
     const [addressResults] = await getAllAddresses();
 
     return res.status(200).json({
@@ -43,14 +44,15 @@ addressController.get('/', permit('Admin', 'Trainer', 'Member'), async (req, res
 
 addressController.get('/:id', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
   try {
-    const { id } = req.params;
-    const result = await idSchema.spa(id);
+    const result = await idSchema.spa(req.params.id);
     if (!result.success) {
       return res.status(400).json({
         status: 400,
         message: JSON.stringify(result.error.flatten()),
       });
     }
+    const id = result.data;
+
     const [[firstAddressResult]] = await getAddressesById(id);
 
     if (!firstAddressResult) {
@@ -83,7 +85,7 @@ addressController.post('/', permit('Admin', 'Trainer', 'Member'), async (req, re
         message: JSON.stringify(result.error.flatten()),
       });
     }
-    const { lineOne, lineTwo, suburb, postcode, state, country } = req.body;
+    const { lineOne, lineTwo, suburb, postcode, state, country } = result.data;
 
     const [{ insertId }] = await createAddress(lineOne, lineTwo, suburb, postcode, state, country);
 
@@ -104,24 +106,20 @@ addressController.post('/', permit('Admin', 'Trainer', 'Member'), async (req, re
 // Update Address
 addressController.patch('/:id', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
   try {
-    // FIXME Need to use one schema (incl. both `params` and `body`) to parse the entire Express `req` and get data by
-    //  destructuring `result.data` returned by zod's `spa()` i/o destructuring `req.body`, extending to other endpoints
-    const { id } = req.params;
-    const result = await idSchema.spa(id);
+    const result = await updateAddressSchema.spa({
+      params: req.params,
+      body: req.body,
+    });
     if (!result.success) {
       return res.status(400).json({
         status: 400,
         message: JSON.stringify(result.error.flatten()),
       });
     }
-    const result2 = await addressSchema.spa(req.body);
-    if (!result2.success) {
-      return res.status(400).json({
-        status: 400,
-        message: JSON.stringify(result2.error.flatten()),
-      });
-    }
-    const { lineOne, lineTwo, suburb, postcode, state, country } = req.body;
+    const {
+      params: { id },
+      body: { lineOne, lineTwo, suburb, postcode, state, country },
+    } = result.data;
 
     const [{ affectedRows }] = await updateAddressById(id, lineOne, lineTwo, suburb, postcode, state, country);
 
@@ -146,22 +144,20 @@ addressController.patch('/:id', permit('Admin', 'Trainer', 'Member'), async (req
 
 addressController.patch('/by/admin_id/:admin_id', permit('Admin'), async (req, res) => {
   try {
-    const { admin_id: adminId } = req.params.admin_id;
-    const result = await idSchema.spa(adminId);
+    const result = await updateAddressSchema.spa({
+      params: req.params,
+      body: req.body,
+    });
     if (!result.success) {
       return res.status(400).json({
         status: 400,
         message: JSON.stringify(result.error.flatten()),
       });
     }
-    const result2 = await addressSchema.spa(req.body);
-    if (!result2.success) {
-      return res.status(400).json({
-        status: 400,
-        message: JSON.stringify(result2.error.flatten()),
-      });
-    }
-    const { lineOne, lineTwo, suburb, postcode, state, country } = req.body;
+    const {
+      params: { admin_id: adminId },
+      body: { lineOne, lineTwo, suburb, postcode, state, country },
+    } = result.data;
 
     const [[{ addressId }]] = await getAdminsAddressesIdById(adminId);
     const [{ affectedRows }] = await updateAddressById(addressId, lineOne, lineTwo, suburb, postcode, state, country);
@@ -188,22 +184,20 @@ addressController.patch('/by/admin_id/:admin_id', permit('Admin'), async (req, r
 
 addressController.patch('/by/trainer_id/:trainer_id', permit('Admin', 'Trainer'), async (req, res) => {
   try {
-    const { trainer_id: trainerId } = req.params;
-    const result = await idSchema.spa(trainerId);
+    const result = await updateAddressSchema.spa({
+      params: req.params,
+      body: req.body,
+    });
     if (!result.success) {
       return res.status(400).json({
         status: 400,
         message: JSON.stringify(result.error.flatten()),
       });
     }
-    const result2 = await addressSchema.spa(req.body);
-    if (!result2.success) {
-      return res.status(400).json({
-        status: 400,
-        message: JSON.stringify(result2.error.flatten()),
-      });
-    }
-    const { lineOne, lineTwo, suburb, postcode, state, country } = req.body;
+    const {
+      params: { trainer_id: trainerId },
+      body: { lineOne, lineTwo, suburb, postcode, state, country },
+    } = result.data;
 
     const [[{ addressId }]] = await getTrainersAddressesIdById(trainerId);
     const [{ affectedRows }] = await updateAddressById(addressId, lineOne, lineTwo, suburb, postcode, state, country);
@@ -230,22 +224,20 @@ addressController.patch('/by/trainer_id/:trainer_id', permit('Admin', 'Trainer')
 
 addressController.patch('/by/member_id/:member_id', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
   try {
-    const { member_id: memberId } = req.params;
-    const result = await idSchema.spa(memberId);
+    const result = await updateAddressSchema.spa({
+      params: req.params,
+      body: req.body,
+    });
     if (!result.success) {
       return res.status(400).json({
         status: 400,
         message: JSON.stringify(result.error.flatten()),
       });
     }
-    const result2 = await addressSchema.spa(req.body);
-    if (!result2.success) {
-      return res.status(400).json({
-        status: 400,
-        message: JSON.stringify(result2.error.flatten()),
-      });
-    }
-    const { lineOne, lineTwo, suburb, postcode, state, country } = req.body;
+    const {
+      params: { member_id: memberId },
+      body: { lineOne, lineTwo, suburb, postcode, state, country },
+    } = result.data;
 
     const [[{ addressId }]] = await getMembersAddressesIdById(memberId);
     const [{ affectedRows }] = await updateAddressById(addressId, lineOne, lineTwo, suburb, postcode, state, country);
@@ -273,14 +265,15 @@ addressController.patch('/by/member_id/:member_id', permit('Admin', 'Trainer', '
 // Delete Address
 addressController.delete('/:id', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
   try {
-    const { id } = req.params;
-    const result = await idSchema.spa(id);
+    const result = await idSchema.spa(req.params.id);
     if (!result.success) {
       return res.status(400).json({
         status: 400,
         message: JSON.stringify(result.error.flatten()),
       });
     }
+    const id = result.data;
+
     const [{ affectedRows }] = await deleteAddressById(id);
 
     if (!affectedRows) {
