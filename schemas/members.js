@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import { emailSchema, passwordSchema, usernameSchema, firstNameSchema, lastNameSchema, phoneSchema } from './users.js';
 import { lineOneSchema, lineTwoSchema, suburbSchema, postcodeSchema, stateSchema, countrySchema } from './addresses.js';
+import { idSchema } from './params.js';
 
 export const ageSchema = z
   .number({ message: 'Age must be a number' })
@@ -35,6 +36,16 @@ export const memberDetailedSchema = z.object({
   postcode: postcodeSchema,
   state: stateSchema,
   country: countrySchema,
+});
+
+export const updateMemberSchema = z.object({
+  params: z.object({ id: idSchema }),
+  body: memberSchema,
+});
+
+export const updateMemberDetailedSchema = z.object({
+  params: z.object({ id: idSchema }),
+  body: memberDetailedSchema,
 });
 
 // NB Based on tests, `nullable()` won't let undefined pass, but will let null and empty string pass => PREFERRED

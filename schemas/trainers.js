@@ -38,3 +38,13 @@ export const trainerDetailedSchema = z.object({
   state: stateSchema,
   country: countrySchema,
 });
+
+export const updateTrainerSchema = z.object({
+  params: z.object({ id: idSchema }),
+  body: trainerSchema,
+});
+
+export const updateTrainerDetailedSchema = z.object({
+  params: z.object({ id: idSchema }),
+  body: trainerDetailedSchema,
+});

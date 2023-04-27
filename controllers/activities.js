@@ -15,8 +15,8 @@ import upload from '../middleware/multer.js';
 
 const activityController = Router();
 
-// TODO In future projects, instead of writing bloated controllers, functional approach will be used and controllers
-//  will be split into (1) route, (2) data validation and (3) route handler
+// TODO In future projects, instead of writing bloated controllers, controllers will be split into (1) route, (2) data
+//  validation and (3) route handler
 // Read Activity
 activityController.get('/', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
   try {

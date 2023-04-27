@@ -3,7 +3,12 @@ import { XMLParser } from 'fast-xml-parser';
 import bcrypt from 'bcryptjs'; // reason to use `bcryptjs`: https://github.com/kelektiv/node.bcrypt.js/issues/705
 import pool from '../config/database.js';
 import { emptyObjSchema, idSchema } from '../schemas/params.js';
-import { memberSchema, memberDetailedSchema } from '../schemas/members.js';
+import {
+  memberSchema,
+  memberDetailedSchema,
+  updateMemberSchema,
+  updateMemberDetailedSchema,
+} from '../schemas/members.js';
 import {
   getAllMembers,
   getAllMembersWithDetails,
@@ -25,6 +30,7 @@ memberController.get('/', permit('Admin', 'Trainer', 'Member'), async (req, res)
         message: JSON.stringify(result.error.flatten()),
       });
     }
+
     const [memberResults] = await getAllMembers();
 
     return res.status(200).json({
@@ -72,14 +78,14 @@ memberController.get(
 
 memberController.get('/:id', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
   try {
-    const { id } = req.params;
-    const result = await idSchema.spa(id);
+    const result = await idSchema.spa(req.params.id);
     if (!result.success) {
       return res.status(400).json({
         status: 400,
         message: JSON.stringify(result.error.flatten()),
       });
     }
+    const id = result.data;
 
     const [[firstMemberResult]] = await getMembersById(id);
     if (!firstMemberResult) {
@@ -105,14 +111,14 @@ memberController.get('/:id', permit('Admin', 'Trainer', 'Member'), async (req, r
 
 memberController.get('/:id/detailed', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
   try {
-    const { id } = req.params;
-    const result = await idSchema.spa(id);
+    const result = await idSchema.spa(req.params.id);
     if (!result.success) {
       return res.status(400).json({
         status: 400,
         message: JSON.stringify(result.error.flatten()),
       });
     }
+    const id = result.data;
 
     const [[firstMemberResult]] = await getMembersWithDetailsById(id);
     if (!firstMemberResult) {
@@ -147,13 +153,10 @@ memberController.post(['/', '/signup'], async (req, res) => {
         message: JSON.stringify(result.error.flatten()),
       });
     }
-    // PS1 `req.body` does NOT explicitly contain `loginId` that is necessary for `createCustomer()` function, however,
-    //  contains `email`, `password` and `username`, based on which `loginId` can be generated; same goes for
-    //  `addressId`
-    // PS2 DA could be avoided here to improve the readability of parameters within the `createCustomer()` function;
-    //  however, DA is used here for the benefit of (1) rapidly generating `req.body` for testing in Postman, (2)
-    //  assigning a default value if needed
-    const { email, password, username, firstName, lastName, phone, age, gender } = req.body;
+    // PS1 `req.body`/`result.data` does NOT explicitly contain `loginId` that is necessary for `createCustomer()`
+    //  function, however, contains `email`, `password` and `username`, based on which `loginId` can be generated; same
+    //  goes for`addressId`
+    const { email, password, username, firstName, lastName, phone, age, gender } = result.data;
 
     // #region un-foldable
     // NB Use SQL query i/o JS array method => transaction is preferred over multiple INSERT, see:
@@ -246,7 +249,7 @@ memberController.post('/detailed', permit('Admin', 'Trainer', 'Member'), async (
       postcode,
       state,
       country,
-    } = req.body;
+    } = result.data;
 
     // Manually acquire a connection from the pool & start a TRANSACTION
     conn = await pool.getConnection();
@@ -520,22 +523,20 @@ memberController.post(
 memberController.patch('/:id', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
   let conn = null;
   try {
-    const { id } = req.params;
-    const result = await idSchema.spa(id);
+    const result = await updateMemberSchema.spa({
+      params: req.params,
+      body: req.body,
+    });
     if (!result.success) {
       return res.status(400).json({
         status: 400,
         message: JSON.stringify(result.error.flatten()),
       });
     }
-    const result2 = await memberSchema.spa(req.body);
-    if (!result2.success) {
-      return res.status(400).json({
-        status: 400,
-        message: JSON.stringify(result2.error.flatten()),
-      });
-    }
-    const { email, password, username, firstName, lastName, phone, age, gender } = req.body;
+    const {
+      params: { id },
+      body: { email, password, username, firstName, lastName, phone, age, gender },
+    } = result.data;
 
     const [[firstMemberResult]] = await getMembersById(id);
     if (!firstMemberResult) {
@@ -601,37 +602,35 @@ memberController.patch('/:id', permit('Admin', 'Trainer', 'Member'), async (req,
 memberController.patch('/:id/detailed', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
   let conn = null;
   try {
-    const { id } = req.params;
-    const result = await idSchema.spa(id);
+    const result = await updateMemberDetailedSchema.spa({
+      params: req.params,
+      body: req.body,
+    });
     if (!result.success) {
       return res.status(400).json({
         status: 400,
         message: JSON.stringify(result.error.flatten()),
       });
     }
-    const result2 = await memberDetailedSchema.spa(req.body);
-    if (!result2.success) {
-      return res.status(400).json({
-        status: 400,
-        message: JSON.stringify(result2.error.flatten()),
-      });
-    }
     const {
-      email,
-      password,
-      username,
-      firstName,
-      lastName,
-      phone,
-      age,
-      gender,
-      lineOne,
-      lineTwo,
-      suburb,
-      postcode,
-      state,
-      country,
-    } = req.body;
+      params: { id },
+      body: {
+        email,
+        password,
+        username,
+        firstName,
+        lastName,
+        phone,
+        age,
+        gender,
+        lineOne,
+        lineTwo,
+        suburb,
+        postcode,
+        state,
+        country,
+      },
+    } = result.data;
 
     const [[firstMemberResult]] = await getMembersById(id);
     if (!firstMemberResult) {
@@ -709,14 +708,14 @@ memberController.patch('/:id/detailed', permit('Admin', 'Trainer', 'Member'), as
 memberController.delete('/:id', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
   let conn = null;
   try {
-    const { id } = req.params;
-    const result = await idSchema.spa(id);
+    const result = await idSchema.spa(req.params.id);
     if (!result.success) {
       return res.status(400).json({
         status: 400,
         message: JSON.stringify(result.error.flatten()),
       });
     }
+    const id = result.data;
 
     const [[firstMemberResult]] = await getMembersById(id);
     if (!firstMemberResult) {

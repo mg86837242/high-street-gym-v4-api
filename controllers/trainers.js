@@ -2,7 +2,7 @@ import { Router } from 'express';
 import bcrypt from 'bcryptjs'; // reason to use `bcryptjs`: https://github.com/kelektiv/node.bcrypt.js/issues/705
 import pool from '../config/database.js';
 import { emptyObjSchema, idSchema } from '../schemas/params.js';
-import { trainerSchema } from '../schemas/trainers.js';
+import { trainerSchema, updateTrainerDetailedSchema, updateTrainerSchema } from '../schemas/trainers.js';
 import { getAllTrainers, getTrainersById, getTrainersWithDetailsById } from '../models/trainers.js';
 import permit from '../middleware/rbac.js';
 
@@ -18,6 +18,7 @@ trainerController.get('/', permit('Admin', 'Trainer', 'Member'), async (req, res
         message: JSON.stringify(result.error.flatten()),
       });
     }
+
     const [trainerResults] = await getAllTrainers();
 
     return res.status(200).json({
@@ -36,14 +37,14 @@ trainerController.get('/', permit('Admin', 'Trainer', 'Member'), async (req, res
 
 trainerController.get('/:id', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
   try {
-    const { id } = req.params;
-    const result = await idSchema.spa(id);
+    const result = await idSchema.spa(req.params.id);
     if (!result.success) {
       return res.status(400).json({
         status: 400,
         message: JSON.stringify(result.error.flatten()),
       });
     }
+    const id = result.data;
 
     const [[firstTrainerResult]] = await getTrainersById(id);
     if (!firstTrainerResult) {
@@ -69,14 +70,14 @@ trainerController.get('/:id', permit('Admin', 'Trainer', 'Member'), async (req, 
 
 trainerController.get('/:id/detailed', permit('Admin', 'Trainer'), async (req, res) => {
   try {
-    const { id } = req.params;
-    const result = await idSchema.spa(id);
+    const result = await idSchema.spa(req.params.id);
     if (!result.success) {
       return res.status(400).json({
         status: 400,
         message: JSON.stringify(result.error.flatten()),
       });
     }
+    const id = result.data;
 
     const [[firstTrainerResult]] = await getTrainersWithDetailsById(id);
     if (!firstTrainerResult) {
@@ -121,7 +122,7 @@ trainerController.post('/detailed', permit('Admin', 'Trainer'), async (req, res)
       postcode,
       state,
       country,
-    } = req.body;
+    } = result.data;
 
     // Manually acquire a connection from the pool & start a TRANSACTION
     conn = await pool.getConnection();
@@ -192,23 +193,20 @@ trainerController.post('/detailed', permit('Admin', 'Trainer'), async (req, res)
 trainerController.patch('/:id', permit('Admin', 'Trainer'), async (req, res) => {
   let conn = null;
   try {
-    const { id } = req.params;
-    const result = await idSchema.spa(id);
+    const result = await updateTrainerSchema.spa({
+      params: req.params,
+      body: req.body,
+    });
     if (!result.success) {
       return res.status(400).json({
         status: 400,
         message: JSON.stringify(result.error.flatten()),
       });
     }
-    const result2 = await trainerSchema.spa(req.body);
-    if (!result2.success) {
-      return res.status(400).json({
-        status: 400,
-        message: JSON.stringify(result2.error.flatten()),
-      });
-    }
-    const { email, password, username, firstName, lastName, phone, description, specialty, certificate, imageUrl } =
-      req.body;
+    const {
+      params: { id },
+      body: { email, password, username, firstName, lastName, phone, description, specialty, certificate, imageUrl },
+    } = result.data;
 
     const [[firstTrainerResult]] = await getTrainersById(id);
     if (!firstTrainerResult) {
@@ -274,8 +272,10 @@ trainerController.patch('/:id', permit('Admin', 'Trainer'), async (req, res) => 
 trainerController.patch('/:id/detailed', permit('Admin', 'Trainer'), async (req, res) => {
   let conn = null;
   try {
-    const { id } = req.params;
-    const result = await idSchema.spa(id);
+    const result = await updateTrainerDetailedSchema.spa({
+      params: req.params,
+      body: req.body,
+    });
     if (!result.success) {
       return res.status(400).json({
         status: 400,
@@ -283,23 +283,26 @@ trainerController.patch('/:id/detailed', permit('Admin', 'Trainer'), async (req,
       });
     }
     const {
-      email,
-      password,
-      username,
-      firstName,
-      lastName,
-      phone,
-      description,
-      specialty,
-      certificate,
-      imageUrl,
-      lineOne,
-      lineTwo,
-      suburb,
-      postcode,
-      state,
-      country,
-    } = req.body;
+      params: { id },
+      body: {
+        email,
+        password,
+        username,
+        firstName,
+        lastName,
+        phone,
+        description,
+        specialty,
+        certificate,
+        imageUrl,
+        lineOne,
+        lineTwo,
+        suburb,
+        postcode,
+        state,
+        country,
+      },
+    } = result.data;
 
     const [[firstTrainerResult]] = await getTrainersById(id);
     if (!firstTrainerResult) {
@@ -377,14 +380,14 @@ trainerController.patch('/:id/detailed', permit('Admin', 'Trainer'), async (req,
 trainerController.delete('/:id', permit('Admin', 'Trainer'), async (req, res) => {
   let conn = null;
   try {
-    const { id } = req.params;
-    const result = await idSchema.spa(id);
+    const result = await idSchema.spa(req.params.id);
     if (!result.success) {
       return res.status(400).json({
         status: 400,
         message: JSON.stringify(result.error.flatten()),
       });
     }
+    const id = result.data;
 
     const [[firstTrainerResult]] = await getTrainersById(id);
     if (!firstTrainerResult) {
