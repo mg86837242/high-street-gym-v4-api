@@ -22,7 +22,7 @@ module.exports = {
     'prettier/prettier': 'error',
     'arrow-body-style': 'off',
     'prefer-arrow-callback': 'off',
-    // Band-aid solution to the Vite import resolver issue, @see:
+    // Band-aid solution to lack of resolver in the backend, @see:
     // https://stackoverflow.com/questions/46208367/how-to-remove-eslint-error-no-unresolved-from-importing-react
     // & https://stackoverflow.com/questions/67316153/facing-problem-while-importing-files-in-nodejs
     'import/no-unresolved': ['warn', { caseSensitive: false }],
