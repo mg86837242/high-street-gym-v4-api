@@ -9,7 +9,7 @@ export function getAddressesById(id) {
   return pool.query('SELECT * FROM Addresses WHERE id = ?', [id]);
 }
 
-export function getAddressesByDetails(lineOne, lineTwo, suburb, postcode, state, country) {
+export function getIdenticalAddrByDetails(lineOne, lineTwo, suburb, postcode, state, country) {
   return pool.query(
     'SELECT * FROM Addresses WHERE lineOne = ? AND lineTwo = ? AND suburb = ? AND postcode = ? AND state = ? AND country = ?',
     [lineOne, lineTwo, suburb, postcode, state, country]
