@@ -8,20 +8,23 @@ module.exports = {
     //  & https://eslint.org/docs/latest/use/configure/language-options#specifying-parser-options
     ecmaVersion: 'latest',
     sourceType: 'module',
+    ecmaFeatures: {
+      jsx: true,
+    },
   },
-  // @see: https://www.robinwieruch.de/prettier-eslint/ & https://prettier.io/docs/en/integrating-with-linters.html
-  extends: ['airbnb', 'prettier'],
-  plugins: ['prettier'],
+  // @see: https://prettier.io/docs/en/integrating-with-linters.html & https://react.dev/learn/editor-setup#linting
+  //  & https://www.npmjs.com/package/eslint-config-react-app & https://www.npmjs.com/package/eslint-plugin-react-hooks
+  extends: ['airbnb', 'prettier', 'react-app'],
+  plugins: ['react-hooks'],
   ignorePatterns: [
     // Unused folders && files
     '**/__*',
     // Temporarily ignored
   ],
   rules: {
-    // @see: https://github.com/prettier/eslint-plugin-prettier#recommended-configuration for the following 3 lines
-    'prettier/prettier': 'error',
-    'arrow-body-style': 'off',
-    'prefer-arrow-callback': 'off',
+    // @see: https://www.npmjs.com/package/eslint-plugin-react-hooks
+    'react-hooks/rules-of-hooks': 'error',
+    'react-hooks/exhaustive-deps': 'error',
     // Band-aid solution to lack of resolver in the backend, @see:
     // https://stackoverflow.com/questions/46208367/how-to-remove-eslint-error-no-unresolved-from-importing-react
     // & https://stackoverflow.com/questions/67316153/facing-problem-while-importing-files-in-nodejs
