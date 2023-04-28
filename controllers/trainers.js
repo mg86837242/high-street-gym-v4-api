@@ -2,7 +2,7 @@ import { Router } from 'express';
 import bcrypt from 'bcryptjs'; // reason to use `bcryptjs`: https://github.com/kelektiv/node.bcrypt.js/issues/705
 import pool from '../config/database.js';
 import { emptyObjSchema, idSchema } from '../schemas/params.js';
-import { trainerSchema, updateTrainerDetailedSchema, updateTrainerSchema } from '../schemas/trainers.js';
+import { updateTrainerDetailedSchema, updateTrainerSchema } from '../schemas/trainers.js';
 import { getAllTrainers, getTrainersById, getTrainersWithDetailsById } from '../models/trainers.js';
 import permit from '../middleware/rbac.js';
 
@@ -144,7 +144,7 @@ trainerController.post('/detailed', permit('Admin', 'Trainer'), async (req, res)
       INSERT INTO Logins (email, password, username, role)
       VALUES (?, ?, ?, ?)
       `,
-      [email, hashedPassword, username, 'Trainer']
+      [email, hashedPassword, username, 'Trainer'],
     );
     const loginId = createLoginResult.insertId;
 
@@ -157,7 +157,7 @@ trainerController.post('/detailed', permit('Admin', 'Trainer'), async (req, res)
         (lineOne, lineTwo, suburb, postcode, state, country)
         VALUES (?, ?, ?, ?, ?, ?)
         `,
-        [lineOne, lineTwo, suburb, postcode, state, country]
+        [lineOne, lineTwo, suburb, postcode, state, country],
       );
       addressId = createAddressResult.insertId;
     }
@@ -168,7 +168,7 @@ trainerController.post('/detailed', permit('Admin', 'Trainer'), async (req, res)
       INSERT INTO Trainers (loginId, firstName, lastName, phone, addressId, description, specialty, certificate, imageUrl)
       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
       `,
-      [loginId, firstName, lastName, phone, addressId, description, specialty, certificate, imageUrl]
+      [loginId, firstName, lastName, phone, addressId, description, specialty, certificate, imageUrl],
     );
 
     await conn.commit();
@@ -239,7 +239,7 @@ trainerController.patch('/:id', permit('Admin', 'Trainer'), async (req, res) => 
       SET email = ?, password = ?, username = ?
       WHERE id = ?
       `,
-      [email, hashedPassword, username, loginId]
+      [email, hashedPassword, username, loginId],
     );
 
     // Update trainer row with `loginId` FK
@@ -249,7 +249,7 @@ trainerController.patch('/:id', permit('Admin', 'Trainer'), async (req, res) => 
       SET loginId = ?, firstName = ?, lastName = ?, phone = ?, description = ?, specialty = ?, certificate = ?, imageUrl = ?
       WHERE id = ?
       `,
-      [loginId, firstName, lastName, phone, description, specialty, certificate, imageUrl, id]
+      [loginId, firstName, lastName, phone, description, specialty, certificate, imageUrl, id],
     );
 
     await conn.commit();
@@ -335,7 +335,7 @@ trainerController.patch('/:id/detailed', permit('Admin', 'Trainer'), async (req,
       SET email = ?, password = ?, username = ?
       WHERE id = ?
       `,
-      [email, hashedPassword, username, loginId]
+      [email, hashedPassword, username, loginId],
     );
 
     // Update address row – referring to the parent table `Addresses`
@@ -346,7 +346,7 @@ trainerController.patch('/:id/detailed', permit('Admin', 'Trainer'), async (req,
       SET lineOne = ?, lineTwo = ?, suburb = ?, postcode = ?, state = ?, country = ?
       WHERE id = ?
       `,
-      [lineOne, lineTwo, suburb, postcode, state, country, addressId]
+      [lineOne, lineTwo, suburb, postcode, state, country, addressId],
     );
 
     // Update trainer row with 2 FKs
@@ -356,7 +356,7 @@ trainerController.patch('/:id/detailed', permit('Admin', 'Trainer'), async (req,
       SET loginId = ?, firstName = ?, lastName = ?, phone = ?, addressId = ?, description = ?, specialty = ?, certificate = ?. imageUrl = ?
       WHERE id = ?
       `,
-      [loginId, firstName, lastName, phone, addressId, description, specialty, certificate, imageUrl, id]
+      [loginId, firstName, lastName, phone, addressId, description, specialty, certificate, imageUrl, id],
     );
 
     await conn.commit();
