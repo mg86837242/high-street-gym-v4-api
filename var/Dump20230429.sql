@@ -1,5 +1,3 @@
-CREATE DATABASE  IF NOT EXISTS `high_street_gym_v5` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_bin */ /*!80016 DEFAULT ENCRYPTION='N' */;
-USE `high_street_gym_v5`;
 -- MySQL dump 10.13  Distrib 8.0.31, for Win64 (x86_64)
 --
 -- Host: localhost    Database: high_street_gym_v5
@@ -26,13 +24,13 @@ DROP TABLE IF EXISTS `activities`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `activities` (
   `id` int NOT NULL AUTO_INCREMENT,
-  `name` varchar(45) COLLATE utf8mb4_bin NOT NULL,
-  `category` enum('Aerobic','Strength','Aerobic & Strength','Flexibility') COLLATE utf8mb4_bin DEFAULT NULL,
-  `description` varchar(255) COLLATE utf8mb4_bin DEFAULT NULL,
-  `intensityLevel` enum('Low','Medium','High','Very High','Varies with Type') COLLATE utf8mb4_bin DEFAULT NULL,
+  `name` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
+  `category` enum('Aerobic','Strength','Aerobic & Strength','Flexibility') CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
+  `description` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
+  `intensityLevel` enum('Low','Medium','High','Very High','Varies with Type') CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
   `maxPeopleAllowed` int DEFAULT NULL,
-  `requirementOne` varchar(100) COLLATE utf8mb4_bin DEFAULT NULL,
-  `requirementTwo` varchar(100) COLLATE utf8mb4_bin DEFAULT NULL,
+  `requirementOne` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
+  `requirementTwo` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
   `durationMinutes` int NOT NULL,
   `price` decimal(10,2) DEFAULT NULL,
   PRIMARY KEY (`id`)
@@ -58,12 +56,12 @@ DROP TABLE IF EXISTS `addresses`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `addresses` (
   `id` int NOT NULL AUTO_INCREMENT,
-  `lineOne` varchar(45) COLLATE utf8mb4_bin NOT NULL,
-  `lineTwo` varchar(45) COLLATE utf8mb4_bin DEFAULT NULL,
-  `suburb` varchar(45) COLLATE utf8mb4_bin NOT NULL,
-  `postcode` varchar(45) COLLATE utf8mb4_bin NOT NULL,
-  `state` varchar(45) COLLATE utf8mb4_bin NOT NULL,
-  `country` varchar(45) COLLATE utf8mb4_bin NOT NULL,
+  `lineOne` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
+  `lineTwo` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
+  `suburb` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
+  `postcode` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
+  `state` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
+  `country` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -88,9 +86,9 @@ DROP TABLE IF EXISTS `admins`;
 CREATE TABLE `admins` (
   `id` int NOT NULL AUTO_INCREMENT,
   `loginId` int DEFAULT NULL,
-  `firstName` varchar(45) COLLATE utf8mb4_bin NOT NULL,
-  `lastName` varchar(45) COLLATE utf8mb4_bin NOT NULL,
-  `phone` varchar(45) COLLATE utf8mb4_bin NOT NULL,
+  `firstName` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
+  `lastName` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
+  `phone` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
   `addressId` int DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `fk_Managers_Logins1_idx` (`loginId`),
@@ -119,8 +117,8 @@ DROP TABLE IF EXISTS `blogs`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `blogs` (
   `id` int NOT NULL AUTO_INCREMENT,
-  `title` varchar(45) COLLATE utf8mb4_bin NOT NULL,
-  `body` text COLLATE utf8mb4_bin NOT NULL,
+  `title` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
+  `body` text CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
   `loginId` int NOT NULL,
   `createdAt` datetime DEFAULT NULL,
   `updatedAt` datetime DEFAULT NULL,
@@ -182,11 +180,11 @@ DROP TABLE IF EXISTS `logins`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `logins` (
   `id` int NOT NULL AUTO_INCREMENT,
-  `email` varchar(45) COLLATE utf8mb4_bin NOT NULL,
-  `password` varchar(100) COLLATE utf8mb4_bin NOT NULL,
-  `username` varchar(45) COLLATE utf8mb4_bin NOT NULL,
-  `role` enum('Member','Trainer','Admin','') COLLATE utf8mb4_bin DEFAULT NULL,
-  `accessKey` varchar(36) COLLATE utf8mb4_bin DEFAULT NULL,
+  `email` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
+  `password` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
+  `username` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
+  `role` enum('Member','Trainer','Admin','') CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
+  `accessKey` varchar(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `email_UNIQUE` (`email`),
   UNIQUE KEY `authKey_UNIQUE` (`accessKey`)
@@ -213,12 +211,12 @@ DROP TABLE IF EXISTS `members`;
 CREATE TABLE `members` (
   `id` int NOT NULL AUTO_INCREMENT,
   `loginId` int DEFAULT NULL,
-  `firstName` varchar(45) COLLATE utf8mb4_bin NOT NULL,
-  `lastName` varchar(45) COLLATE utf8mb4_bin NOT NULL,
-  `phone` varchar(45) COLLATE utf8mb4_bin NOT NULL,
+  `firstName` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
+  `lastName` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
+  `phone` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
   `addressId` int DEFAULT NULL,
   `age` int DEFAULT NULL,
-  `gender` enum('Female','Male','Other') COLLATE utf8mb4_bin DEFAULT NULL,
+  `gender` enum('Female','Male','Other') CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `fk_members_specific_traits_users1_idx` (`loginId`),
   KEY `fk_Members_Addresses1_idx` (`addressId`),
@@ -247,14 +245,14 @@ DROP TABLE IF EXISTS `trainers`;
 CREATE TABLE `trainers` (
   `id` int NOT NULL AUTO_INCREMENT,
   `loginId` int DEFAULT NULL,
-  `firstName` varchar(45) COLLATE utf8mb4_bin NOT NULL,
-  `lastName` varchar(45) COLLATE utf8mb4_bin NOT NULL,
-  `phone` varchar(45) COLLATE utf8mb4_bin NOT NULL,
+  `firstName` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
+  `lastName` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
+  `phone` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
   `addressId` int DEFAULT NULL,
-  `description` varchar(255) COLLATE utf8mb4_bin DEFAULT NULL,
-  `specialty` varchar(45) COLLATE utf8mb4_bin DEFAULT NULL,
-  `certificate` varchar(45) COLLATE utf8mb4_bin DEFAULT NULL,
-  `imageUrl` varchar(255) COLLATE utf8mb4_bin DEFAULT NULL,
+  `description` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
+  `specialty` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
+  `certificate` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
+  `imageUrl` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `fk_trainers_specific_traits_users1_idx` (`loginId`),
   KEY `fk_Trainers_Addresses1_idx` (`addressId`),
@@ -282,4 +280,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2023-04-24 15:15:09
+-- Dump completed on 2023-04-29 23:42:31
