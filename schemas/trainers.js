@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import { emailSchema, passwordSchema, usernameSchema, firstNameSchema, lastNameSchema, phoneSchema } from './users.js';
 import { lineOneSchema, lineTwoSchema, suburbSchema, postcodeSchema, stateSchema, countrySchema } from './addresses.js';
+import { idSchema } from './params.js';
 
 const descriptionSchema = z.string().trim().max(255).nullable();
 const specialtySchema = z.string().trim().max(45).nullable();

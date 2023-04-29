@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { idSchema } from './params';
+import { idSchema } from './params.js';
 
 export const lineOneSchema = z.string().trim().max(45);
 export const lineTwoSchema = z.string().trim().max(45);

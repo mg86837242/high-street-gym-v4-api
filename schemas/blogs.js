@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { idSchema } from './params';
+import { idSchema } from './params.js';
 
 export const blogSchema = z.object({
   title: z.string().trim().max(45),
