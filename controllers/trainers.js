@@ -2,7 +2,7 @@ import { Router } from 'express';
 import bcrypt from 'bcryptjs'; // reason to use `bcryptjs`: https://github.com/kelektiv/node.bcrypt.js/issues/705
 import pool from '../config/database.js';
 import { emptyObjSchema, idSchema } from '../schemas/params.js';
-import { updateTrainerDetailedSchema, updateTrainerSchema } from '../schemas/trainers.js';
+import { trainerDetailedSchema, updateTrainerDetailedSchema, updateTrainerSchema } from '../schemas/trainers.js';
 import { getAllTrainers, getTrainersById, getTrainersWithDetailsById } from '../models/trainers.js';
 import permit from '../middleware/rbac.js';
 
@@ -105,6 +105,13 @@ trainerController.get('/:id/detailed', permit('Admin', 'Trainer'), async (req, r
 trainerController.post('/detailed', permit('Admin', 'Trainer'), async (req, res) => {
   let conn = null;
   try {
+    const result = await trainerDetailedSchema.spa(req.body);
+    if (!result.success) {
+      return res.status(400).json({
+        status: 400,
+        message: JSON.stringify(result.error.flatten()),
+      });
+    }
     const {
       email,
       password,
