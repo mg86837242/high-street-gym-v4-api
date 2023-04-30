@@ -4,7 +4,7 @@ import pool from '../config/database.js';
 import { emptyObjSchema, idSchema } from '../schemas/params.js';
 import { adminDetailedSchema, updateAdminSchema, updateAdminDetailedSchema } from '../schemas/admins.js';
 import { getAllAdmins, getAdminsById, getAdminsWithDetailsById } from '../models/admins.js';
-import permit from '../middleware/rbac.js';
+import permit from '../middleware/authorization.js';
 
 const adminController = Router();
 

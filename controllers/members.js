@@ -15,7 +15,7 @@ import {
   getMembersById,
   getMembersWithDetailsById,
 } from '../models/members.js';
-import permit from '../middleware/rbac.js';
+import permit from '../middleware/authorization.js';
 import upload from '../middleware/multer.js';
 
 const memberController = Router();

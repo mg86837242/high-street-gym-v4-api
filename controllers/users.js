@@ -7,7 +7,7 @@ import { getLoginsByAccessKey, getLoginsByEmail, updateLoginAccessKeyById } from
 import { getAdminsByLoginId, getAdminsWithDetailsByLoginId } from '../models/admins.js';
 import { getTrainersByLoginId, getTrainersWithDetailsByLoginId } from '../models/trainers.js';
 import { getMembersByLoginId, getMembersWithDetailsByLoginId } from '../models/members.js';
-import permit from '../middleware/rbac.js';
+import permit from '../middleware/authorization.js';
 
 const userController = Router();
 

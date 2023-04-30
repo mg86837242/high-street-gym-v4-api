@@ -4,7 +4,7 @@ import pool from '../config/database.js';
 import { emptyObjSchema, idSchema } from '../schemas/params.js';
 import { trainerDetailedSchema, updateTrainerDetailedSchema, updateTrainerSchema } from '../schemas/trainers.js';
 import { getAllTrainers, getTrainersById, getTrainersWithDetailsById } from '../models/trainers.js';
-import permit from '../middleware/rbac.js';
+import permit from '../middleware/authorization.js';
 
 const trainerController = Router();
 

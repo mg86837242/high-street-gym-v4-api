@@ -11,7 +11,7 @@ import {
 import { getAdminsAddressesIdById } from '../models/admins.js';
 import { getTrainersAddressesIdById } from '../models/trainers.js';
 import { getMembersAddressesIdById } from '../models/members.js';
-import permit from '../middleware/rbac.js';
+import permit from '../middleware/authorization.js';
 
 const addressController = Router();
 

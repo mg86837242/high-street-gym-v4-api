@@ -10,7 +10,7 @@ import {
   updateActivityById,
   deleteActivityById,
 } from '../models/activities.js';
-import permit from '../middleware/rbac.js';
+import permit from '../middleware/authorization.js';
 import upload from '../middleware/multer.js';
 
 const activityController = Router();

@@ -16,7 +16,7 @@ import {
 import { getAllMembers } from '../models/members.js';
 import { getAllTrainers } from '../models/trainers.js';
 import { getAllActivities } from '../models/activities.js';
-import permit from '../middleware/rbac.js';
+import permit from '../middleware/authorization.js';
 
 const bookingController = Router();
 
