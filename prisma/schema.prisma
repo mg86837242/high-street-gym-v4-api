@@ -1,0 +1,164 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Activity {
+  id               Int             @id @default(autoincrement())
+  name             String          @db.VarChar(45)
+  category         Category?
+  description      String?         @db.VarChar(255)
+  intensityLevel   IntensityLevel?
+  maxPeopleAllowed Int?
+  requirementOne   String?         @db.VarChar(100)
+  requirementTwo   String?         @db.VarChar(100)
+  durationMinutes  Int
+  price            Decimal?        @db.Decimal(10, 2)
+  bookings         Booking[]
+
+  @@map("activities")
+}
+
+model Address {
+  id       Int       @id @default(autoincrement())
+  lineOne  String    @db.VarChar(45)
+  lineTwo  String?   @db.VarChar(45)
+  suburb   String    @db.VarChar(45)
+  postcode String    @db.VarChar(45)
+  state    String    @db.VarChar(45)
+  country  String    @db.VarChar(45)
+  admins   Admin[]
+  members  Member[]
+  trainers Trainer[]
+
+  @@map("addresses")
+}
+
+model Admin {
+  id        Int      @id @default(autoincrement())
+  loginId   Int?
+  firstName String   @db.VarChar(45)
+  lastName  String   @db.VarChar(45)
+  phone     String   @db.VarChar(45)
+  addressId Int?
+  addresses Address? @relation(fields: [addressId], references: [id], onUpdate: SetNull, map: "fk_Administrators_Addresses1")
+  logins    User?    @relation(fields: [loginId], references: [id], onUpdate: SetNull, map: "fk_Administrators_Logins1")
+
+  @@index([addressId], map: "fk_Managers_Addresses1_idx")
+  @@index([loginId], map: "fk_Managers_Logins1_idx")
+  @@map("admins")
+}
+
+model Blog {
+  id        Int       @id @default(autoincrement())
+  title     String    @db.VarChar(45)
+  body      String    @db.Text
+  loginId   Int
+  createdAt DateTime? @db.DateTime(0)
+  updatedAt DateTime? @db.DateTime(0)
+  logins    User      @relation(fields: [loginId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_Blogs_Logins1")
+
+  @@index([loginId], map: "fk_Blogs_Logins1_idx")
+  @@map("blogs")
+}
+
+model Booking {
+  id         Int      @id @default(autoincrement())
+  memberId   Int
+  trainerId  Int
+  activityId Int
+  dateTime   DateTime @db.DateTime(0)
+  activities Activity @relation(fields: [activityId], references: [id], onDelete: Cascade, map: "fk_Bookings_Activities1")
+  members    Member   @relation(fields: [memberId], references: [id], onDelete: Cascade, map: "fk_Bookings_Members1")
+  trainers   Trainer  @relation(fields: [trainerId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_Bookings_Trainers1")
+
+  @@index([activityId], map: "fk_Bookings_Activities1_idx")
+  @@index([trainerId], map: "fk_Bookings_Trainers1_idx")
+  @@index([memberId], map: "fk_member_activity_bookings_members1_idx")
+  @@map("bookings")
+}
+
+model User {
+  id        Int       @id @default(autoincrement())
+  email     String    @unique(map: "email_UNIQUE") @db.VarChar(45)
+  password  String    @db.VarChar(100)
+  username  String    @db.VarChar(45)
+  role      Role?
+  accessKey String?   @unique(map: "authKey_UNIQUE") @db.VarChar(36)
+  admins    Admin[]
+  blogs     Blog[]
+  members   Member[]
+  trainers  Trainer[]
+
+  @@map("logins")
+}
+
+model Member {
+  id        Int       @id @default(autoincrement())
+  loginId   Int?
+  firstName String    @db.VarChar(45)
+  lastName  String    @db.VarChar(45)
+  phone     String    @db.VarChar(45)
+  addressId Int?
+  age       Int?
+  gender    Gender?
+  bookings  Booking[]
+  addresses Address?  @relation(fields: [addressId], references: [id], onUpdate: SetNull, map: "fk_Members_Addresses1")
+  logins    User?     @relation(fields: [loginId], references: [id], onUpdate: SetNull, map: "fk_Members_Logins1")
+
+  @@index([addressId], map: "fk_Members_Addresses1_idx")
+  @@index([loginId], map: "fk_members_specific_traits_users1_idx")
+  @@map("members")
+}
+
+model Trainer {
+  id          Int       @id @default(autoincrement())
+  loginId     Int?
+  firstName   String    @db.VarChar(45)
+  lastName    String    @db.VarChar(45)
+  phone       String    @db.VarChar(45)
+  addressId   Int?
+  description String?   @db.VarChar(255)
+  specialty   String?   @db.VarChar(45)
+  certificate String?   @db.VarChar(45)
+  imageUrl    String?   @db.VarChar(255)
+  bookings    Booking[]
+  addresses   Address?  @relation(fields: [addressId], references: [id], onUpdate: SetNull, map: "fk_Trainers_Addresses1")
+  logins      User?     @relation(fields: [loginId], references: [id], onUpdate: SetNull, map: "fk_Trainers_Logins1")
+
+  @@index([addressId], map: "fk_Trainers_Addresses1_idx")
+  @@index([loginId], map: "fk_trainers_specific_traits_users1_idx")
+  @@map("trainers")
+}
+
+enum Category {
+  Aerobic
+  Strength
+  Aerobic___Strength @map("Aerobic & Strength")
+  Flexibility
+}
+
+enum Role {
+  Member
+  Trainer
+  Admin
+  EMPTY_ENUM_VALUE @map("")
+}
+
+enum IntensityLevel {
+  Low
+  Medium
+  High
+  Very_High        @map("Very High")
+  Varies_with_Type @map("Varies with Type")
+}
+
+enum Gender {
+  Female
+  Male
+  Other
+}
