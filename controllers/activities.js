@@ -108,7 +108,7 @@ activityController.post('/', permit('Admin', 'Trainer'), async (req, res) => {
       requirementOne,
       requirementTwo,
       durationMinutes,
-      price
+      price,
     );
 
     return res.status(200).json({
@@ -147,9 +147,9 @@ activityController.post(
       //  becomes undefined
 
       // NB Bug: after configuring the `numberParseOptions` of the parser as shown above, and properly sanitizing the
-      //  element with empty content (w/ falsy value), the JS obj (generated from parsing XML string) is still
-      //  considered invalid by the schema (designed in accordance with the database constraints) => Solution: write a
-      //  constructor to type cast the member obj during the sanitization
+      //  element w/ empty content (falsy value), the JS obj generated from parsing XML string is still considered
+      //  invalid by the schema (designed in accordance with the database constraints) => Solution: write a constructor
+      //  to type cast the member obj during the sanitization
       class Activity {
         constructor(
           name,
@@ -160,7 +160,7 @@ activityController.post(
           requirementOne,
           requirementTwo,
           durationMinutes,
-          price
+          price,
         ) {
           this.name = name.toString();
           this.category = category.toString();
@@ -195,7 +195,7 @@ activityController.post(
             requirementOne,
             requirementTwo,
             durationMinutes,
-            price
+            price,
           );
 
           return Object.keys(castActivity).reduce((acc, cv) => {
@@ -206,7 +206,7 @@ activityController.post(
             }
             return acc;
           }, {});
-        }
+        },
       );
       const sanitizedActivities = await Promise.all(sanitizeActivityPromises);
 
@@ -251,9 +251,9 @@ activityController.post(
               requirementTwo,
               durationMinutes,
               price,
-            ]
+            ],
           );
-        }
+        },
       );
       await Promise.all(createActivityPromises);
 
@@ -272,7 +272,7 @@ activityController.post(
     } finally {
       if (conn) conn.release();
     }
-  }
+  },
 );
 
 // Update Activity
@@ -313,7 +313,7 @@ activityController.patch('/:id', permit('Admin', 'Trainer'), async (req, res) =>
       requirementOne,
       requirementTwo,
       durationMinutes,
-      price
+      price,
     );
 
     if (!affectedRows) {
