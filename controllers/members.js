@@ -73,7 +73,7 @@ memberController.get(
         message: 'Database or server error',
       });
     }
-  }
+  },
 );
 
 memberController.get('/:id', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
@@ -190,7 +190,7 @@ memberController.post(['/', '/signup'], async (req, res) => {
       INSERT INTO Logins (email, password, username, role)
       VALUES (?, ?, ?, ?)
       `,
-      [email, hashedPassword, username, 'Member']
+      [email, hashedPassword, username, 'Member'],
     );
     const loginId = createLoginResult.insertId;
 
@@ -203,7 +203,7 @@ memberController.post(['/', '/signup'], async (req, res) => {
       INSERT INTO Members (loginId, firstName, lastName, phone, addressId, age, gender)
       VALUES (?, ?, ?, ?, ?, ?, ?)
       `,
-      [loginId, firstName, lastName, phone, addressId, age, gender]
+      [loginId, firstName, lastName, phone, addressId, age, gender],
     );
 
     await conn.commit();
@@ -271,7 +271,7 @@ memberController.post('/detailed', permit('Admin', 'Trainer', 'Member'), async (
       INSERT INTO Logins (email, password, username, role)
       VALUES (?, ?, ?, ?)
       `,
-      [email, hashedPassword, username, 'Member']
+      [email, hashedPassword, username, 'Member'],
     );
     const loginId = createLoginResult.insertId;
 
@@ -284,7 +284,7 @@ memberController.post('/detailed', permit('Admin', 'Trainer', 'Member'), async (
         (lineOne, lineTwo, suburb, postcode, state, country)
         VALUES (?, ?, ?, ?, ?, ?)
         `,
-        [lineOne, lineTwo, suburb, postcode, state, country]
+        [lineOne, lineTwo, suburb, postcode, state, country],
       );
       addressId = createAddressResult.insertId;
     }
@@ -295,7 +295,7 @@ memberController.post('/detailed', permit('Admin', 'Trainer', 'Member'), async (
       INSERT INTO Members (loginId, firstName, lastName, phone, addressId, age, gender)
       VALUES (?, ?, ?, ?, ?, ?, ?)
       `,
-      [loginId, firstName, lastName, phone, addressId, age, gender]
+      [loginId, firstName, lastName, phone, addressId, age, gender],
     );
     await conn.commit();
     return res.status(200).json({
@@ -337,9 +337,9 @@ memberController.post(
       //  becomes undefined
 
       // NB Bug: after configuring the `numberParseOptions` of the parser as shown above, and properly sanitizing the
-      //  field with falsy value, the JS object (generated from parsing XML string) is still considered invalid by
-      //  the schema (designed in accordance with the database constraints) => Solution: write a constructor to type
-      //  cast the member object during sanitization
+      //  field w/ empty content (falsy value), the JS object generated from parsing XML string is still considered
+      //  invalid by the schema (designed in accordance with the database constraints) => Solution: write a constructor
+      //  to type cast the member object during sanitization
       class Member {
         constructor(
           email,
@@ -355,7 +355,7 @@ memberController.post(
           suburb,
           postcode,
           state,
-          country
+          country,
         ) {
           this.email = email.toString();
           this.password = password.toString();
@@ -405,7 +405,7 @@ memberController.post(
             suburb,
             postcode,
             state,
-            country
+            country,
           );
 
           return Object.keys(castMember).reduce((acc, cv) => {
@@ -416,7 +416,7 @@ memberController.post(
             }
             return acc;
           }, {});
-        }
+        },
       );
       const sanitizedMembers = await Promise.all(sanitizeMemberPromises);
 
@@ -466,7 +466,7 @@ memberController.post(
             INSERT INTO Logins (email, password, username, role)
             VALUES (?, ?, ?, ?)
             `,
-            [email, hashedPassword, username, 'Member']
+            [email, hashedPassword, username, 'Member'],
           );
           const loginId = createLoginResult.insertId;
 
@@ -480,7 +480,7 @@ memberController.post(
               (lineOne, lineTwo, suburb, postcode, state, country)
               VALUES (?, ?, ?, ?, ?, ?)
               `,
-              [lineOne, lineTwo, suburb, postcode, state, country]
+              [lineOne, lineTwo, suburb, postcode, state, country],
             );
             addressId = createAddressResult.insertId;
           }
@@ -491,10 +491,10 @@ memberController.post(
             INSERT INTO Members (loginId, firstName, lastName, phone, addressId, age, gender)
             VALUES (?, ?, ?, ?, ?, ?, ?)
             `,
-            [loginId, firstName, lastName, phone, addressId, age, gender]
+            [loginId, firstName, lastName, phone, addressId, age, gender],
           );
           return undefined;
-        }
+        },
       );
       await Promise.all(createMemberPromises);
 
@@ -513,7 +513,7 @@ memberController.post(
     } finally {
       if (conn) conn.release();
     }
-  }
+  },
 );
 
 // Update Member
@@ -569,7 +569,7 @@ memberController.patch('/:id', permit('Admin', 'Trainer', 'Member'), async (req,
       SET email = ?, password = ?, username = ?
       WHERE id = ?
       `,
-      [email, hashedPassword, username, loginId]
+      [email, hashedPassword, username, loginId],
     );
 
     // Update member row with `loginId` FK
@@ -579,7 +579,7 @@ memberController.patch('/:id', permit('Admin', 'Trainer', 'Member'), async (req,
       SET loginId = ?, firstName = ?, lastName = ?, phone = ?, age = ?, gender = ?
       WHERE id = ?
       `,
-      [loginId, firstName, lastName, phone, age, gender, id]
+      [loginId, firstName, lastName, phone, age, gender, id],
     );
 
     await conn.commit();
@@ -663,7 +663,7 @@ memberController.patch('/:id/detailed', permit('Admin', 'Trainer', 'Member'), as
       SET email = ?, password = ?, username = ?
       WHERE id = ?
       `,
-      [email, hashedPassword, username, loginId]
+      [email, hashedPassword, username, loginId],
     );
 
     // Update address row – referring to the parent table `Addresses`
@@ -674,7 +674,7 @@ memberController.patch('/:id/detailed', permit('Admin', 'Trainer', 'Member'), as
       SET lineOne = ?, lineTwo = ?, suburb = ?, postcode = ?, state = ?, country = ?
       WHERE id = ?
       `,
-      [lineOne, lineTwo, suburb, postcode, state, country, addressId]
+      [lineOne, lineTwo, suburb, postcode, state, country, addressId],
     );
 
     // Update member row with 2 FKs
@@ -684,7 +684,7 @@ memberController.patch('/:id/detailed', permit('Admin', 'Trainer', 'Member'), as
       SET loginId = ?, firstName = ?, lastName = ?, phone = ?, addressId = ?, age = ?, gender = ?
       WHERE id = ?
       `,
-      [loginId, firstName, lastName, phone, addressId, age, gender, id]
+      [loginId, firstName, lastName, phone, addressId, age, gender, id],
     );
 
     await conn.commit();
