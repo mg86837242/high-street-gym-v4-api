@@ -18,7 +18,6 @@ const prodConfig = {
 };
 const defaultConfig = {
   PORT: process.env.PORT || 3000,
-  VITE_PORT: process.env.VITE_PORT || 5173,
   SESSION_SECRET: process.env.SESSION_SECRET || 'ds2s981301UhWUIwe',
 };
 
