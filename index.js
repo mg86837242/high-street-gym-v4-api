@@ -12,11 +12,10 @@ app.get('/api/helloworld', (req, res) => {
   res.status(200).json({ status: 200, message: 'Hello world' });
 });
 
-app.listen(constants.PORT, err => {
-  if (err) {
-    throw err;
-  } else {
-    console.log(`✅ Express server running on http://localhost:${constants.PORT}
+app.listen(constants.PORT, () => {
+  console.info(`✅ Express server running on http://localhost:${constants.PORT}
     -- Running on ${process.env.NODE_ENV}`);
-  }
 });
+
+// References
+// -- https://stackoverflow.com/questions/56291321/how-to-handle-errors-with-express-listen-in-typescript
