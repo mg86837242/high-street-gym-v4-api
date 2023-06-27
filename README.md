@@ -33,7 +33,6 @@ Navigate to [`http://localhost:5173`](http://localhost:5173).
 
 <!-- 
 The following items are changed for deployment:
-- `.env` file
+- `.env` file, which affects `VITE_PORT` in `config/constants.js`
 - `config/middlewareConfig` CORS setting
-- `config/constants.js`
- -->
+-->
