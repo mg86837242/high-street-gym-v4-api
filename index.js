@@ -13,7 +13,7 @@ app.get('/api/helloworld', (req, res) => {
 });
 
 app.listen(constants.PORT, () => {
-  console.info(`✅ Express server running on http://localhost:${constants.PORT}
+  console.info(`✅ Express server running on port: ${constants.PORT}
     -- Running on ${process.env.NODE_ENV}`);
 });
 
