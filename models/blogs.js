@@ -6,8 +6,8 @@ export function getAllBlogs() {
     `
     SELECT b.id, b.title, b.body, b.loginId, b.createdAt, b.updatedAt,
     l.username, l.role
-    FROM Blogs b
-    INNER JOIN Logins l on b.loginId = l.id
+    FROM blogs b
+    INNER JOIN logins l on b.loginId = l.id
     `
   );
 }
@@ -17,8 +17,8 @@ export function getBlogsById(id) {
     `
     SELECT b.id, b.title, b.body, b.loginId, b.createdAt, b.updatedAt,
     l.username, l.role
-    FROM Blogs b
-    INNER JOIN Logins l on b.loginId = l.id
+    FROM blogs b
+    INNER JOIN logins l on b.loginId = l.id
     WHERE b.id = ?
     `,
     [id]
@@ -29,7 +29,7 @@ export function getBlogsById(id) {
 export function createBlog(title, body, loginId) {
   return pool.query(
     `
-		INSERT INTO Blogs (title, body, loginId, createdAt)
+		INSERT INTO blogs (title, body, loginId, createdAt)
 		VALUES (?, ?, ?, NOW())
 		`,
     [title, body, loginId]
@@ -40,7 +40,7 @@ export function createBlog(title, body, loginId) {
 export function updateBlogById(id, title, body, loginId) {
   return pool.query(
     `
-		UPDATE Blogs
+		UPDATE blogs
 		SET title = ?, body = ?, loginId = ?, updatedAt = NOW()
 		WHERE id = ?
 		`,
@@ -50,5 +50,5 @@ export function updateBlogById(id, title, body, loginId) {
 
 // Delete Blog
 export function deleteBlogById(id) {
-  return pool.query('DELETE FROM Blogs WHERE id = ?', [id]);
+  return pool.query('DELETE FROM blogs WHERE id = ?', [id]);
 }

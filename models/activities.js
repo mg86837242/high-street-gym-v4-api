@@ -2,15 +2,15 @@ import pool from '../config/database.js';
 
 // Read Activity
 export function getAllActivities() {
-  return pool.query('SELECT * FROM Activities');
+  return pool.query('SELECT * FROM activities');
 }
 
 export function getActivitiesById(id) {
-  return pool.query('SELECT * FROM Activities WHERE id = ?', [id]);
+  return pool.query('SELECT * FROM activities WHERE id = ?', [id]);
 }
 
 export function getActivitiesByName(name) {
-  return pool.query('SELECT * FROM Activities WHERE name = ?', [name]);
+  return pool.query('SELECT * FROM activities WHERE name = ?', [name]);
 }
 
 // Create Activity
@@ -27,7 +27,7 @@ export function createActivity(
 ) {
   return pool.query(
     `
-      INSERT INTO Activities
+      INSERT INTO activities
       (name, category, description, intensityLevel, maxPeopleAllowed, requirementOne, requirementTwo, durationMinutes, price)
       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
     `,
@@ -60,7 +60,7 @@ export function updateActivityById(
 ) {
   return pool.query(
     `
-      UPDATE Activities
+      UPDATE activities
       SET name = ?, category = ?, description = ?, intensityLevel = ?, maxPeopleAllowed = ?, requirementOne = ?, requirementTwo = ?, durationMinutes = ?, price = ?
       WHERE id = ?
     `,
@@ -81,5 +81,5 @@ export function updateActivityById(
 
 // Delete Activity
 export function deleteActivityById(id) {
-  return pool.query('DELETE FROM Activities WHERE id = ?', [id]);
+  return pool.query('DELETE FROM activities WHERE id = ?', [id]);
 }

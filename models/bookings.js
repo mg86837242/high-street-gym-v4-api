@@ -2,15 +2,15 @@ import pool from '../config/database.js';
 
 // Read Booking
 export function getAllBookings() {
-  return pool.query('SELECT * FROM Bookings');
+  return pool.query('SELECT * FROM bookings');
 }
 
 export function getBookingsById(id) {
-  return pool.query('SELECT * FROM Bookings WHERE id = ?', [id]);
+  return pool.query('SELECT * FROM bookings WHERE id = ?', [id]);
 }
 
 export function getBookingsByActivityId(activityId) {
-  return pool.query('SELECT * FROM Bookings WHERE activityId = ?', [activityId]);
+  return pool.query('SELECT * FROM bookings WHERE activityId = ?', [activityId]);
 }
 
 export function getBookingsWithDetailsByDate(date) {
@@ -20,10 +20,10 @@ export function getBookingsWithDetailsByDate(date) {
     m.firstName AS memberFirstName, m.lastName AS memberLastName,
     t.firstName AS trainerFirstName, t.lastName AS trainerLastName,
     a.name AS activityName, a.durationMinutes
-    FROM Bookings b 
-    INNER JOIN Members m ON b.memberId = m.id
-    INNER JOIN Trainers t ON b.trainerId = t.id
-    INNER JOIN Activities a ON b.activityId = a.id
+    FROM bookings b 
+    INNER JOIN members m ON b.memberId = m.id
+    INNER JOIN trainers t ON b.trainerId = t.id
+    INNER JOIN activities a ON b.activityId = a.id
     WHERE DATE(b.dateTime) = ?
     ORDER BY b.dateTime
     `,
@@ -40,12 +40,12 @@ export function getBookingsWithDetailsById(id) {
     lm.email AS memberEmail,
     lt.email AS trainerEmail,
     a.name AS activityName, a.category, a.description, a.intensityLevel, a.maxPeopleAllowed, a.requirementOne, a.requirementTwo, a.durationMinutes, a.price
-    FROM Bookings b 
-    INNER JOIN Members m ON b.memberId = m.id
-    INNER JOIN Trainers t ON b.trainerId = t.id
-    INNER JOIN Logins lm on m.loginId = lm.id
-    INNER JOIN Logins lt on t.loginId = lt.id
-    INNER JOIN Activities a ON b.activityId = a.id
+    FROM bookings b 
+    INNER JOIN members m ON b.memberId = m.id
+    INNER JOIN trainers t ON b.trainerId = t.id
+    INNER JOIN logins lm on m.loginId = lm.id
+    INNER JOIN logins lt on t.loginId = lt.id
+    INNER JOIN activities a ON b.activityId = a.id
     WHERE b.id = ?
     `,
     [id]
@@ -53,7 +53,7 @@ export function getBookingsWithDetailsById(id) {
 }
 
 export function getConflictBookingsByMemberTrainerAndDateTime(memberId, trainerId, dateTime) {
-  return pool.query('SELECT * FROM Bookings WHERE (memberId = ? OR trainerId = ?) AND dateTime = ?', [
+  return pool.query('SELECT * FROM bookings WHERE (memberId = ? OR trainerId = ?) AND dateTime = ?', [
     memberId,
     trainerId,
     dateTime,
@@ -61,7 +61,7 @@ export function getConflictBookingsByMemberTrainerAndDateTime(memberId, trainerI
 }
 
 export function getIdenticalBookings(memberId, trainerId, activityId, dateTime) {
-  return pool.query('SELECT * FROM Bookings WHERE memberId = ? AND trainerId = ? AND activityId = ? AND dateTime = ?', [
+  return pool.query('SELECT * FROM bookings WHERE memberId = ? AND trainerId = ? AND activityId = ? AND dateTime = ?', [
     memberId,
     trainerId,
     activityId,
@@ -70,7 +70,7 @@ export function getIdenticalBookings(memberId, trainerId, activityId, dateTime) 
 }
 
 export function getConflictBookingsByMemberTrainerAndDateTimeExceptCurr(id, memberId, trainerId, dateTime) {
-  return pool.query('SELECT * FROM Bookings WHERE (memberId = ? OR trainerId = ?) AND dateTime = ? AND NOT id = ?', [
+  return pool.query('SELECT * FROM bookings WHERE (memberId = ? OR trainerId = ?) AND dateTime = ? AND NOT id = ?', [
     memberId,
     trainerId,
     dateTime,
@@ -82,7 +82,7 @@ export function getConflictBookingsByMemberTrainerAndDateTimeExceptCurr(id, memb
 export function createBooking(memberId, trainerId, activityId, dateTime) {
   return pool.query(
     `
-    INSERT INTO Bookings (memberId, trainerId, activityId, dateTime)
+    INSERT INTO bookings (memberId, trainerId, activityId, dateTime)
     VALUES (?, ?, ?, ?)
     `,
     [memberId, trainerId, activityId, dateTime]
@@ -93,7 +93,7 @@ export function createBooking(memberId, trainerId, activityId, dateTime) {
 export function updateBookingById(id, memberId, trainerId, activityId, dateTime) {
   return pool.query(
     `
-    UPDATE Bookings
+    UPDATE bookings
     SET memberId = ?, trainerId = ?, activityId = ?, dateTime = ?
     WHERE id = ?
     `,
@@ -103,5 +103,5 @@ export function updateBookingById(id, memberId, trainerId, activityId, dateTime)
 
 // Delete Booking
 export function deleteBookingById(id) {
-  return pool.query('DELETE FROM Bookings WHERE id = ?', [id]);
+  return pool.query('DELETE FROM bookings WHERE id = ?', [id]);
 }

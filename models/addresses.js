@@ -2,16 +2,16 @@ import pool from '../config/database.js';
 
 // Read Address
 export function getAllAddresses() {
-  return pool.query('SELECT * FROM Addresses');
+  return pool.query('SELECT * FROM addresses');
 }
 
 export function getAddressesById(id) {
-  return pool.query('SELECT * FROM Addresses WHERE id = ?', [id]);
+  return pool.query('SELECT * FROM addresses WHERE id = ?', [id]);
 }
 
 export function getIdenticalAddressesByDetails(lineOne, lineTwo, suburb, postcode, state, country) {
   return pool.query(
-    'SELECT * FROM Addresses WHERE lineOne = ? AND lineTwo = ? AND suburb = ? AND postcode = ? AND state = ? AND country = ?',
+    'SELECT * FROM addresses WHERE lineOne = ? AND lineTwo = ? AND suburb = ? AND postcode = ? AND state = ? AND country = ?',
     [lineOne, lineTwo, suburb, postcode, state, country]
   );
 }
@@ -20,7 +20,7 @@ export function getIdenticalAddressesByDetails(lineOne, lineTwo, suburb, postcod
 export function createAddress(lineOne, lineTwo, suburb, postcode, state, country) {
   return pool.query(
     `
-		INSERT INTO Addresses
+		INSERT INTO addresses
 		(lineOne, lineTwo, suburb, postcode, state, country)
 		VALUES (?, ?, ?, ?, ?, ?)
 		`,
@@ -32,7 +32,7 @@ export function createAddress(lineOne, lineTwo, suburb, postcode, state, country
 export function updateAddressById(id, lineOne, lineTwo, suburb, postcode, state, country) {
   return pool.query(
     `
-		UPDATE Addresses
+		UPDATE addresses
 		SET lineOne = ?, lineTwo = ?, suburb = ?, postcode = ?, state = ?, country = ?
 		WHERE id = ?
 		`,
@@ -42,5 +42,5 @@ export function updateAddressById(id, lineOne, lineTwo, suburb, postcode, state,
 
 // Delete Address
 export function deleteAddressById(id) {
-  return pool.query('DELETE FROM Addresses WHERE id = ?', [id]);
+  return pool.query('DELETE FROM addresses WHERE id = ?', [id]);
 }

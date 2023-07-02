@@ -2,30 +2,30 @@ import pool from '../config/database.js';
 
 // Read Login
 export function getAllLogins() {
-  return pool.query('SELECT * FROM Logins');
+  return pool.query('SELECT * FROM logins');
 }
 
 export function getAllEmails() {
-  return pool.query('SELECT email FROM Logins');
+  return pool.query('SELECT email FROM logins');
 }
 
 export function getLoginsById(id) {
-  return pool.query('SELECT * FROM Logins WHERE id = ?', [id]);
+  return pool.query('SELECT * FROM logins WHERE id = ?', [id]);
 }
 
 export function getLoginsByEmail(email) {
-  return pool.query('SELECT * FROM Logins WHERE email = ?', [email]);
+  return pool.query('SELECT * FROM logins WHERE email = ?', [email]);
 }
 
 export function getLoginsByAccessKey(accessKey) {
-  return pool.query('SELECT * FROM Logins WHERE accessKey = ?', [accessKey]);
+  return pool.query('SELECT * FROM logins WHERE accessKey = ?', [accessKey]);
 }
 
 // Create Login
 export function createLogin(email, password, username) {
   return pool.query(
     `
-		INSERT INTO Logins (email, password, username)
+		INSERT INTO logins (email, password, username)
 		VALUES (?, ?, ?)
 		`,
     [email, username, password]
@@ -36,7 +36,7 @@ export function createLogin(email, password, username) {
 export function updateLoginById(id, email, password, username) {
   return pool.query(
     `
-		UPDATE Logins
+		UPDATE logins
 		SET email = ?, password = ?, username = ?
 		WHERE id = ?
 		`,
@@ -47,7 +47,7 @@ export function updateLoginById(id, email, password, username) {
 export function updateLoginAccessKeyById(id, accessKey) {
   return pool.query(
     `
-    UPDATE Logins
+    UPDATE logins
     SET accessKey = ?
     WHERE id = ?
     `,
@@ -57,5 +57,5 @@ export function updateLoginAccessKeyById(id, accessKey) {
 
 // Delete Login
 export function deleteLoginById(id) {
-  return pool.query('DELETE FROM Logins WHERE id = ?', [id]);
+  return pool.query('DELETE FROM logins WHERE id = ?', [id]);
 }

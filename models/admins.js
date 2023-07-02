@@ -2,11 +2,11 @@ import pool from '../config/database.js';
 
 // Read Admin
 export function getAllAdmins() {
-  return pool.query('SELECT * FROM Admins');
+  return pool.query('SELECT * FROM admins');
 }
 
 export function getAdminsById(id) {
-  return pool.query('SELECT * FROM Admins WHERE id = ?', [id]);
+  return pool.query('SELECT * FROM admins WHERE id = ?', [id]);
 }
 
 export function getAdminsWithDetailsById(id) {
@@ -15,9 +15,9 @@ export function getAdminsWithDetailsById(id) {
     SELECT d.id, d.firstName, d.lastName, d.phone,
     l.email, l.password, l.username,
     a.lineOne, a.lineTwo, a.suburb, a.postcode, a.state, a.country
-    FROM Admins d
-    INNER JOIN Logins l on d.loginId = l.id
-    INNER JOIN Addresses a on d.addressId = a.id
+    FROM admins d
+    INNER JOIN logins l on d.loginId = l.id
+    INNER JOIN addresses a on d.addressId = a.id
     WHERE d.id = ?
     `,
     [id]
@@ -25,7 +25,7 @@ export function getAdminsWithDetailsById(id) {
 }
 
 export function getAdminsByLoginId(loginId) {
-  return pool.query('SELECT * FROM Admins WHERE loginId = ?', [loginId]);
+  return pool.query('SELECT * FROM admins WHERE loginId = ?', [loginId]);
 }
 
 export function getAdminsWithDetailsByLoginId(loginId) {
@@ -34,9 +34,9 @@ export function getAdminsWithDetailsByLoginId(loginId) {
     SELECT d.id, d.firstName, d.lastName, d.phone,
     l.email, l.password, l.username,
     a.lineOne, a.lineTwo, a.suburb, a.postcode, a.state, a.country
-    FROM Admins d
-    INNER JOIN Logins l on d.loginId = l.id
-    INNER JOIN Addresses a on d.addressId = a.id
+    FROM admins d
+    INNER JOIN logins l on d.loginId = l.id
+    INNER JOIN addresses a on d.addressId = a.id
     WHERE d.loginId = ?
     `,
     [loginId]
@@ -44,14 +44,14 @@ export function getAdminsWithDetailsByLoginId(loginId) {
 }
 
 export function getAdminsAddressesIdById(id) {
-  return pool.query('SELECT addressId FROM Admins WHERE id = ?', [id]);
+  return pool.query('SELECT addressId FROM admins WHERE id = ?', [id]);
 }
 
 // Create Admin
 export function createAdmin(loginId, firstName, lastName, phone, addressId) {
   return pool.query(
     `
-		INSERT INTO Admins (loginId, firstName, lastName, phone, addressId)
+		INSERT INTO admins (loginId, firstName, lastName, phone, addressId)
 		VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
 		`,
     [loginId, firstName, lastName, phone, addressId]
@@ -62,7 +62,7 @@ export function createAdmin(loginId, firstName, lastName, phone, addressId) {
 export function updateAdminById(id, loginId, firstName, lastName, phone, addressId) {
   return pool.query(
     `
-		UPDATE Admins
+		UPDATE admins
 		SET loginId = ?, firstName = ?, lastName = ?, phone = ?, addressId = ?
 		WHERE id = ?
 		`,
@@ -72,5 +72,5 @@ export function updateAdminById(id, loginId, firstName, lastName, phone, address
 
 // Delete Admin
 export function deleteAdminById(id) {
-  return pool.query('DELETE FROM Admins WHERE id = ?', [id]);
+  return pool.query('DELETE FROM admins WHERE id = ?', [id]);
 }
