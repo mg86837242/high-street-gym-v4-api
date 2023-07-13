@@ -10,6 +10,17 @@ export const ageSchema = z
   .nullable();
 export const genderSchema = z.enum(['Female', 'Male', 'Other', '']).nullable();
 
+export const signupSchema = z.object({
+  email: emailSchema,
+  password: passwordSchema,
+  username: usernameSchema,
+  firstName: firstNameSchema,
+  lastName: lastNameSchema,
+  phone: phoneSchema,
+  age: ageSchema,
+  gender: genderSchema,
+});
+
 export const memberSchema = z.object({
   email: emailSchema,
   password: passwordSchema,
