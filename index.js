@@ -18,5 +18,8 @@ app.listen(constants.PORT, () => {
     -- node mode: ${process.env.NODE_ENV}`);
 });
 
-// References
+// References:
 // -- https://stackoverflow.com/questions/56291321/how-to-handle-errors-with-express-listen-in-typescript
+
+// pm2 server start script:
+// -- sudo pm2 start index.js --name api --watch --ignore-watch="node_modules" --max-memory-restart 300M
