@@ -13,8 +13,9 @@ app.get('/api/helloworld', (req, res) => {
 });
 
 app.listen(constants.PORT, () => {
-  console.info(`✅ Express server running on port: ${constants.PORT}
-    -- Running on ${process.env.NODE_ENV}`);
+  console.info(`✅ Express server running on: ${constants.CORS_ORIGIN}
+    -- port: ${constants.PORT}
+    -- node mode: ${process.env.NODE_ENV}`);
 });
 
 // References
