@@ -2,7 +2,6 @@
   "printWidth": 120,
   "singleQuote": true,
   "jsxSingleQuote": true,
-  "trailingComma": "all",
   "arrowParens": "avoid",
   "htmlWhitespaceSensitivity": "strict",
   "endOfLine": "lf"
