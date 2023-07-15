@@ -2,7 +2,7 @@
   "name": "high-street-gym-v4-api",
   "version": "1.0.4",
   "description": "",
-  "main": "server.js",
+  "main": "index.js",
   "type": "module",
   "scripts": {
     "start": "nodemon -r dotenv/config",
