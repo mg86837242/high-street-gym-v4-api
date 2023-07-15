@@ -20,6 +20,8 @@ app.listen(constants.PORT, () => {
 
 // References:
 // -- https://stackoverflow.com/questions/56291321/how-to-handle-errors-with-express-listen-in-typescript
+// -- https://pm2.keymetrics.io/docs/usage/quick-start/: pm2 start options
+// -- https://pm2.keymetrics.io/docs/usage/process-management/: pm2 start script directly
 
-// pm2 server start script:
-// -- sudo pm2 start index.js --name api --watch --ignore-watch="node_modules" --max-memory-restart 300M
+// PM2 start script:
+// -- pm2 start "node -r dotenv/config index.js" --name api --watch --ignore-watch="node_modules" --max-memory-restart 300M
