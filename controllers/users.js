@@ -11,9 +11,10 @@ import permit from '../middleware/authorization.js';
 
 const userController = Router();
 
-userController.get('/by_key/:access_key', async (req, res) => {
+// PS The design of route paths and route parameters follows: https://expressjs.com/en/guide/routing.html
+userController.get('/keys/:accessKey', async (req, res) => {
   try {
-    const result = await uuidSchema.spa(req.params.access_key);
+    const result = await uuidSchema.spa(req.params.accessKey);
     if (!result.success) {
       return res.status(400).json({
         status: 400,
@@ -148,9 +149,9 @@ userController.post('/logout', async (req, res) => {
   }
 });
 
-userController.get('/by_key/:access_key/detailed', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
+userController.get('/keys/:accessKey/detailed', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
   try {
-    const result = await uuidSchema.spa(req.params.access_key);
+    const result = await uuidSchema.spa(req.params.accessKey);
     if (!result.success) {
       return res.status(400).json({
         status: 400,
@@ -159,23 +160,23 @@ userController.get('/by_key/:access_key/detailed', permit('Admin', 'Trainer', 'M
     }
     const accessKey = result.data;
 
-    const [[firstLoginResult]] = await getLoginsByAccessKey(accessKey);
-    if (!firstLoginResult) {
+    const [[{ id, role }]] = await getLoginsByAccessKey(accessKey);
+    if (!id) {
       return res.status(401).json({
         status: 401,
         message: 'Unauthorized credentials',
       });
     }
-    let firstResult = null;
-    switch (firstLoginResult?.role) {
+    let firstUserResult = null;
+    switch (role) {
       case 'Admin':
-        [[firstResult]] = await getAdminsWithDetailsByLoginId(firstLoginResult.id);
+        [[firstUserResult]] = await getAdminsWithDetailsByLoginId(id);
         break;
       case 'Trainer':
-        [[firstResult]] = await getTrainersWithDetailsByLoginId(firstLoginResult.id);
+        [[firstUserResult]] = await getTrainersWithDetailsByLoginId(id);
         break;
       case 'Member':
-        [[firstResult]] = await getMembersWithDetailsByLoginId(firstLoginResult.id);
+        [[firstUserResult]] = await getMembersWithDetailsByLoginId(id);
         break;
       default:
         return res.status(403).json({
@@ -187,7 +188,7 @@ userController.get('/by_key/:access_key/detailed', permit('Admin', 'Trainer', 'M
     return res.status(200).json({
       status: 200,
       message: 'User record successfully retrieved',
-      user: firstResult,
+      user: firstUserResult,
     });
   } catch (error) {
     console.error(error);

@@ -149,7 +149,7 @@ addressController.patch('/:id', permit('Admin', 'Trainer', 'Member'), async (req
 });
 
 // PS The design of route paths and route parameters follows: https://expressjs.com/en/guide/routing.html
-addressController.patch('/by/admins/:adminId', permit('Admin'), async (req, res) => {
+addressController.patch('/admins/:adminId', permit('Admin'), async (req, res) => {
   try {
     const result = await updateAddressByAdminIdSchema.spa({
       params: req.params,
@@ -189,7 +189,7 @@ addressController.patch('/by/admins/:adminId', permit('Admin'), async (req, res)
   }
 });
 
-addressController.patch('/by/trainers/:trainerId', permit('Admin', 'Trainer'), async (req, res) => {
+addressController.patch('/trainers/:trainerId', permit('Admin', 'Trainer'), async (req, res) => {
   try {
     const result = await updateAddressByTrainerIdSchema.spa({
       params: req.params,
@@ -229,7 +229,7 @@ addressController.patch('/by/trainers/:trainerId', permit('Admin', 'Trainer'), a
   }
 });
 
-addressController.patch('/by/members/:memberId', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
+addressController.patch('/members/:memberId', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
   try {
     const result = await updateAddressByMemberIdSchema.spa({
       params: req.params,
