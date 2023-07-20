@@ -14,8 +14,8 @@ module.exports = {
   },
   // @see: https://prettier.io/docs/en/integrating-with-linters.html & https://react.dev/learn/editor-setup#linting
   //  & https://www.npmjs.com/package/eslint-config-react-app & https://www.npmjs.com/package/eslint-plugin-react-hooks
-  extends: ['airbnb', 'prettier', 'react-app'],
-  plugins: ['react-hooks'],
+  extends: ['airbnb', 'prettier'],
+  plugins: [],
   ignorePatterns: [
     // Unused folders && files
     '**/__*',
