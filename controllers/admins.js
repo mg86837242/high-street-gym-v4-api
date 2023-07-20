@@ -131,8 +131,8 @@ adminController.post('/detailed', permit('Admin'), async (req, res) => {
     conn = await pool.getConnection();
     await conn.beginTransaction();
 
-    // Find if there's a login row with identical email – referring to the parent table `Logins`
-    const [[emailExists]] = await conn.query('SELECT * FROM Logins WHERE email = ?', [email]);
+    // Find if there's a login row with identical email – referring to the parent table `logins`
+    const [[emailExists]] = await conn.query('SELECT * FROM logins WHERE email = ?', [email]);
     if (emailExists) {
       // -- Return error if exists
       return res.status(409).json({
@@ -144,23 +144,23 @@ adminController.post('/detailed', permit('Admin'), async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, 6);
     const [createLoginResult] = await conn.query(
       `
-      INSERT INTO Logins (email, password, username, role)
+      INSERT INTO logins (email, password, username, role)
       VALUES (?, ?, ?, ?)
       `,
-      [email, hashedPassword, username, 'Admin']
+      [email, hashedPassword, username, 'Admin'],
     );
     const loginId = createLoginResult.insertId;
 
-    // Create address row – referring to the parent table `Addresses`
+    // Create address row – referring to the parent table `addresses`
     let addressId = null;
     if (lineOne && suburb && postcode && state && country) {
       const [createAddressResult] = await conn.query(
         `
-        INSERT INTO Addresses
+        INSERT INTO addresses
         (lineOne, lineTwo, suburb, postcode, state, country)
         VALUES (?, ?, ?, ?, ?, ?)
         `,
-        [lineOne, lineTwo, suburb, postcode, state, country]
+        [lineOne, lineTwo, suburb, postcode, state, country],
       );
       addressId = createAddressResult.insertId;
     }
@@ -168,10 +168,10 @@ adminController.post('/detailed', permit('Admin'), async (req, res) => {
     // Create admin row with 2 FKs
     const [{ insertId }] = await conn.query(
       `
-      INSERT INTO Admins (loginId, firstName, lastName, phone, addressId)
+      INSERT INTO admins (loginId, firstName, lastName, phone, addressId)
       VALUES (?, ?, ?, ?, ?)
       `,
-      [loginId, firstName, lastName, phone, addressId]
+      [loginId, firstName, lastName, phone, addressId],
     );
 
     await conn.commit();
@@ -223,9 +223,9 @@ adminController.patch('/:id', permit('Admin'), async (req, res) => {
     conn = await pool.getConnection();
     await conn.beginTransaction();
 
-    // Find if there's a login row with identical email EXCEPT the request maker – referring to the parent table `Logins`
-    const [[{ loginId }]] = await conn.query('SELECT loginId FROM Admins WHERE id = ?', [id]);
-    const [[emailExists]] = await conn.query('SELECT * FROM Logins WHERE email = ? AND NOT id = ?', [email, loginId]);
+    // Find if there's a login row with identical email EXCEPT the request maker – referring to the parent table `logins`
+    const [[{ loginId }]] = await conn.query('SELECT loginId FROM admins WHERE id = ?', [id]);
+    const [[emailExists]] = await conn.query('SELECT * FROM logins WHERE email = ? AND NOT id = ?', [email, loginId]);
     if (emailExists) {
       // -- Return error if exists
       return res.status(409).json({
@@ -238,21 +238,21 @@ adminController.patch('/:id', permit('Admin'), async (req, res) => {
     const hashedPassword = password.startsWith('$2') ? password : await bcrypt.hash(password, 6);
     await conn.query(
       `
-      UPDATE Logins
+      UPDATE logins
       SET email = ?, password = ?, username = ?
       WHERE id = ?
       `,
-      [email, hashedPassword, username, loginId]
+      [email, hashedPassword, username, loginId],
     );
 
     // Update admin row with `loginId` FK
     await conn.query(
       `
-      UPDATE Admins
+      UPDATE admins
       SET loginId = ?, firstName = ?, lastName = ?, phone = ?
       WHERE id = ?
       `,
-      [loginId, firstName, lastName, phone, id]
+      [loginId, firstName, lastName, phone, id],
     );
 
     await conn.commit();
@@ -315,9 +315,9 @@ adminController.patch('/:id/detailed', permit('Admin'), async (req, res) => {
     conn = await pool.getConnection();
     await conn.beginTransaction();
 
-    // Find if there's a login row with identical email EXCEPT the request maker – referring to the parent table `Logins`
-    const [[{ loginId }]] = await conn.query('SELECT loginId FROM Admins WHERE id = ?', [id]);
-    const [[emailExists]] = await conn.query('SELECT * FROM Logins WHERE email = ? AND NOT id = ?', [email, loginId]);
+    // Find if there's a login row with identical email EXCEPT the request maker – referring to the parent table `logins`
+    const [[{ loginId }]] = await conn.query('SELECT loginId FROM admins WHERE id = ?', [id]);
+    const [[emailExists]] = await conn.query('SELECT * FROM logins WHERE email = ? AND NOT id = ?', [email, loginId]);
     if (emailExists) {
       // -- Return error if exists
       return res.status(409).json({
@@ -330,32 +330,32 @@ adminController.patch('/:id/detailed', permit('Admin'), async (req, res) => {
     const hashedPassword = password.startsWith('$2') ? password : await bcrypt.hash(password, 6);
     await conn.query(
       `
-      UPDATE Logins
+      UPDATE logins
       SET email = ?, password = ?, username = ?
       WHERE id = ?
       `,
-      [email, hashedPassword, username, loginId]
+      [email, hashedPassword, username, loginId],
     );
 
-    // Update address row – referring to the parent table `Addresses`
-    const [[{ addressId }]] = await conn.query('SELECT addressId FROM Admins WHERE id = ?', [id]);
+    // Update address row – referring to the parent table `addresses`
+    const [[{ addressId }]] = await conn.query('SELECT addressId FROM admins WHERE id = ?', [id]);
     await conn.query(
       `
-      UPDATE Addresses
+      UPDATE addresses
       SET lineOne = ?, lineTwo = ?, suburb = ?, postcode = ?, state = ?, country = ?
       WHERE id = ?
       `,
-      [lineOne, lineTwo, suburb, postcode, state, country, addressId]
+      [lineOne, lineTwo, suburb, postcode, state, country, addressId],
     );
 
     // Update admin row with 2 FKs
     await conn.query(
       `
-      UPDATE Admins
+      UPDATE admins
       SET loginId = ?, firstName = ?, lastName = ?, phone = ?, addressId = ?
       WHERE id = ?
       `,
-      [loginId, firstName, lastName, phone, addressId, id]
+      [loginId, firstName, lastName, phone, addressId, id],
     );
 
     await conn.commit();
@@ -400,9 +400,9 @@ adminController.delete('/:id', permit('Admin'), async (req, res) => {
     conn = await pool.getConnection();
     await conn.beginTransaction();
 
-    await conn.query('DELETE FROM Addresses WHERE id = ?', [firstAdminResult.addressId]);
-    await conn.query('DELETE FROM Logins WHERE id = ?', [firstAdminResult.loginId]);
-    await conn.query('DELETE FROM Admins WHERE id = ?', [firstAdminResult.id]);
+    await conn.query('DELETE FROM addresses WHERE id = ?', [firstAdminResult.addressId]);
+    await conn.query('DELETE FROM logins WHERE id = ?', [firstAdminResult.loginId]);
+    await conn.query('DELETE FROM admins WHERE id = ?', [firstAdminResult.id]);
 
     await conn.commit();
     return res.status(200).json({

@@ -135,8 +135,8 @@ trainerController.post('/detailed', permit('Admin', 'Trainer'), async (req, res)
     conn = await pool.getConnection();
     await conn.beginTransaction();
 
-    // Find if there's a login row with identical email – referring to the parent table `Logins`
-    const [[emailExists]] = await conn.query('SELECT * FROM Logins WHERE email = ?', [email]);
+    // Find if there's a login row with identical email – referring to the parent table `logins`
+    const [[emailExists]] = await conn.query('SELECT * FROM logins WHERE email = ?', [email]);
     if (emailExists) {
       // -- Return error if exists
       return res.status(409).json({
@@ -148,19 +148,19 @@ trainerController.post('/detailed', permit('Admin', 'Trainer'), async (req, res)
     const hashedPassword = await bcrypt.hash(password, 6);
     const [createLoginResult] = await conn.query(
       `
-      INSERT INTO Logins (email, password, username, role)
+      INSERT INTO logins (email, password, username, role)
       VALUES (?, ?, ?, ?)
       `,
       [email, hashedPassword, username, 'Trainer'],
     );
     const loginId = createLoginResult.insertId;
 
-    // Create address row – referring to the parent table `Addresses`
+    // Create address row – referring to the parent table `addresses`
     let addressId = null;
     if (lineOne && suburb && postcode && state && country) {
       const [createAddressResult] = await conn.query(
         `
-        INSERT INTO Addresses
+        INSERT INTO addresses
         (lineOne, lineTwo, suburb, postcode, state, country)
         VALUES (?, ?, ?, ?, ?, ?)
         `,
@@ -172,7 +172,7 @@ trainerController.post('/detailed', permit('Admin', 'Trainer'), async (req, res)
     // Create trainer row with 2 FKs
     const [{ insertId }] = await conn.query(
       `
-      INSERT INTO Trainers (loginId, firstName, lastName, phone, addressId, description, specialty, certificate, imageUrl)
+      INSERT INTO trainers (loginId, firstName, lastName, phone, addressId, description, specialty, certificate, imageUrl)
       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
       `,
       [loginId, firstName, lastName, phone, addressId, description, specialty, certificate, imageUrl],
@@ -227,9 +227,9 @@ trainerController.patch('/:id', permit('Admin', 'Trainer'), async (req, res) => 
     conn = await pool.getConnection();
     await conn.beginTransaction();
 
-    // Find if there's a login row with identical email EXCEPT the request maker – referring to the parent table `Logins`
+    // Find if there's a login row with identical email EXCEPT the request maker – referring to the parent table `logins`
     const [[{ loginId }]] = await conn.query('SELECT loginId FROM trainers WHERE id = ?', [id]);
-    const [[emailExists]] = await conn.query('SELECT * FROM Logins WHERE email = ? AND NOT id = ?', [email, loginId]);
+    const [[emailExists]] = await conn.query('SELECT * FROM logins WHERE email = ? AND NOT id = ?', [email, loginId]);
     if (emailExists) {
       // -- Return error if exists
       return res.status(409).json({
@@ -242,7 +242,7 @@ trainerController.patch('/:id', permit('Admin', 'Trainer'), async (req, res) => 
     const hashedPassword = password.startsWith('$2') ? password : await bcrypt.hash(password, 6);
     await conn.query(
       `
-      UPDATE Logins
+      UPDATE logins
       SET email = ?, password = ?, username = ?
       WHERE id = ?
       `,
@@ -323,9 +323,9 @@ trainerController.patch('/:id/detailed', permit('Admin', 'Trainer'), async (req,
     conn = await pool.getConnection();
     await conn.beginTransaction();
 
-    // Find if there's a login row with identical email EXCEPT the request maker – referring to the parent table `Logins`
-    const [[{ loginId }]] = await conn.query('SELECT loginId FROM Trainers WHERE id = ?', [id]);
-    const [[emailExists]] = await conn.query('SELECT * FROM Logins WHERE email = ? AND NOT id = ?', [email, loginId]);
+    // Find if there's a login row with identical email EXCEPT the request maker – referring to the parent table `logins`
+    const [[{ loginId }]] = await conn.query('SELECT loginId FROM trainers WHERE id = ?', [id]);
+    const [[emailExists]] = await conn.query('SELECT * FROM logins WHERE email = ? AND NOT id = ?', [email, loginId]);
     if (emailExists) {
       // -- Return error if exists
       return res.status(409).json({
@@ -338,18 +338,18 @@ trainerController.patch('/:id/detailed', permit('Admin', 'Trainer'), async (req,
     const hashedPassword = password.startsWith('$2') ? password : await bcrypt.hash(password, 6);
     await conn.query(
       `
-      UPDATE Logins
+      UPDATE logins
       SET email = ?, password = ?, username = ?
       WHERE id = ?
       `,
       [email, hashedPassword, username, loginId],
     );
 
-    // Update address row – referring to the parent table `Addresses`
-    const [[{ addressId }]] = await conn.query('SELECT addressId FROM Trainers WHERE id = ?', [id]);
+    // Update address row – referring to the parent table `addresses`
+    const [[{ addressId }]] = await conn.query('SELECT addressId FROM trainers WHERE id = ?', [id]);
     await conn.query(
       `
-      UPDATE Addresses
+      UPDATE addresses
       SET lineOne = ?, lineTwo = ?, suburb = ?, postcode = ?, state = ?, country = ?
       WHERE id = ?
       `,
@@ -359,7 +359,7 @@ trainerController.patch('/:id/detailed', permit('Admin', 'Trainer'), async (req,
     // Update trainer row with 2 FKs
     await conn.query(
       `
-      UPDATE Trainers
+      UPDATE trainers
       SET loginId = ?, firstName = ?, lastName = ?, phone = ?, addressId = ?, description = ?, specialty = ?, certificate = ?. imageUrl = ?
       WHERE id = ?
       `,
@@ -408,9 +408,9 @@ trainerController.delete('/:id', permit('Admin', 'Trainer'), async (req, res) =>
     conn = await pool.getConnection();
     await conn.beginTransaction();
 
-    await conn.query('DELETE FROM Addresses WHERE id = ?', [firstTrainerResult.addressId]);
-    await conn.query('DELETE FROM Logins WHERE id = ?', [firstTrainerResult.loginId]);
-    await conn.query('DELETE FROM Trainers WHERE id = ?', [firstTrainerResult.id]);
+    await conn.query('DELETE FROM addresses WHERE id = ?', [firstTrainerResult.addressId]);
+    await conn.query('DELETE FROM logins WHERE id = ?', [firstTrainerResult.loginId]);
+    await conn.query('DELETE FROM trainers WHERE id = ?', [firstTrainerResult.id]);
 
     await conn.commit();
     return res.status(200).json({

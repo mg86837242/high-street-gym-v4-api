@@ -174,8 +174,8 @@ memberController.post(['/', '/signup'], async (req, res) => {
     conn = await pool.getConnection();
     await conn.beginTransaction();
 
-    // Find if there's a login row with identical email – referring to the parent table `Logins`
-    const [[emailExists]] = await conn.query('SELECT * FROM Logins WHERE email = ?', [email]);
+    // Find if there's a login row with identical email – referring to the parent table `logins`
+    const [[emailExists]] = await conn.query('SELECT * FROM logins WHERE email = ?', [email]);
     if (emailExists) {
       // -- Return error if exists
       return res.status(409).json({
@@ -187,7 +187,7 @@ memberController.post(['/', '/signup'], async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, 6);
     const [createLoginResult] = await conn.query(
       `
-      INSERT INTO Logins (email, password, username, role)
+      INSERT INTO logins (email, password, username, role)
       VALUES (?, ?, ?, ?)
       `,
       [email, hashedPassword, username, 'Member'],
@@ -200,7 +200,7 @@ memberController.post(['/', '/signup'], async (req, res) => {
     // Create member row with 2 FKs
     const [{ insertId }] = await conn.query(
       `
-      INSERT INTO Members (loginId, firstName, lastName, phone, addressId, age, gender)
+      INSERT INTO members (loginId, firstName, lastName, phone, addressId, age, gender)
       VALUES (?, ?, ?, ?, ?, ?, ?)
       `,
       [loginId, firstName, lastName, phone, addressId, age, gender],
@@ -255,8 +255,8 @@ memberController.post('/detailed', permit('Admin', 'Trainer', 'Member'), async (
     conn = await pool.getConnection();
     await conn.beginTransaction();
 
-    // Find if there's a login row with identical email – referring to the parent table `Logins`
-    const [[emailExists]] = await conn.query('SELECT * FROM Logins WHERE email = ?', [email]);
+    // Find if there's a login row with identical email – referring to the parent table `logins`
+    const [[emailExists]] = await conn.query('SELECT * FROM logins WHERE email = ?', [email]);
     if (emailExists) {
       // -- Return error if exists
       return res.status(409).json({
@@ -268,19 +268,19 @@ memberController.post('/detailed', permit('Admin', 'Trainer', 'Member'), async (
     const hashedPassword = await bcrypt.hash(password, 6);
     const [createLoginResult] = await conn.query(
       `
-      INSERT INTO Logins (email, password, username, role)
+      INSERT INTO logins (email, password, username, role)
       VALUES (?, ?, ?, ?)
       `,
       [email, hashedPassword, username, 'Member'],
     );
     const loginId = createLoginResult.insertId;
 
-    // Create address row – referring to the parent table `Addresses`
+    // Create address row – referring to the parent table `addresses`
     let addressId = null;
     if (lineOne && suburb && postcode && state && country) {
       const [createAddressResult] = await conn.query(
         `
-        INSERT INTO Addresses
+        INSERT INTO addresses
         (lineOne, lineTwo, suburb, postcode, state, country)
         VALUES (?, ?, ?, ?, ?, ?)
         `,
@@ -292,7 +292,7 @@ memberController.post('/detailed', permit('Admin', 'Trainer', 'Member'), async (
     // Create member row with 2 FKs
     const [{ insertId }] = await conn.query(
       `
-      INSERT INTO Members (loginId, firstName, lastName, phone, addressId, age, gender)
+      INSERT INTO members (loginId, firstName, lastName, phone, addressId, age, gender)
       VALUES (?, ?, ?, ?, ?, ?, ?)
       `,
       [loginId, firstName, lastName, phone, addressId, age, gender],
@@ -450,8 +450,8 @@ memberController.post(
           state,
           country,
         }) => {
-          // Find if there's a login row with identical email – referring to the parent table `Logins`
-          const [[emailExists]] = await conn.query('SELECT * FROM Logins WHERE email = ?', [email]);
+          // Find if there's a login row with identical email – referring to the parent table `logins`
+          const [[emailExists]] = await conn.query('SELECT * FROM logins WHERE email = ?', [email]);
           if (emailExists) {
             // -- Return error if exists
             return res.status(409).json({
@@ -463,20 +463,20 @@ memberController.post(
           const hashedPassword = await bcrypt.hash(password, 6);
           const [createLoginResult] = await conn.query(
             `
-            INSERT INTO Logins (email, password, username, role)
+            INSERT INTO logins (email, password, username, role)
             VALUES (?, ?, ?, ?)
             `,
             [email, hashedPassword, username, 'Member'],
           );
           const loginId = createLoginResult.insertId;
 
-          // Create address row – referring to the parent table `Addresses`
+          // Create address row – referring to the parent table `addresses`
           let addressId = null;
           if (lineOne && suburb && postcode && state && country) {
             // -- Create address row if NOT exists
             const [createAddressResult] = await conn.query(
               `
-              INSERT INTO Addresses
+              INSERT INTO addresses
               (lineOne, lineTwo, suburb, postcode, state, country)
               VALUES (?, ?, ?, ?, ?, ?)
               `,
@@ -488,7 +488,7 @@ memberController.post(
           // Create member row with 2 FKs
           await conn.query(
             `
-            INSERT INTO Members (loginId, firstName, lastName, phone, addressId, age, gender)
+            INSERT INTO members (loginId, firstName, lastName, phone, addressId, age, gender)
             VALUES (?, ?, ?, ?, ?, ?, ?)
             `,
             [loginId, firstName, lastName, phone, addressId, age, gender],
@@ -550,9 +550,9 @@ memberController.patch('/:id', permit('Admin', 'Trainer', 'Member'), async (req,
     conn = await pool.getConnection();
     await conn.beginTransaction();
 
-    // Find if there's a login row with identical email EXCEPT the request maker – referring to the parent table `Logins`
-    const [[{ loginId }]] = await conn.query('SELECT loginId FROM Members WHERE id = ?', [id]);
-    const [[emailExists]] = await conn.query('SELECT * FROM Logins WHERE email = ? AND NOT id = ?', [email, loginId]);
+    // Find if there's a login row with identical email EXCEPT the request maker – referring to the parent table `logins`
+    const [[{ loginId }]] = await conn.query('SELECT loginId FROM members WHERE id = ?', [id]);
+    const [[emailExists]] = await conn.query('SELECT * FROM logins WHERE email = ? AND NOT id = ?', [email, loginId]);
     if (emailExists) {
       // -- Return error if exists
       return res.status(409).json({
@@ -565,7 +565,7 @@ memberController.patch('/:id', permit('Admin', 'Trainer', 'Member'), async (req,
     const hashedPassword = password.startsWith('$2') ? password : await bcrypt.hash(password, 6);
     await conn.query(
       `
-      UPDATE Logins
+      UPDATE logins
       SET email = ?, password = ?, username = ?
       WHERE id = ?
       `,
@@ -575,7 +575,7 @@ memberController.patch('/:id', permit('Admin', 'Trainer', 'Member'), async (req,
     // Update member row with `loginId` FK
     await conn.query(
       `
-      UPDATE Members
+      UPDATE members
       SET loginId = ?, firstName = ?, lastName = ?, phone = ?, age = ?, gender = ?
       WHERE id = ?
       `,
@@ -644,9 +644,9 @@ memberController.patch('/:id/detailed', permit('Admin', 'Trainer', 'Member'), as
     conn = await pool.getConnection();
     await conn.beginTransaction();
 
-    // Find if there's a login row with identical email EXCEPT the request maker – referring to the parent table `Logins`
-    const [[{ loginId }]] = await conn.query('SELECT loginId FROM Members WHERE id = ?', [id]);
-    const [[emailExists]] = await conn.query('SELECT * FROM Logins WHERE email = ? AND NOT id = ?', [email, loginId]);
+    // Find if there's a login row with identical email EXCEPT the request maker – referring to the parent table `logins`
+    const [[{ loginId }]] = await conn.query('SELECT loginId FROM members WHERE id = ?', [id]);
+    const [[emailExists]] = await conn.query('SELECT * FROM logins WHERE email = ? AND NOT id = ?', [email, loginId]);
     if (emailExists) {
       // -- Return error if exists
       return res.status(409).json({
@@ -659,18 +659,18 @@ memberController.patch('/:id/detailed', permit('Admin', 'Trainer', 'Member'), as
     const hashedPassword = password.startsWith('$2') ? password : await bcrypt.hash(password, 6);
     await conn.query(
       `
-      UPDATE Logins
+      UPDATE logins
       SET email = ?, password = ?, username = ?
       WHERE id = ?
       `,
       [email, hashedPassword, username, loginId],
     );
 
-    // Update address row – referring to the parent table `Addresses`
-    const [[{ addressId }]] = await conn.query('SELECT addressId FROM Members WHERE id = ?', [id]);
+    // Update address row – referring to the parent table `addresses`
+    const [[{ addressId }]] = await conn.query('SELECT addressId FROM members WHERE id = ?', [id]);
     await conn.query(
       `
-      UPDATE Addresses
+      UPDATE addresses
       SET lineOne = ?, lineTwo = ?, suburb = ?, postcode = ?, state = ?, country = ?
       WHERE id = ?
       `,
@@ -680,7 +680,7 @@ memberController.patch('/:id/detailed', permit('Admin', 'Trainer', 'Member'), as
     // Update member row with 2 FKs
     await conn.query(
       `
-      UPDATE Members
+      UPDATE members
       SET loginId = ?, firstName = ?, lastName = ?, phone = ?, addressId = ?, age = ?, gender = ?
       WHERE id = ?
       `,
@@ -729,9 +729,9 @@ memberController.delete('/:id', permit('Admin', 'Trainer', 'Member'), async (req
     conn = await pool.getConnection();
     await conn.beginTransaction();
 
-    await conn.query('DELETE FROM Addresses WHERE id = ?', [firstMemberResult.addressId]);
-    await conn.query('DELETE FROM Logins WHERE id = ?', [firstMemberResult.loginId]);
-    await conn.query('DELETE FROM Members WHERE id = ?', [firstMemberResult.id]);
+    await conn.query('DELETE FROM addresses WHERE id = ?', [firstMemberResult.addressId]);
+    await conn.query('DELETE FROM logins WHERE id = ?', [firstMemberResult.loginId]);
+    await conn.query('DELETE FROM members WHERE id = ?', [firstMemberResult.id]);
 
     await conn.commit();
     return res.status(200).json({
