@@ -21,3 +21,18 @@ export const updateAddressSchema = z.object({
   params: z.object({ id: idSchema }),
   body: addressSchema,
 });
+
+export const updateAddressByAdminIdSchema = z.object({
+  params: z.object({ adminId: idSchema }),
+  body: addressSchema,
+});
+
+export const updateAddressByTrainerIdSchema = z.object({
+  params: z.object({ trainerId: idSchema }),
+  body: addressSchema,
+});
+
+export const updateAddressByMemberIdSchema = z.object({
+  params: z.object({ memberId: idSchema }),
+  body: addressSchema,
+});

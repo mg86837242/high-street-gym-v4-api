@@ -1,6 +1,12 @@
 import { Router } from 'express';
 import { emptyObjSchema, idSchema } from '../schemas/params.js';
-import { addressSchema, updateAddressSchema } from '../schemas/addresses.js';
+import {
+  addressSchema,
+  updateAddressSchema,
+  updateAddressByAdminIdSchema,
+  updateAddressByTrainerIdSchema,
+  updateAddressByMemberIdSchema,
+} from '../schemas/addresses.js';
 import {
   getAllAddresses,
   getAddressesById,
@@ -142,9 +148,10 @@ addressController.patch('/:id', permit('Admin', 'Trainer', 'Member'), async (req
   }
 });
 
-addressController.patch('/by/admin_id/:admin_id', permit('Admin'), async (req, res) => {
+// PS The design of route paths and route parameters follows: https://expressjs.com/en/guide/routing.html
+addressController.patch('/by/admins/:adminId', permit('Admin'), async (req, res) => {
   try {
-    const result = await updateAddressSchema.spa({
+    const result = await updateAddressByAdminIdSchema.spa({
       params: req.params,
       body: req.body,
     });
@@ -155,7 +162,7 @@ addressController.patch('/by/admin_id/:admin_id', permit('Admin'), async (req, r
       });
     }
     const {
-      params: { admin_id: adminId },
+      params: { adminId },
       body: { lineOne, lineTwo, suburb, postcode, state, country },
     } = result.data;
 
@@ -182,9 +189,9 @@ addressController.patch('/by/admin_id/:admin_id', permit('Admin'), async (req, r
   }
 });
 
-addressController.patch('/by/trainer_id/:trainer_id', permit('Admin', 'Trainer'), async (req, res) => {
+addressController.patch('/by/trainers/:trainerId', permit('Admin', 'Trainer'), async (req, res) => {
   try {
-    const result = await updateAddressSchema.spa({
+    const result = await updateAddressByTrainerIdSchema.spa({
       params: req.params,
       body: req.body,
     });
@@ -195,7 +202,7 @@ addressController.patch('/by/trainer_id/:trainer_id', permit('Admin', 'Trainer')
       });
     }
     const {
-      params: { trainer_id: trainerId },
+      params: { trainerId },
       body: { lineOne, lineTwo, suburb, postcode, state, country },
     } = result.data;
 
@@ -222,9 +229,9 @@ addressController.patch('/by/trainer_id/:trainer_id', permit('Admin', 'Trainer')
   }
 });
 
-addressController.patch('/by/member_id/:member_id', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
+addressController.patch('/by/members/:memberId', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
   try {
-    const result = await updateAddressSchema.spa({
+    const result = await updateAddressByMemberIdSchema.spa({
       params: req.params,
       body: req.body,
     });
@@ -235,7 +242,7 @@ addressController.patch('/by/member_id/:member_id', permit('Admin', 'Trainer', '
       });
     }
     const {
-      params: { member_id: memberId },
+      params: { memberId },
       body: { lineOne, lineTwo, suburb, postcode, state, country },
     } = result.data;
 
