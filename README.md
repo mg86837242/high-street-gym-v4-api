@@ -59,6 +59,8 @@ Install dependencies and start the [Vite](https://vitejs.dev/guide/#command-line
 ```bash
 cd high-street-gym-v4-client
 
+npm install
+
 npm run dev
 ```
 
