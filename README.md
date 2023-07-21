@@ -8,6 +8,9 @@ For more details about the project requirement, check the [project requirement s
 
 ## 1. Usage
 
+> **Note**
+> All commands are bash, adjust to the scripting language of your choice accordingly if necessary
+
 **Step 1**: To run this web app in local environment, clone the backend repository to a folder of your choice (e.g. `my-folder`) and install dependencies:
 
 ```bash
@@ -27,13 +30,13 @@ npm install
 
 **Step 3**: Configure database adapter's options, then start the API server (backend):
 
-Configure `mysql2`'s options in `high-street-gym-v4-api/config/database.js` ([example](https://github.com/sidorares/node-mysql2#using-connection-pools)), then start the server:
+Configure `host`, `user`, `password` and `database` options by modifying `high-street-gym-v4-api/config/database.js` ([example](https://github.com/sidorares/node-mysql2#using-connection-pools)), then start the server:
 
 ```bash
 npm start
 ```
 
-**Step 4**: Open up a new terminal in the same folder where the backend is located, then run the following bash commands:
+**Step 4**: Open up a new terminal in the same folder where the backend is located, then run the following commands:
 
 ```bash
 cd ..
