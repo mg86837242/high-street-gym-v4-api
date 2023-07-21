@@ -4,7 +4,7 @@ A gym web application (web app) created for schoolwork. This website is of dynam
 
 For a fast preview of this web app, check the [deployment section](#2-deployment).
 
-For more details about the project requirement, check the [project requirement section](#3-project-requirement).
+For more details about the project requirements, check the [project requirement section](#3-project-requirement).
 
 ## 1. Usage
 
@@ -84,7 +84,7 @@ Technologies used for deployment includes but not limited to:
 
 ## 3. Project Requirement
 
-The school project calls for a dynamic website with a database integration. In terms of the business requirement, the web app is expected to have the following functionalities:
+This school project calls for a dynamic website with a database integration. In terms of the business requirement, the web app is expected to have the following functionalities:
 
 - Handling user authentication
 - Rendering a calendar view from information stored in the database, including booking date and time
