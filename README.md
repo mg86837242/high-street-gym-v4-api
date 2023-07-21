@@ -4,7 +4,7 @@ A gym web application (web app) created for schoolwork. This website is of dynam
 
 For a fast preview of this web app, [deployment section](#2-deployment).
 
-For more information about the project requirement, check the [project requirement section](#3-project-requirement).
+For more details about the project requirement, check the [project requirement section](#3-project-requirement).
 
 ## 1. Usage
 
