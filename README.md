@@ -2,7 +2,7 @@
 
 A gym web application (web app) created for schoolwork. This website is of dynamic nature, with database and API integration, interactive forms with proper validation, conditional rendering based on user roles and user inputs, content editing functionalities for authenticated users, etc.
 
-For a fast preview of this web app, [deployment section](#2-deployment).
+For a fast preview of this web app, check the [deployment section](#2-deployment).
 
 For more details about the project requirement, check the [project requirement section](#3-project-requirement).
 
