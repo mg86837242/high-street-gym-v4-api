@@ -92,7 +92,7 @@ This school project calls for a dynamic website with a database integration. In 
 - Displaying users' blog with functionality to upload and read messages
 - Utilization of at least two (2) XML documents to be used to send data to the database, in this case, for adding a new activity and adding a new member
 
-The technologies to be used for implementing this project is left to the discretion of the programmer/developer. The extensive list of packages used in the backend and the frontend can be found in their respective `package.json` file. Essential technologies used for this project are listed below:
+The technologies to be used for implementing this project is left to the discretion of the programmer/developer. The extensive list of packages used in the backend and the frontend can be found in their respective `package.json` files. Essential technologies used for this project are listed below:
 
 - Git – for version controlling (also used during deployment)
 - Prettier & Eslint – for code formatting and quality
