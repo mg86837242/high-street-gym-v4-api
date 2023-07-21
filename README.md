@@ -27,7 +27,7 @@ npm install
 
 **Step 3**: Configure database adapter's options, then start the API server (backend):
 
-Configure `mysql2`'s options in `high-street-gym-v4-api/config/database.js` ([example](https://github.com/sidorares/node-mysql2#using-connection-pools)).
+Configure `mysql2`'s options in `high-street-gym-v4-api/config/database.js` ([example](https://github.com/sidorares/node-mysql2#using-connection-pools)), then start the server:
 
 ```bash
 npm start
@@ -54,7 +54,7 @@ my-folder
    └─ ...
 ```
 
-Install dependencies and start the [Vite](https://vitejs.dev/guide/#command-line-interface) server (frontend):
+**Step 5**: Install dependencies and start the [Vite](https://vitejs.dev/guide/#command-line-interface) server (frontend):
 
 ```bash
 cd high-street-gym-v4-client
