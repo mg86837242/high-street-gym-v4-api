@@ -97,8 +97,9 @@ The technologies to be used for implementing this project is left to the discret
 - Git – for version controlling (also used during deployment)
 - Prettier & Eslint – for code formatting and quality
 - Zod – for data validation
+- MySQL - database management system with mysql2 adapter (which supports database transactions)
 - Express.js – for API integration
-- React – functional approach
+- React
 - React Router 6.4+
 - React Hook Form
 - Tailwind CSS
