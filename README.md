@@ -90,7 +90,7 @@ This school project calls for a dynamic website with a database integration. In 
 - Rendering a calendar view from information stored in the database, including booking date and time
 - Functionality to allow users to book a class with a specific trainer
 - Displaying users' blog with functionality to upload and read messages
-- Using XML as the data representation to add new records to database, two (2) XML documents at least, in this case, for adding a new activity and adding a new member
+- Using XML as data representation to add new records to database, at least two (2) XML documents, in this case, for adding new activity and adding new member
 
 The technologies to be used for implementing this project is left to the discretion of the programmer/developer. The extensive list of packages used in the backend and the frontend can be found in their respective `package.json` files. Essential technologies used for this project are listed below:
 
