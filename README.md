@@ -18,16 +18,16 @@ cd high-street-gym-v4-api
 npm install
 ```
 
-**Step 2**: Open MySQL Workbench to import dataset. Steps for using the MySQL Workbench tool:
+**Step 2**: Open [MySQL Workbench](https://dev.mysql.com/downloads/workbench/) to import dataset. Steps for using the MySQL Workbench tool:
 
-    1.  Administration – data import/restore
+    1.  Administration tab –> data import/restore
     2.  Import from self-contained file
     3.  Select the dump file located at `./high-street-gym-v4-api/sqldump`
     4.  Start import
 
-Configure `mysql2` [options](https://github.com/sidorares/node-mysql2#using-connection-pools) in `high-street-gym-v4-api/config/database.js`.
+**Step 3**: Configure database adapter's options, then start the API server (backend):
 
-**Step 3**: Then start the API server (backend):
+Configure `mysql2`'s options in `high-street-gym-v4-api/config/database.js` ([example](https://github.com/sidorares/node-mysql2#using-connection-pools)).
 
 ```bash
 npm start
