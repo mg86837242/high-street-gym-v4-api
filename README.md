@@ -33,7 +33,7 @@ Configure `mysql2`'s options in `high-street-gym-v4-api/config/database.js` ([ex
 npm start
 ```
 
-**Step 4**: Open up a new terminal in the same folder where the backend is located in order to clone the front repository:
+**Step 4**: Open up a new terminal in the same folder where the backend is located, then run the following bash commands:
 
 ```bash
 cd ..
