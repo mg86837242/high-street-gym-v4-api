@@ -8,10 +8,10 @@ For more details about the project requirement, check the [project requirement s
 
 ## 1. Usage
 
-> **Note**
-> All commands are bash, adjust to the scripting language of your choice accordingly if necessary
+> **Note:**
+> All commands are supposed to run in bash, adjust to the scripting language of your choice accordingly if necessary
 
-**Step 1**: To run this web app in local environment, clone the backend repository to a folder of your choice (e.g. `my-folder`) and install dependencies:
+**Step 1:** To run this web app in local environment, clone the backend repository to a folder of your choice (e.g. `my-folder`) and install dependencies:
 
 ```bash
 git clone https://github.com/mg86837242/high-street-gym-v4-api.git
@@ -21,22 +21,22 @@ cd high-street-gym-v4-api
 npm install
 ```
 
-**Step 2**: Open [MySQL Workbench](https://dev.mysql.com/downloads/workbench/) to import dataset. Steps for using the MySQL Workbench tool:
+**Step 2:** Open [MySQL Workbench](https://dev.mysql.com/downloads/workbench/) to import dataset. Steps for using the MySQL Workbench tool:
 
     1.  Administration tab –> data import/restore
     2.  Import from self-contained file
     3.  Select the dump file located at `./high-street-gym-v4-api/sqldump`
     4.  Start import
 
-**Step 3**: Configure database adapter's options, then start the API server (backend):
+**Step 3:** Configure database adapter's options, then start the API server (backend):
 
-Configure `host`, `user`, `password` and `database` options by modifying `high-street-gym-v4-api/config/database.js` ([example](https://github.com/sidorares/node-mysql2#using-connection-pools)), then start the server:
+Configure the `host`, `user`, `password` and `database` options by modifying `high-street-gym-v4-api/config/database.js` ([example](https://github.com/sidorares/node-mysql2#using-connection-pools)), then start the server:
 
 ```bash
 npm start
 ```
 
-**Step 4**: Open up a new terminal in the same folder where the backend is located, then run the following commands:
+**Step 4:** Open up a new terminal in the same folder where the backend is located, then run the following commands:
 
 ```bash
 cd ..
@@ -57,7 +57,7 @@ my-folder
    └─ ...
 ```
 
-**Step 5**: Install dependencies and start the [Vite](https://vitejs.dev/guide/#command-line-interface) server (frontend):
+**Step 5:** Install dependencies and start the [Vite](https://vitejs.dev/guide/#command-line-interface) server (frontend):
 
 ```bash
 cd high-street-gym-v4-client
