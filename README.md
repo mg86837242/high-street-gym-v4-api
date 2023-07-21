@@ -1,6 +1,6 @@
 # High Street Gym
 
-A gym web application (web app) created for schoolwork. This website is of dynamic nature, featuring database and API integration, interactive forms with proper validation, conditional rendering based on user roles and user inputs, content editing functionalities for authenticated users, etc.
+A gym web application (web app) created for schoolwork. This website is of dynamic nature, with database and API integration, interactive forms with proper validation, conditional rendering based on user roles and user inputs, content editing functionalities for authenticated users, etc.
 
 For a fast preview of this web app, [deployment section](#2-deployment).
 
@@ -68,7 +68,7 @@ Navigate to [`http://localhost:5173`](http://localhost:5173) in the browser to o
 
 For the deployed version of this web app, visit: http://54.91.168.210/
 
-Technology used for deployment includes but not limited to:
+Technologies used for deployment includes but not limited to:
 
 - Amazon Web Services (AWS), including EC2 and RDS
 - Linux (Ubuntu)
@@ -87,7 +87,7 @@ The school project calls for a dynamic website with a database integration. In t
 - Displaying users' blog with functionality to upload and read messages
 - Utilization of at least two (2) XML documents to be used to send data to the database, in this case, for adding a new activity and adding a new member
 
-The technology to be used for implementing this project is left to the discretion of the programmer/developer. The extensive list of packages used in the backend and the frontend can be found in their respective `package.json` file. Essential technology used for this project is listed below:
+The technologies to be used for implementing this project is left to the discretion of the programmer/developer. The extensive list of packages used in the backend and the frontend can be found in their respective `package.json` file. Essential technologies used for this project are listed below:
 
 - Git – for version controlling (also used during deployment)
 - Prettier & Eslint – for code formatting and quality
