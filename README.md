@@ -2,11 +2,11 @@
 
 A gym web application (web app) created for schoolwork. This website is of dynamic nature, featuring database and API integration, interactive forms with proper validation, conditional rendering based on user roles and user inputs, content editing functionalities for authenticated users, etc.
 
-For a fast preview of this web app, [deployment section](#☁️-2-deployment).
+For a fast preview of this web app, [deployment section](#2-deployment).
 
-For more information about the project requirement, check the [project requirement section](#📝-3-project-requirement).
+For more information about the project requirement, check the [project requirement section](#3-project-requirement).
 
-## 🛠️ 1. Usage
+## 1. Usage
 
 **Step 1**: To run this web app in local environment, clone the backend repository to a folder of your choice (e.g. `my-folder`) and install dependencies:
 
@@ -64,7 +64,7 @@ npm run dev
 
 Navigate to [`http://localhost:5173`](http://localhost:5173) in the browser to open the web app.
 
-## ☁️ 2. Deployment
+## 2. Deployment
 
 For the deployed version of this web app, visit: http://54.91.168.210/
 
@@ -77,7 +77,7 @@ Technology used for deployment includes but not limited to:
 - PM2 – backend process management
 - Vite – frontend build tool
 
-## 📝 3. Project Requirement
+## 3. Project Requirement
 
 The school project calls for a dynamic website with a database integration. In terms of the business requirement, the web app is expected to have the following functionalities:
 
@@ -99,7 +99,7 @@ The technology to be used for implementing this project is left to the discretio
 - Tailwind CSS
 - Tiptap – headless editor framework for blog functionalities
 
-## 🤝 4. Credit
+## 4. Credit
 
 - <a href="https://www.flaticon.com/free-icons/dumbell" title="Dumbell icons">Dumbell icons created by Vitaly Gorbachev - Flaticon</a>
 - <a href="https://www.flaticon.com/free-icons/random" title="random icons">Random icons created by noomtah - Flaticon</a>
