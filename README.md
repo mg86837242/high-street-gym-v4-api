@@ -71,7 +71,7 @@ Navigate to [`http://localhost:5173`](http://localhost:5173) in the browser to o
 
 ## 2. Deployment
 
-For deployed version of this web app, visit: http://www.highstreetgymdemo.space/
+For deployed version of this web app, visit: http://52.55.144.167
 
 Technologies used for deployment includes but not limited to:
 
