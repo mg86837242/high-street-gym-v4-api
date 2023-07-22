@@ -9,7 +9,7 @@ export default function (app) {
   // Express CORS middleware – CORS allows to set which frontend URLs are allowed to access APIs
   app.use(
     cors({
-      origin: [`${constants.CORS_ORIGIN}`, /\.highstreetgymdemo\.space$/],
+      origin: [`${constants.CORS_ORIGIN}`, /^https?:\/\/highstreetgymdemo\.space.*/],
       credentials: true,
       maxAge: 24 * 60 * 60 * 1_000,
     }),
