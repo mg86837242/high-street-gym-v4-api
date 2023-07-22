@@ -9,7 +9,7 @@ For more details about the project requirements, check the [project requirement 
 ## 1. Usage
 
 > **Note:**
-> All commands are supposed to run in bash, adjust to the scripting language of your choice accordingly if necessary
+> All commands are supposed to run in bash, if necessary, adjust to the scripting language of your choice accordingly
 
 **Step 1:** To run this web app in local environment, clone the backend repository to a folder of your choice (e.g. `my-folder`) and install dependencies:
 
@@ -71,11 +71,11 @@ Navigate to [`http://localhost:5173`](http://localhost:5173) in the browser to o
 
 ## 2. Deployment
 
-For the deployed version of this web app, visit: http://54.91.168.210/
+For the deployed version of this web app, visit: http://www.highstreetgymdemo.space/
 
 Technologies used for deployment includes but not limited to:
 
-- Amazon Web Services (AWS), including EC2 and RDS
+- Amazon Web Services (AWS), including IAM, EC2 and RDS
 - Linux (Ubuntu)
 - Bash (Git Bash)
 - Nginx – web server
@@ -96,9 +96,9 @@ The technologies to be used for implementing this project is left to the discret
 
 - Git – for version controlling (also used during deployment)
 - Prettier & Eslint – for code formatting and quality
-- Zod – for data validation
-- MySQL – database management system with mysql2 adapter (which supports database transactions)
-- Express.js – for API integration
+- Zod – for data validation in both backend and frontend
+- MySQL – database management system with mysql2 adapter (which has built-in methods for database transactions)
+- Express.js – for building RESTful APIs
 - React
 - React Router 6.4+
 - React Hook Form
