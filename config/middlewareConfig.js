@@ -9,10 +9,10 @@ export default function (app) {
   // Express CORS middleware – CORS allows to set which frontend URLs are allowed to access APIs
   app.use(
     cors({
-      origin: `${constants.CORS_ORIGIN}`,
+      origin: [`${constants.CORS_ORIGIN}`, /\.highstreetgymdemo\.space$/],
       credentials: true,
       maxAge: 24 * 60 * 60 * 1_000,
-    })
+    }),
   );
 
   // Express session middleware
@@ -34,7 +34,7 @@ export default function (app) {
         maxAge: 7 * 24 * 60 * 60 * 1_000,
         sameSite: 'lax',
       },
-    })
+    }),
   );
 
   // Built-in middleware – parsing middleware needs to be placed before defining any routes
