@@ -20,7 +20,7 @@ export function getAdminsWithDetailsById(id) {
     INNER JOIN addresses a on d.addressId = a.id
     WHERE d.id = ?
     `,
-    [id]
+    [id],
   );
 }
 
@@ -39,7 +39,7 @@ export function getAdminsWithDetailsByLoginId(loginId) {
     INNER JOIN addresses a on d.addressId = a.id
     WHERE d.loginId = ?
     `,
-    [loginId]
+    [loginId],
   );
 }
 
@@ -54,7 +54,7 @@ export function createAdmin(loginId, firstName, lastName, phone, addressId) {
 		INSERT INTO admins (loginId, firstName, lastName, phone, addressId)
 		VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
 		`,
-    [loginId, firstName, lastName, phone, addressId]
+    [loginId, firstName, lastName, phone, addressId],
   );
 }
 
@@ -66,7 +66,7 @@ export function updateAdminById(id, loginId, firstName, lastName, phone, address
 		SET loginId = ?, firstName = ?, lastName = ?, phone = ?, addressId = ?
 		WHERE id = ?
 		`,
-    [loginId, firstName, lastName, phone, addressId, id]
+    [loginId, firstName, lastName, phone, addressId, id],
   );
 }
 

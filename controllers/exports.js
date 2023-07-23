@@ -1,6 +1,6 @@
 import * as fs from 'node:fs';
 import ejs from 'ejs';
-import { Router } from 'express';
+import Router from 'express-promise-router';
 import { emptyObjSchema } from '../schemas/params.js';
 import { getAllMembers, getMembersById } from '../models/members.js';
 import { getAddressesById } from '../models/addresses.js';
@@ -8,7 +8,7 @@ import { getAllActivities } from '../models/activities.js';
 import { getBookingsByActivityId } from '../models/bookings.js';
 import { getTrainersById } from '../models/trainers.js';
 
-const exportController = Router();
+const exportController = new Router();
 
 exportController.get('/member_list', async (req, res) => {
   try {

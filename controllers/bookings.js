@@ -1,4 +1,4 @@
-import { Router } from 'express';
+import Router from 'express-promise-router';
 import { emptyObjSchema, idSchema, dateSchema } from '../schemas/params.js';
 import { bookingSchema, updateBookingSchema } from '../schemas/bookings.js';
 import {
@@ -18,7 +18,7 @@ import { getAllTrainers } from '../models/trainers.js';
 import { getAllActivities } from '../models/activities.js';
 import permit from '../middleware/authorization.js';
 
-const bookingController = Router();
+const bookingController = new Router();
 
 // Read Booking
 bookingController.get('/', async (req, res) => {
@@ -272,7 +272,7 @@ bookingController.patch('/:id', permit('Admin', 'Trainer', 'Member'), async (req
       id,
       memberId,
       trainerId,
-      dateTime
+      dateTime,
     );
     if (isConflicting) {
       // -- Return error indicating a party involved is unavailable at the given date and time

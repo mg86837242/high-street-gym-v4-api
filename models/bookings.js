@@ -27,7 +27,7 @@ export function getBookingsWithDetailsByDate(date) {
     WHERE DATE(b.dateTime) = ?
     ORDER BY b.dateTime
     `,
-    [date]
+    [date],
   );
 }
 
@@ -48,7 +48,7 @@ export function getBookingsWithDetailsById(id) {
     INNER JOIN activities a ON b.activityId = a.id
     WHERE b.id = ?
     `,
-    [id]
+    [id],
   );
 }
 
@@ -85,7 +85,7 @@ export function createBooking(memberId, trainerId, activityId, dateTime) {
     INSERT INTO bookings (memberId, trainerId, activityId, dateTime)
     VALUES (?, ?, ?, ?)
     `,
-    [memberId, trainerId, activityId, dateTime]
+    [memberId, trainerId, activityId, dateTime],
   );
 }
 
@@ -97,7 +97,7 @@ export function updateBookingById(id, memberId, trainerId, activityId, dateTime)
     SET memberId = ?, trainerId = ?, activityId = ?, dateTime = ?
     WHERE id = ?
     `,
-    [memberId, trainerId, activityId, dateTime, id]
+    [memberId, trainerId, activityId, dateTime, id],
   );
 }
 

@@ -1,11 +1,11 @@
 import express from 'express';
-import middlewareConfig from './config/middlewareConfig.js';
-import apiRoutes from './config/apiRoutes.js';
 import constants from './config/constants.js';
+import middlewareConfig from './config/middleware.js';
+import mountRoutes from './controllers/index.js';
 
 const app = express();
 middlewareConfig(app);
-apiRoutes(app);
+mountRoutes(app);
 
 // Testing endpoints
 app.get('/api/helloworld', (req, res) => {

@@ -1,4 +1,4 @@
-import { Router } from 'express';
+import Router from 'express-promise-router';
 import bcrypt from 'bcryptjs'; // reason to use `bcryptjs`: https://github.com/kelektiv/node.bcrypt.js/issues/705
 import { v4 as uuid4 } from 'uuid';
 import { uuidSchema } from '../schemas/params.js';
@@ -9,7 +9,7 @@ import { getTrainersByLoginId, getTrainersWithDetailsByLoginId } from '../models
 import { getMembersByLoginId, getMembersWithDetailsByLoginId } from '../models/members.js';
 import permit from '../middleware/authorization.js';
 
-const userController = Router();
+const userController = new Router();
 
 // PS The design of route paths and route parameters follows: https://expressjs.com/en/guide/routing.html
 userController.get('/keys/:accessKey', async (req, res) => {

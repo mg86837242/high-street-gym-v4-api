@@ -12,7 +12,7 @@ export function getAddressesById(id) {
 export function getIdenticalAddressesByDetails(lineOne, lineTwo, suburb, postcode, state, country) {
   return pool.query(
     'SELECT * FROM addresses WHERE lineOne = ? AND lineTwo = ? AND suburb = ? AND postcode = ? AND state = ? AND country = ?',
-    [lineOne, lineTwo, suburb, postcode, state, country]
+    [lineOne, lineTwo, suburb, postcode, state, country],
   );
 }
 
@@ -24,7 +24,7 @@ export function createAddress(lineOne, lineTwo, suburb, postcode, state, country
 		(lineOne, lineTwo, suburb, postcode, state, country)
 		VALUES (?, ?, ?, ?, ?, ?)
 		`,
-    [lineOne, lineTwo, suburb, postcode, state, country]
+    [lineOne, lineTwo, suburb, postcode, state, country],
   );
 }
 
@@ -36,7 +36,7 @@ export function updateAddressById(id, lineOne, lineTwo, suburb, postcode, state,
 		SET lineOne = ?, lineTwo = ?, suburb = ?, postcode = ?, state = ?, country = ?
 		WHERE id = ?
 		`,
-    [lineOne, lineTwo, suburb, postcode, state, country, id]
+    [lineOne, lineTwo, suburb, postcode, state, country, id],
   );
 }
 

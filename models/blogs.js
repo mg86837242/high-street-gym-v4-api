@@ -8,7 +8,7 @@ export function getAllBlogs() {
     l.username, l.role
     FROM blogs b
     INNER JOIN logins l on b.loginId = l.id
-    `
+    `,
   );
 }
 
@@ -21,7 +21,7 @@ export function getBlogsById(id) {
     INNER JOIN logins l on b.loginId = l.id
     WHERE b.id = ?
     `,
-    [id]
+    [id],
   );
 }
 
@@ -32,7 +32,7 @@ export function createBlog(title, body, loginId) {
 		INSERT INTO blogs (title, body, loginId, createdAt)
 		VALUES (?, ?, ?, NOW())
 		`,
-    [title, body, loginId]
+    [title, body, loginId],
   );
 }
 
@@ -44,7 +44,7 @@ export function updateBlogById(id, title, body, loginId) {
 		SET title = ?, body = ?, loginId = ?, updatedAt = NOW()
 		WHERE id = ?
 		`,
-    [title, body, loginId, id]
+    [title, body, loginId, id],
   );
 }
 

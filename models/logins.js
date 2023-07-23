@@ -28,7 +28,7 @@ export function createLogin(email, password, username) {
 		INSERT INTO logins (email, password, username)
 		VALUES (?, ?, ?)
 		`,
-    [email, username, password]
+    [email, username, password],
   );
 }
 
@@ -40,7 +40,7 @@ export function updateLoginById(id, email, password, username) {
 		SET email = ?, password = ?, username = ?
 		WHERE id = ?
 		`,
-    [email, username, password, id]
+    [email, username, password, id],
   );
 }
 
@@ -51,7 +51,7 @@ export function updateLoginAccessKeyById(id, accessKey) {
     SET accessKey = ?
     WHERE id = ?
     `,
-    [accessKey, id]
+    [accessKey, id],
   );
 }
 

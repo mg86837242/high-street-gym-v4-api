@@ -20,7 +20,7 @@ export function getTrainersWithDetailsById(id) {
     INNER JOIN addresses a on t.addressId = a.id
     WHERE t.id = ?
     `,
-    [id]
+    [id],
   );
 }
 
@@ -39,7 +39,7 @@ export function getTrainersWithDetailsByLoginId(loginId) {
     INNER JOIN addresses a on t.addressId = a.id
     WHERE t.loginId = ?
     `,
-    [loginId]
+    [loginId],
   );
 }
 
@@ -57,14 +57,14 @@ export function createTrainer(
   description,
   specialty,
   certificate,
-  imageUrl
+  imageUrl,
 ) {
   return pool.query(
     `
 		INSERT INTO trainers (loginId, firstName, lastName, phone, addressId, description, specialty, certificate, imageUrl)
 		VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
 		`,
-    [loginId, firstName, lastName, phone, addressId, description, specialty, certificate, imageUrl]
+    [loginId, firstName, lastName, phone, addressId, description, specialty, certificate, imageUrl],
   );
 }
 
@@ -79,7 +79,7 @@ export function updateTrainerById(
   description,
   specialty,
   certificate,
-  imageUrl
+  imageUrl,
 ) {
   return pool.query(
     `
@@ -87,7 +87,7 @@ export function updateTrainerById(
 		SET loginId = ?, firstName = ?, lastName = ?, phone = ?, addressId = ?, description = ?, specialty = ?, certificate = ?, imageUrl = ?
 		WHERE id = ?
 		`,
-    [loginId, firstName, lastName, phone, addressId, description, specialty, certificate, imageUrl, id]
+    [loginId, firstName, lastName, phone, addressId, description, specialty, certificate, imageUrl, id],
   );
 }
 

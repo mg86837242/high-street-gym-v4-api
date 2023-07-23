@@ -1,10 +1,10 @@
-import { Router } from 'express';
+import Router from 'express-promise-router';
 import { emptyObjSchema, idSchema } from '../schemas/params.js';
 import { blogSchema, updateBlogSchema } from '../schemas/blogs.js';
 import { getAllBlogs, getBlogsById, createBlog, updateBlogById, deleteBlogById } from '../models/blogs.js';
 import permit from '../middleware/authorization.js';
 
-const blogController = Router();
+const blogController = new Router();
 
 // Read Blog
 blogController.get('/', async (req, res) => {

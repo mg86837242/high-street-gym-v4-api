@@ -1,4 +1,4 @@
-import { Router } from 'express';
+import Router from 'express-promise-router';
 import bcrypt from 'bcryptjs'; // reason to use `bcryptjs`: https://github.com/kelektiv/node.bcrypt.js/issues/705
 import pool from '../config/database.js';
 import { emptyObjSchema, idSchema } from '../schemas/params.js';
@@ -6,7 +6,7 @@ import { adminDetailedSchema, updateAdminSchema, updateAdminDetailedSchema } fro
 import { getAllAdmins, getAdminsById, getAdminsWithDetailsById } from '../models/admins.js';
 import permit from '../middleware/authorization.js';
 
-const adminController = Router();
+const adminController = new Router();
 
 // Read Admin
 adminController.get('/', permit('Admin', 'Trainer', 'Member'), async (req, res) => {

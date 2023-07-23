@@ -23,7 +23,7 @@ export function createActivity(
   requirementOne,
   requirementTwo,
   durationMinutes,
-  price
+  price,
 ) {
   return pool.query(
     `
@@ -41,7 +41,7 @@ export function createActivity(
       requirementTwo,
       durationMinutes,
       price,
-    ]
+    ],
   );
 }
 
@@ -56,7 +56,7 @@ export function updateActivityById(
   requirementOne,
   requirementTwo,
   durationMinutes,
-  price
+  price,
 ) {
   return pool.query(
     `
@@ -75,7 +75,7 @@ export function updateActivityById(
       durationMinutes,
       price,
       id,
-    ]
+    ],
   );
 }
 

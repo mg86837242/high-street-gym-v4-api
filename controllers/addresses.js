@@ -1,4 +1,4 @@
-import { Router } from 'express';
+import Router from 'express-promise-router';
 import { emptyObjSchema, idSchema } from '../schemas/params.js';
 import {
   addressSchema,
@@ -19,7 +19,7 @@ import { getTrainersAddressesIdById } from '../models/trainers.js';
 import { getMembersAddressesIdById } from '../models/members.js';
 import permit from '../middleware/authorization.js';
 
-const addressController = Router();
+const addressController = new Router();
 
 // Read Address
 addressController.get('/', permit('Admin', 'Trainer', 'Member'), async (req, res) => {

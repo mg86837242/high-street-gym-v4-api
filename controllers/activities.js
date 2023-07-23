@@ -1,4 +1,4 @@
-import { Router } from 'express';
+import Router from 'express-promise-router';
 import { XMLParser } from 'fast-xml-parser'; // reason to use `fast-xml-parser` i/o `xml2js`: no need to (1) deep clone or `JSON.parse(JSON.stringify(parsedResult))` to clean up the `[Object null prototype]`, nor (2) tinker `explicitArray` option to explicitly tell the parser to not output the obj value as an array
 import pool from '../config/database.js';
 import { emptyObjSchema, idSchema } from '../schemas/params.js';
@@ -13,7 +13,7 @@ import {
 import permit from '../middleware/authorization.js';
 import upload from '../middleware/multer.js';
 
-const activityController = Router();
+const activityController = new Router();
 
 // TODO In future projects, instead of writing bloated controllers, controllers will be split into (1) route, (2) data
 //  validation and (3) route handler

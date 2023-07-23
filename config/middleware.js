@@ -48,6 +48,8 @@ export default function (app) {
 // -- https://forum.freecodecamp.org/t/what-is-the-secret-key-in-express-session/354972: Express session secret working
 //  in tandem with environment variables
 // -- https://medium.com/the-node-js-collection/making-your-node-js-work-everywhere-with-environment-variables-2da8cdf6e786
+// -- https://github.com/erickow/nodejs-express-auth-passport-jwt-es6-example/tree/master/src: modularization of `index.js`
+// -- https://node-postgres.com/guides/async-express: modularization of `index.js`, and `express-promise-router`
 
 // References for preserving `req.session` after fetching in the frontend:
 // -- https://twin.sh/articles/11/react-fix-issue-with-session-changing-after-every-request: Gives the hint that it's

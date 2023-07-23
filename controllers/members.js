@@ -1,4 +1,4 @@
-import { Router } from 'express';
+import Router from 'express-promise-router';
 import { XMLParser } from 'fast-xml-parser';
 import bcrypt from 'bcryptjs'; // reason to use `bcryptjs`: https://github.com/kelektiv/node.bcrypt.js/issues/705
 import pool from '../config/database.js';
@@ -18,7 +18,7 @@ import {
 import permit from '../middleware/authorization.js';
 import upload from '../middleware/multer.js';
 
-const memberController = Router();
+const memberController = new Router();
 
 // Read Member
 memberController.get('/', permit('Admin', 'Trainer', 'Member'), async (req, res) => {

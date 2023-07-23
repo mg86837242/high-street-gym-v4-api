@@ -14,7 +14,7 @@ export function getAllMembersWithDetails() {
     FROM members m
     INNER JOIN logins l on m.loginId = l.id
     INNER JOIN addresses a on m.addressId = a.id
-    `
+    `,
   );
 }
 
@@ -33,7 +33,7 @@ export function getMembersWithDetailsById(id) {
     INNER JOIN addresses a on m.addressId = a.id
     WHERE m.id = ?
     `,
-    [id]
+    [id],
   );
 }
 
@@ -52,7 +52,7 @@ export function getMembersWithDetailsByLoginId(loginId) {
     INNER JOIN addresses a on m.addressId = a.id
     WHERE m.loginId = ?
   `,
-    [loginId]
+    [loginId],
   );
 }
 
@@ -67,7 +67,7 @@ export function createMember(loginId, firstName, lastName, phone, addressId, age
 		INSERT INTO members (loginId, firstName, lastName, phone, addressId, age, gender)
 		VALUES (?, ?, ?, ?, ?, ?, ?)
 		`,
-    [loginId, firstName, lastName, phone, addressId, age, gender]
+    [loginId, firstName, lastName, phone, addressId, age, gender],
   );
 }
 
@@ -79,7 +79,7 @@ export function updateMemberById(id, loginId, firstName, lastName, phone, addres
 		SET loginId = ?, firstName = ?, lastName = ?, phone = ?, addressId = ?, age = ?, gender = ?
 		WHERE id = ?
 		`,
-    [loginId, firstName, lastName, phone, addressId, age, gender, id]
+    [loginId, firstName, lastName, phone, addressId, age, gender, id],
   );
 }
 
