@@ -29,4 +29,3 @@ dist-ssr
 .vscode
 *.pem
 **/__*
-prisma

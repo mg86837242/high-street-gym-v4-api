@@ -25,8 +25,8 @@ module.exports = {
     // @see: https://www.npmjs.com/package/eslint-plugin-react-hooks
     'react-hooks/rules-of-hooks': 'error',
     'react-hooks/exhaustive-deps': 'error',
-    // Band-aid solution to lack of resolver in the backend, @see:
-    // https://stackoverflow.com/questions/46208367/how-to-remove-eslint-error-no-unresolved-from-importing-react
+    // Band-aid solution to lack of resolver in the backend:
+    // @see: https://stackoverflow.com/questions/46208367/how-to-remove-eslint-error-no-unresolved-from-importing-react
     // & https://stackoverflow.com/questions/67316153/facing-problem-while-importing-files-in-nodejs
     'import/no-unresolved': ['warn', { caseSensitive: false }],
     'import/extensions': [
