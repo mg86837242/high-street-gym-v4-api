@@ -78,7 +78,8 @@ Technologies used for deployment includes but not limited to:
 - Amazon Web Services (AWS), including IAM, EC2 and RDS
 - Linux (Ubuntu)
 - Bash (Git Bash)
-- Nginx – web server
+- Node
+- Nginx – web server and reverse proxy
 - PM2 – backend process management
 - Vite – frontend build tool
 
@@ -98,6 +99,7 @@ The technologies to be used for implementing this project is left to the discret
 - Prettier & ESLint – for code formatting and code quality
 - Zod – for data validation in both backend and frontend
 - MySQL – database management system with mysql2 adapter (which has built-in methods for database transaction)
+- Node
 - Express.js – for building RESTful APIs
 - React
 - React Router 6.4+
