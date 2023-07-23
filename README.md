@@ -9,7 +9,8 @@ For more details about the project requirements, check the [project requirement 
 ## 1. Usage
 
 > **Note:**
-> All commands are supposed to run in bash, if necessary, adjust to the scripting language of your choice accordingly
+> (1) The following instructions are given assuming it's in Windows OS, adjust to your OS accordingly.
+> (2) All commands examples are bash, if necessary, adjust to the scripting language of your choice accordingly.
 
 **Step 1:** To run this web app in local environment, clone the backend repository to a folder of your choice (e.g. `my-folder`) and install dependencies:
 
@@ -111,14 +112,14 @@ The technologies to be used for implementing this project is left to the discret
 
 - <a href="https://www.flaticon.com/free-icons/dumbell" title="Dumbell icons">Dumbell icons created by Vitaly Gorbachev - Flaticon</a>
 - <a href="https://www.flaticon.com/free-icons/random" title="random icons">Random icons created by noomtah - Flaticon</a>
-- Photo by <a href="https://unsplash.com/@weareambitious?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Ambitious Creative Co. - Rick Barrett</a> on <a href="https://unsplash.com/photos/AcFdytAyJgk?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Unsplash</a>
-- Photo by Cliff Booth on [Pexels](https://www.pexels.com/photo/photo-of-women-stretching-together-4056723/)
-- Photo by Gustavo Fring from [Pexels](https://www.pexels.com/photo/women-keeping-fit-3984353/)
-- Photo by Andrej Klintsy on [Pexels](https://www.pexels.com/photo/a-woman-doing-sit-ups-6392828/)
-- Photo by Leon Ardho from [Pexels](https://www.pexels.com/photo/man-and-woman-holding-battle-ropes-1552242/)
-- Photo by <a href="https://unsplash.com/@sammoghadamkhamseh?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Sam Moghadam Khamseh</a> on <a href="https://unsplash.com/photos/W8CyjblrF8U?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Unsplash</a>
-- Photo by <a href="https://unsplash.com/@markadriane?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">MARK ADRIANE</a> on <a href="https://unsplash.com/photos/FH6JcaCrYJ0?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Unsplash</a>
-- Photo by Yan Krukau from [Pexels](https://www.pexels.com/photo/people-doing-raised-hands-pose-in-yoga-class-8436587/)
-- Photo by Khaled Oukaci from [Pexels](https://www.pexels.com/photo/black-and-white-photo-of-a-backpacker-walking-in-the-desert-12563642/)
-- Photo by <a href="https://unsplash.com/@d_mccullough?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Daniel McCullough</a> on <a href="https://unsplash.com/photos/-FPFq_trr2Y?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Unsplash</a>
-- Photo by <a href="https://unsplash.com/@r3dmax?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Jonatan Pie</a> on <a href="https://unsplash.com/photos/xgTMSz6kegE?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Unsplash</a>
+- <!-- Hero -->Photo by <a href="https://unsplash.com/@weareambitious?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Ambitious Creative Co. - Rick Barrett</a> on <a href="https://unsplash.com/photos/AcFdytAyJgk?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Unsplash</a>
+- <!-- 7 Carousel Items -->Photo by Cliff Booth on [Pexels](https://www.pexels.com/photo/photo-of-women-stretching-together-4056723/)
+- <!-- 7 Carousel Items -->Photo by Gustavo Fring from [Pexels](https://www.pexels.com/photo/women-keeping-fit-3984353/)
+- <!-- 7 Carousel Items -->Photo by Andrej Klintsy on [Pexels](https://www.pexels.com/photo/a-woman-doing-sit-ups-6392828/)
+- <!-- 7 Carousel Items -->Photo by Leon Ardho from [Pexels](https://www.pexels.com/photo/man-and-woman-holding-battle-ropes-1552242/)
+- <!-- 7 Carousel Items -->Photo by <a href="https://unsplash.com/@sammoghadamkhamseh?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Sam Moghadam Khamseh</a> on <a href="https://unsplash.com/photos/W8CyjblrF8U?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Unsplash</a>
+- <!-- 7 Carousel Items -->Photo by <a href="https://unsplash.com/@markadriane?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">MARK ADRIANE</a> on <a href="https://unsplash.com/photos/FH6JcaCrYJ0?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Unsplash</a>
+- <!-- 7 Carousel Items -->Photo by Yan Krukau from [Pexels](https://www.pexels.com/photo/people-doing-raised-hands-pose-in-yoga-class-8436587/)
+- <!-- 404 Page -->Photo by Khaled Oukaci from [Pexels](https://www.pexels.com/photo/black-and-white-photo-of-a-backpacker-walking-in-the-desert-12563642/)
+- <!-- Under Construction Page -->Photo by <a href="https://unsplash.com/@d_mccullough?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Daniel McCullough</a> on <a href="https://unsplash.com/photos/-FPFq_trr2Y?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Unsplash</a>
+- <!-- Blog Example Image -->Photo by <a href="https://unsplash.com/@r3dmax?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Jonatan Pie</a> on <a href="https://unsplash.com/photos/xgTMSz6kegE?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Unsplash</a>
