@@ -22,14 +22,18 @@ cd high-street-gym-v4-api
 npm install
 ```
 
-**Step 2:** Open [MySQL Workbench](https://dev.mysql.com/downloads/workbench/) to import dataset. Steps for using the MySQL Workbench tool:
+**Step 2** Install MySQL Server and MySQL Workbench by following [this guide](https://www.simplilearn.com/tutorials/mysql-tutorial/mysql-workbench-installation) (optional)
+
+Skip this step if MySQL Server and MySQL Workbench are already installed
+
+**Step 3:** Open MySQL Workbench to import dataset. Steps for using the MySQL Workbench tool:
 
     1.  Administration tab –> data import/restore
     2.  Import from self-contained file
     3.  Select the dump file located at `./high-street-gym-v4-api/sqldump`
     4.  Start import
 
-**Step 3:** Configure database adapter's options, then start the API server (backend):
+**Step 4:** Configure database adapter's options, then start the API server (backend):
 
 Configure the `host`, `user`, `password` and `database` options by modifying `high-street-gym-v4-api/config/database.js` ([example](https://github.com/sidorares/node-mysql2#using-connection-pools)), then start the server:
 
@@ -37,13 +41,12 @@ Configure the `host`, `user`, `password` and `database` options by modifying `hi
 npm start
 ```
 
-**Step 4:** Open up a new terminal in the same folder where the backend is located, then run the following commands:
+**Step 5:** Open up a new terminal in the same folder where the backend is located, then run the following commands:
 
 ```bash
 cd ..
 
 git clone https://github.com/mg86837242/high-street-gym-v4-client.git
-
 ```
 
 Now the folder structure should look like this:
@@ -58,7 +61,7 @@ my-folder
    └─ ...
 ```
 
-**Step 5:** Install dependencies and start the [Vite](https://vitejs.dev/guide/#command-line-interface) server (frontend):
+**Step 6:** Install dependencies and start the [Vite](https://vitejs.dev/guide/#command-line-interface) server (frontend):
 
 ```bash
 cd high-street-gym-v4-client
