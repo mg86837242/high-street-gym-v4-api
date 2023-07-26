@@ -26,6 +26,6 @@ dist-ssr
 # Customized
 .env
 .env.production
-.vscode
 *.pem
-**/__*
+__*
+ecosystem.*

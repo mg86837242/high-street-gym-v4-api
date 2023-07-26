@@ -3,7 +3,7 @@ import bcrypt from 'bcryptjs'; // reason to use `bcryptjs`: https://github.com/k
 import pool from '../config/database.js';
 import { emptyObjSchema, idSchema } from '../schemas/params.js';
 import { trainerDetailedSchema, updateTrainerDetailedSchema, updateTrainerSchema } from '../schemas/trainers.js';
-import { getAllTrainers, getTrainersById, getTrainersWithDetailsById } from '../models/trainers.js';
+import { getAllTrainers, getTrainersById, getTrainersWithDetailsById, deleteTrainerById } from '../models/trainers.js';
 import permit from '../middleware/authorization.js';
 
 const trainerController = new Router();
@@ -385,7 +385,6 @@ trainerController.patch('/:id/detailed', permit('Admin', 'Trainer'), async (req,
 
 // Delete Trainer
 trainerController.delete('/:id', permit('Admin', 'Trainer'), async (req, res) => {
-  let conn = null;
   try {
     const result = await idSchema.spa(req.params.id);
     if (!result.success) {
@@ -404,28 +403,20 @@ trainerController.delete('/:id', permit('Admin', 'Trainer'), async (req, res) =>
       });
     }
 
-    // Manually acquire a connection from the pool & start a TRANSACTION
-    conn = await pool.getConnection();
-    await conn.beginTransaction();
+    // The delete rule of referential constraint is set as `ON DELETE CASCADE` for parents table `logins` and
+    // `addresses`, should any of these delete rules has changed, transaction might be needed
+    await deleteTrainerById(firstTrainerResult.id);
 
-    await conn.query('DELETE FROM addresses WHERE id = ?', [firstTrainerResult.addressId]);
-    await conn.query('DELETE FROM logins WHERE id = ?', [firstTrainerResult.loginId]);
-    await conn.query('DELETE FROM trainers WHERE id = ?', [firstTrainerResult.id]);
-
-    await conn.commit();
     return res.status(200).json({
       status: 200,
       message: 'Trainer successfully deleted',
     });
   } catch (error) {
-    if (conn) await conn.rollback();
     console.error(error);
     return res.status(500).json({
       status: 500,
       message: 'Database or server error',
     });
-  } finally {
-    if (conn) conn.release();
   }
 });
 

@@ -1,10 +1,10 @@
 CREATE DATABASE  IF NOT EXISTS `high_street_gym_v5` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_bin */ /*!80016 DEFAULT ENCRYPTION='N' */;
 USE `high_street_gym_v5`;
--- MySQL dump 10.13  Distrib 8.0.31, for Win64 (x86_64)
+-- MySQL dump 10.13  Distrib 8.0.34, for Win64 (x86_64)
 --
 -- Host: localhost    Database: high_street_gym_v5
 -- ------------------------------------------------------
--- Server version	8.0.31
+-- Server version	8.0.34
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -95,8 +95,8 @@ CREATE TABLE `admins` (
   PRIMARY KEY (`id`),
   KEY `fk_Managers_Logins1_idx` (`loginId`),
   KEY `fk_Managers_Addresses1_idx` (`addressId`),
-  CONSTRAINT `fk_Administrators_Addresses1` FOREIGN KEY (`addressId`) REFERENCES `addresses` (`id`) ON DELETE SET NULL ON UPDATE SET NULL,
-  CONSTRAINT `fk_Administrators_Logins1` FOREIGN KEY (`loginId`) REFERENCES `logins` (`id`) ON DELETE SET NULL ON UPDATE SET NULL
+  CONSTRAINT `fk_Administrators_Addresses1` FOREIGN KEY (`addressId`) REFERENCES `addresses` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_Administrators_Logins1` FOREIGN KEY (`loginId`) REFERENCES `logins` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -136,7 +136,7 @@ CREATE TABLE `blogs` (
 
 LOCK TABLES `blogs` WRITE;
 /*!40000 ALTER TABLE `blogs` DISABLE KEYS */;
-INSERT INTO `blogs` VALUES (1,'Title 1','Lorem Ipsum',1,'2023-04-21 19:09:48',NULL),(2,'Title 2','Lorem Ipsum',3,'2023-04-22 20:09:48',NULL),(3,'Title 3','Lorem Ipsum',5,'2023-04-23 21:09:48',NULL),(4,'New Blog ?','<h2>Hi there,</h2><p>this is a <em>basic</em> example of <strong>tiptap</strong>. Sure, there are all kind of basic text styles you’d probably expect from a text editor. But wait until you see the lists:</p><ul><li><p>That’s a bullet list with one …</p></li><li><p>… or two list items.</p></li></ul><p>Isn’t that great? And all of that is editable. But wait, there’s more. Let’s try a code block:</p><pre><code class=\"language-css\">body {\n  display: none;\n}</code></pre><p>I know, I know, this is impressive. It’s only the tip of the iceberg though. Give it a try and click a little bit around. Don’t forget to check the other examples too.</p><blockquote><p>Wow, that’s amazing. Good work, boy! ?</p></blockquote><img class=\"rounded-3xl\" src=\"https://images.unsplash.com/photo-1470093851219-69951fcbb533?ixlib=rb-4.0.3&amp;ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&amp;auto=format&amp;fit=crop&amp;w=1170&amp;q=80\">',9,'2023-04-07 16:37:07','2023-04-22 11:56:12'),(5,'New Blog ?','<h2>Hi there,</h2><p>this is a <em>basic</em> example of <strong>tiptap</strong>. Sure, there are all kind of basic text styles you’d probably expect from a text editor. But wait until you see the lists:</p><ul><li><p>That’s a bullet list with one …</p></li><li><p>… or two list items.</p></li></ul><p>Isn’t that great? And all of that is editable. But wait, there’s more. Let’s try a code block:</p><pre><code class=\"language-css\">body {\n  display: none;\n}</code></pre><p>I know, I know, this is impressive. It’s only the tip of the iceberg though. Give it a try and click a little bit around. Don’t forget to check the other examples too.</p><blockquote><p>Wow, that’s amazing. Good work, boy! ? </p></blockquote>',9,'2023-04-10 21:04:59','2023-04-20 10:26:35');
+INSERT INTO `blogs` VALUES (1,'Title 1','Lorem Ipsum',1,'2023-04-21 19:09:48',NULL),(2,'Title 2','Lorem Ipsum',3,'2023-04-22 20:09:48',NULL),(3,'Title 3','Lorem Ipsum',5,'2023-04-23 21:09:48',NULL),(4,'New Blog ?','<h2>Hi there,</h2><p>this is a <em>basic</em> example of <strong>tiptap</strong>. Sure, there are all kind of basic text styles you’d probably expect from a text editor. But wait until you see the lists:</p><ul><li><p>That’s a bullet list with one …</p></li><li><p>… or two list items.</p></li></ul><p>Isn’t that great? And all of that is editable. But wait, there’s more. Let’s try a code block:</p><pre><code class=\"language-css\">body {\n  display: none;\n}</code></pre><p>I know, I know, this is impressive. It’s only the tip of the iceberg though. Give it a try and click a little bit around. Don’t forget to check the other examples too.</p><blockquote><p>Wow, that’s amazing. Good work, boy! ? </p></blockquote><img class=\"rounded-3xl\" src=\"https://images.unsplash.com/photo-1470093851219-69951fcbb533?ixlib=rb-4.0.3&amp;ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&amp;auto=format&amp;fit=crop&amp;w=1170&amp;q=80\">',9,'2023-04-07 16:37:07','2023-04-22 11:56:12'),(5,'New Blog ?','<h2>Hi there,</h2><p>this is a <em>basic</em> example of <strong>tiptap</strong>. Sure, there are all kind of basic text styles you’d probably expect from a text editor. But wait until you see the lists:</p><ul><li><p>That’s a bullet list with one …</p></li><li><p>… or two list items.</p></li></ul><p>Isn’t that great? And all of that is editable. But wait, there’s more. Let’s try a code block:</p><pre><code class=\"language-css\">body {\n  display: none;\n}</code></pre><p>I know, I know, this is impressive. It’s only the tip of the iceberg though. Give it a try and click a little bit around. Don’t forget to check the other examples too.</p><blockquote><p>Wow, that’s amazing. Good work, boy! ? </p></blockquote>',9,'2023-04-10 21:04:59','2023-04-20 10:26:35');
 /*!40000 ALTER TABLE `blogs` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -159,7 +159,7 @@ CREATE TABLE `bookings` (
   KEY `fk_Bookings_Activities1_idx` (`activityId`),
   CONSTRAINT `fk_Bookings_Activities1` FOREIGN KEY (`activityId`) REFERENCES `activities` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `fk_Bookings_Members1` FOREIGN KEY (`memberId`) REFERENCES `members` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `fk_Bookings_Trainers1` FOREIGN KEY (`trainerId`) REFERENCES `trainers` (`id`)
+  CONSTRAINT `fk_Bookings_Trainers1` FOREIGN KEY (`trainerId`) REFERENCES `trainers` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=32 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -199,7 +199,7 @@ CREATE TABLE `logins` (
 
 LOCK TABLES `logins` WRITE;
 /*!40000 ALTER TABLE `logins` DISABLE KEYS */;
-INSERT INTO `logins` VALUES (1,'someadmin@server.com','password','someadmin','Admin',NULL),(2,'anotheradmin@server.com','password','anotheradmin','Admin',NULL),(3,'sometrainer@server.com','password','sometrainer','Trainer',NULL),(4,'anothertrainer@server.com','password','anothertrainer','Trainer',NULL),(5,'somemember@server.com','password','somemember','Member',NULL),(6,'anothermember@server.com','password','anothermember','Member',NULL),(7,'demomember@server.com','$2a$06$d0PUgEQ0leilUtImVVAGu.sFpXXAL5Q7W0FIyudpGxuzPWg7JYTEu','demomember','Member',NULL),(8,'demotrainer@server.com','$2a$06$EG5eqoiqdQd0wNlgRyKRVO7wwlO5z5knAofu1M300b6/ZyOJHEpRm','demotrainer','Trainer',NULL),(9,'demoadmin@server.com','$2a$06$CJ.HykOF/zi7X/xHv1lPx.bLeS0moyffJixlH9iplPEmp6eJasQaW','demoadmin','Admin','86471277-0dc5-4035-ba13-3430a8e98be6');
+INSERT INTO `logins` VALUES (1,'someadmin@server.com','password','someadmin','Admin',NULL),(2,'anotheradmin@server.com','password','anotheradmin','Admin',NULL),(3,'sometrainer@server.com','password','sometrainer','Trainer',NULL),(4,'anothertrainer@server.com','password','anothertrainer','Trainer',NULL),(5,'somemember@server.com','password','somemember','Member',NULL),(6,'anothermember@server.com','password','anothermember','Member',NULL),(7,'demomember@server.com','$2a$06$d0PUgEQ0leilUtImVVAGu.sFpXXAL5Q7W0FIyudpGxuzPWg7JYTEu','demomember','Member',NULL),(8,'demotrainer@server.com','$2a$06$EG5eqoiqdQd0wNlgRyKRVO7wwlO5z5knAofu1M300b6/ZyOJHEpRm','demotrainer','Trainer',NULL),(9,'demoadmin@server.com','$2a$06$CJ.HykOF/zi7X/xHv1lPx.bLeS0moyffJixlH9iplPEmp6eJasQaW','demoadmin','Admin',NULL);
 /*!40000 ALTER TABLE `logins` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -222,8 +222,8 @@ CREATE TABLE `members` (
   PRIMARY KEY (`id`),
   KEY `fk_members_specific_traits_users1_idx` (`loginId`),
   KEY `fk_Members_Addresses1_idx` (`addressId`),
-  CONSTRAINT `fk_Members_Addresses1` FOREIGN KEY (`addressId`) REFERENCES `addresses` (`id`) ON DELETE SET NULL ON UPDATE SET NULL,
-  CONSTRAINT `fk_Members_Logins1` FOREIGN KEY (`loginId`) REFERENCES `logins` (`id`) ON DELETE SET NULL ON UPDATE SET NULL
+  CONSTRAINT `fk_Members_Addresses1` FOREIGN KEY (`addressId`) REFERENCES `addresses` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_Members_Logins1` FOREIGN KEY (`loginId`) REFERENCES `logins` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -258,8 +258,8 @@ CREATE TABLE `trainers` (
   PRIMARY KEY (`id`),
   KEY `fk_trainers_specific_traits_users1_idx` (`loginId`),
   KEY `fk_Trainers_Addresses1_idx` (`addressId`),
-  CONSTRAINT `fk_Trainers_Addresses1` FOREIGN KEY (`addressId`) REFERENCES `addresses` (`id`) ON DELETE SET NULL ON UPDATE SET NULL,
-  CONSTRAINT `fk_Trainers_Logins1` FOREIGN KEY (`loginId`) REFERENCES `logins` (`id`) ON DELETE SET NULL ON UPDATE SET NULL
+  CONSTRAINT `fk_Trainers_Addresses1` FOREIGN KEY (`addressId`) REFERENCES `addresses` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_Trainers_Logins1` FOREIGN KEY (`loginId`) REFERENCES `logins` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -282,4 +282,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2023-05-23 10:07:23
+-- Dump completed on 2023-07-24 21:36:48

@@ -14,6 +14,7 @@ import {
   getAllMembersWithDetails,
   getMembersById,
   getMembersWithDetailsById,
+  deleteMemberById,
 } from '../models/members.js';
 import permit from '../middleware/authorization.js';
 import upload from '../middleware/multer.js';
@@ -706,7 +707,6 @@ memberController.patch('/:id/detailed', permit('Admin', 'Trainer', 'Member'), as
 
 // Delete Member
 memberController.delete('/:id', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
-  let conn = null;
   try {
     const result = await idSchema.spa(req.params.id);
     if (!result.success) {
@@ -725,28 +725,20 @@ memberController.delete('/:id', permit('Admin', 'Trainer', 'Member'), async (req
       });
     }
 
-    // Manually acquire a connection from the pool & start a TRANSACTION
-    conn = await pool.getConnection();
-    await conn.beginTransaction();
+    // The delete rule of referential constraint is set as `ON DELETE CASCADE` for parents table `logins` and
+    // `addresses`, should any of these delete rules has changed, transaction might be needed
+    await deleteAdminById(firstMemberResult.id);
 
-    await conn.query('DELETE FROM addresses WHERE id = ?', [firstMemberResult.addressId]);
-    await conn.query('DELETE FROM logins WHERE id = ?', [firstMemberResult.loginId]);
-    await conn.query('DELETE FROM members WHERE id = ?', [firstMemberResult.id]);
-
-    await conn.commit();
     return res.status(200).json({
       status: 200,
       message: 'Member successfully deleted',
     });
   } catch (error) {
-    if (conn) await conn.rollback();
     console.error(error);
     return res.status(500).json({
       status: 500,
       message: 'Database or server error',
     });
-  } finally {
-    if (conn) conn.release();
   }
 });
 

@@ -3,7 +3,7 @@ import bcrypt from 'bcryptjs'; // reason to use `bcryptjs`: https://github.com/k
 import pool from '../config/database.js';
 import { emptyObjSchema, idSchema } from '../schemas/params.js';
 import { adminDetailedSchema, updateAdminSchema, updateAdminDetailedSchema } from '../schemas/admins.js';
-import { getAllAdmins, getAdminsById, getAdminsWithDetailsById } from '../models/admins.js';
+import { getAllAdmins, getAdminsById, getAdminsWithDetailsById, deleteAdminById } from '../models/admins.js';
 import permit from '../middleware/authorization.js';
 
 const adminController = new Router();
@@ -377,7 +377,6 @@ adminController.patch('/:id/detailed', permit('Admin'), async (req, res) => {
 
 // Delete Admin
 adminController.delete('/:id', permit('Admin'), async (req, res) => {
-  let conn = null;
   try {
     const result = await idSchema.spa(req.params.id);
     if (!result.success) {
@@ -396,28 +395,20 @@ adminController.delete('/:id', permit('Admin'), async (req, res) => {
       });
     }
 
-    // Manually acquire a connection from the pool & start a TRANSACTION
-    conn = await pool.getConnection();
-    await conn.beginTransaction();
+    // The delete rule of referential constraint is set as `ON DELETE CASCADE` for parents table `logins` and
+    // `addresses`, should any of these delete rules has changed, transaction might be needed
+    await deleteAdminById(firstAdminResult.id);
 
-    await conn.query('DELETE FROM addresses WHERE id = ?', [firstAdminResult.addressId]);
-    await conn.query('DELETE FROM logins WHERE id = ?', [firstAdminResult.loginId]);
-    await conn.query('DELETE FROM admins WHERE id = ?', [firstAdminResult.id]);
-
-    await conn.commit();
     return res.status(200).json({
       status: 200,
       message: 'Admin successfully deleted',
     });
   } catch (error) {
-    if (conn) await conn.rollback();
     console.error(error);
     return res.status(500).json({
       status: 500,
       message: 'Database or server error',
     });
-  } finally {
-    if (conn) conn.release();
   }
 });
 
