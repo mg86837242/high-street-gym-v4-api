@@ -2,8 +2,11 @@ import express from 'express';
 import cors from 'cors';
 import session from 'express-session';
 import constants from './constants.js';
+import helmet from 'helmet';
 // import RedisStore from 'connect-redis';
 // import { createClient } from 'redis';
+
+const isProd = process.env.NODE_ENV === 'production';
 
 export default function (app) {
   // Express CORS middleware – CORS allows to set which frontend URLs are allowed to access APIs
@@ -20,16 +23,18 @@ export default function (app) {
   // let redisClient = createClient();
   // redisClient.connect().catch(console.error);
   // -- Session config
+  // @see: https://expressjs.com/en/advanced/best-practice-security.html: guide specifically for prod env
   app.set('trust proxy', 1);
   app.use(
     session({
       // store: new RedisStore({ client: redisClient }),
+      name: 'highStreetGymSession',
       secret: constants.SESSION_SECRET,
       resave: false,
       saveUninitialized: false,
       cookie: {
         secure: constants.SESSION_COOKIE_SECURE,
-        httpOnly: constants.SESSION_COOKIE_HTTP_ONLY,
+        httpOnly: true,
         maxAge: 7 * 24 * 60 * 60 * 1_000,
         sameSite: 'lax',
       },
@@ -38,6 +43,12 @@ export default function (app) {
 
   // Built-in middleware – parsing middleware needs to be placed before defining any routes
   app.use(express.json());
+
+  // @see: https://expressjs.com/en/advanced/best-practice-security.html: guide specifically for prod env
+  if (isProd) {
+    app.use(helmet());
+    app.disable('x-powered-by');
+  }
 }
 
 // References:
