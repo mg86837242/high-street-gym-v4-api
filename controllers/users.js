@@ -55,6 +55,9 @@ userController.get('/keys/:accessKey', async (req, res) => {
 
     // Synchronize the key in the server-side session in case of session getting reset by failed request, etc.
     req.session.accessKey = accessKey;
+    // console.log(`-- session obj after successful login:`);
+    // console.log(`🔵 [${new Date().toLocaleTimeString()}] Session ID: ${req?.session?.id}`);
+    // console.log(req?.session)
 
     return res.status(200).json({
       status: 200,
