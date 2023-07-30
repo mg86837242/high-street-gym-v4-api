@@ -727,7 +727,7 @@ memberController.delete('/:id', permit('Admin', 'Trainer', 'Member'), async (req
 
     // The delete rule of referential constraint is set as `ON DELETE CASCADE` for parents table `logins` and
     // `addresses`, should any of these delete rules has changed, transaction might be needed
-    await deleteAdminById(firstMemberResult.id);
+    await deleteMemberById(firstMemberResult.id);
 
     return res.status(200).json({
       status: 200,

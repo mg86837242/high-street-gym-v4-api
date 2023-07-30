@@ -27,10 +27,9 @@ export default function (app) {
       secret: constants.SESSION_SECRET,
       resave: false,
       saveUninitialized: false,
-      // rolling: true,
       cookie: {
         secure: constants.SESSION_COOKIE_SECURE,
-        httpOnly: true,
+        httpOnly: constants.SESSION_COOKIE_HTTP_ONLY,
         maxAge: 7 * 24 * 60 * 60 * 1_000,
         sameSite: 'lax',
       },

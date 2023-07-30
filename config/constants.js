@@ -4,7 +4,8 @@ const devConfig = {
   DB_PASSWORD: process.env.DB_PASSWORD_DEV || 'Replace with MySQL connection password of choice',
   DB_SCHEMA: process.env.DB_SCHEMA_DEV || 'Replace with MySQL schema name of choice',
   CORS_ORIGIN: process.env.CORS_ORIGIN_DEV,
-  SESSION_COOKIE_SECURE: process.env.SESSION_COOKIE_SECURE_DEV || false,
+  SESSION_COOKIE_SECURE: false,
+  SESSION_COOKIE_HTTP_ONLY: true,
 };
 const testConfig = {
   DB_HOST: process.env.DB_HOST_TEST || 'Replace with MySQL connection hostname of choice',
@@ -12,7 +13,8 @@ const testConfig = {
   DB_PASSWORD: process.env.DB_PASSWORD_TEST || 'Replace with MySQL connection password of choice',
   DB_SCHEMA: process.env.DB_SCHEMA_TEST || 'Replace with MySQL schema name of choice',
   CORS_ORIGIN: process.env.CORS_ORIGIN_TEST,
-  SESSION_COOKIE_SECURE: process.env.SESSION_COOKIE_SECURE_TEST || false,
+  SESSION_COOKIE_SECURE: false,
+  SESSION_COOKIE_HTTP_ONLY: true,
 };
 const prodConfig = {
   DB_HOST: process.env.DB_HOST_PROD || 'Replace with MySQL connection hostname of choice',
@@ -20,7 +22,8 @@ const prodConfig = {
   DB_PASSWORD: process.env.DB_PASSWORD_PROD || 'Replace with MySQL connection password of choice',
   DB_SCHEMA: process.env.DB_SCHEMA_PROD || 'Replace with MySQL schema name of choice',
   CORS_ORIGIN: process.env.CORS_ORIGIN_PROD,
-  SESSION_COOKIE_SECURE: process.env.SESSION_COOKIE_SECURE_PROD || true,
+  SESSION_COOKIE_SECURE: true,
+  SESSION_COOKIE_HTTP_ONLY: false,
 };
 const defaultConfig = {
   PORT: process.env.PORT || 3000,
