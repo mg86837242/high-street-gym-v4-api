@@ -1,10 +1,11 @@
 import express from 'express';
 import cors from 'cors';
-import session from 'express-session';
-import constants from './constants.js';
-import helmet from 'helmet';
 // import RedisStore from 'connect-redis';
 // import { createClient } from 'redis';
+import session from 'express-session';
+import compression from 'compression';
+import helmet from 'helmet';
+import constants from './constants.js';
 
 const isProd = process.env.NODE_ENV === 'production';
 
@@ -23,8 +24,12 @@ export default function (app) {
   // let redisClient = createClient();
   // redisClient.connect().catch(console.error);
   // -- Session config
-  // @see: https://expressjs.com/en/advanced/best-practice-security.html: guide specifically for prod env
-  app.set('trust proxy', 1);
+  // NB Bug: with Nginx reverse proxy and HTTPS, `accessKey` key added to the `req.session` obj after successful login
+  //  does not persist, print `req.session` obj in `permit` middleware and an endpoint that has `permit` middleware
+  //  enabled (e.g. GET /activities) to observe => Solution: change `trust proxy` setting =>
+  //  https://gist.github.com/nikmartin/5902176) => https://expressjs.com/en/guide/behind-proxies.html
+  //  => https://stackoverflow.com/questions/23413401
+  app.set('trust proxy', '127.0.0.1');
   app.use(
     session({
       // store: new RedisStore({ client: redisClient }),
@@ -33,7 +38,6 @@ export default function (app) {
       resave: false,
       saveUninitialized: false,
       cookie: {
-        secure: constants.SESSION_COOKIE_SECURE,
         httpOnly: true,
         maxAge: 7 * 24 * 60 * 60 * 1_000,
         sameSite: 'lax',
@@ -44,8 +48,9 @@ export default function (app) {
   // Built-in middleware – parsing middleware needs to be placed before defining any routes
   app.use(express.json());
 
-  // @see: https://expressjs.com/en/advanced/best-practice-security.html: guide specifically for prod env
+  // Middleware config spec. for prod env
   if (isProd) {
+    app.use(compression());
     app.use(helmet());
     app.disable('x-powered-by');
   }
@@ -69,3 +74,16 @@ export default function (app) {
 //  CORS header to true
 // -- https://stackoverflow.com/questions/63351799/react-fetch-credentials-include-breaks-my-entire-request-and-i-get-an-error:
 //  different error message, same solution
+
+// References for configuring `express-session` in prod env:
+// -- https://github.com/expressjs/session: official `express-session` docs, incl. options:
+// ---- Note if you have multiple apps running on the same hostname (this is just the name, i.e. localhost or 127.0.0.
+// ---- 1; different schemes and ports do not name a different hostname), then you need to separate the session cookies
+// ---- from each other. The simplest method is to simply set different names per app.
+// -- https://expressjs.com/en/advanced/best-practice-security.html: official recommended session configs for prod env
+// -- https://stackoverflow.com/questions/56726972/express-session-the-difference-between-session-id-and-connect-sid:
+//  clarification about `name` option
+// -- https://gist.github.com/nikmartin/5902176: secure sessions with Node.js, Express.js, and NginX as an SSL proxy
+//  spec. for this line `app.enable('trust proxy')`, however, there's a better solution
+// -- https://expressjs.com/en/guide/behind-proxies.html: official guide for `trust proxy` setting
+// ---- https://stackoverflow.com/questions/23413401: example of `trust proxy` setting with IP Addresses type
