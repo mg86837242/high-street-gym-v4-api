@@ -38,6 +38,7 @@ export default function (app) {
       resave: false,
       saveUninitialized: false,
       cookie: {
+        secure: constants.SESSION_COOKIE_SECURE,
         httpOnly: true,
         maxAge: 7 * 24 * 60 * 60 * 1_000,
         sameSite: 'lax',
