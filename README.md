@@ -92,10 +92,10 @@ Technologies used for deployment includes but not limited to:
 This school project calls for a dynamic website with a database integration. In terms of the business requirement, the web app is expected to have the following functionalities:
 
 - Handling user authentication
-- Rendering a calendar view from information stored in the database, including booking date and time
+- Rendering a calendar view from information pulled from the database, including booking date and time
 - Functionality to allow users to book a class with a specific trainer
 - Displaying users' blog with functionalities of uploading and reading messages
-- Using XML as data representation to add new records to database, at least two (2) XML documents, in this case, for adding new activity and adding new member
+- Using XML as data representation to add new records to database, at least two (2) XML documents, in this case, for adding new activities and adding new members
 
 The technologies to be used for implementing this project is left to the discretion of the programmer/developer. The extensive list of packages used in the backend and the frontend can be found in their respective `package.json` files. Essential technologies used for this project are listed below:
 
@@ -103,7 +103,7 @@ The technologies to be used for implementing this project is left to the discret
 - Prettier & ESLint – for code formatting and code quality
 - Zod – for data validation in both backend and frontend
 - MySQL – database management system with mysql2 adapter (which has built-in methods for database transaction)
-- Node
+- Node.js
 - Express.js – for building RESTful APIs
 - React
 - React Router 6.4+
