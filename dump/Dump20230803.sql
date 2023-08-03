@@ -169,7 +169,7 @@ CREATE TABLE `bookings` (
 
 LOCK TABLES `bookings` WRITE;
 /*!40000 ALTER TABLE `bookings` DISABLE KEYS */;
-INSERT INTO `bookings` VALUES (1,1,1,1,'2023-04-03 16:00:00'),(2,2,2,2,'2023-04-04 16:00:00'),(3,2,2,3,'2023-04-05 16:00:00'),(4,2,2,4,'2023-04-06 16:00:00'),(5,2,2,5,'2023-04-07 08:00:00'),(6,2,2,6,'2023-04-07 09:00:00'),(7,2,2,7,'2023-04-07 10:00:00'),(8,2,2,1,'2023-04-10 16:00:00'),(9,2,2,2,'2023-04-12 16:00:00'),(10,2,2,3,'2023-04-14 08:00:00'),(11,2,2,4,'2023-04-14 09:00:00'),(12,2,2,5,'2023-04-14 10:00:00'),(13,2,2,6,'2023-04-14 11:00:00'),(14,2,2,7,'2023-04-14 12:00:00'),(15,2,2,1,'2023-04-14 13:00:00'),(16,2,2,2,'2023-04-14 14:00:00'),(17,2,2,3,'2023-04-14 15:00:00'),(18,2,2,4,'2023-04-14 16:00:00'),(19,2,2,5,'2023-04-14 17:00:00'),(20,2,2,6,'2023-04-17 16:00:00'),(21,2,2,7,'2023-04-18 16:00:00'),(22,2,2,1,'2023-04-19 16:00:00'),(23,2,2,2,'2023-04-20 16:00:00'),(24,2,2,3,'2023-04-21 16:00:00'),(25,2,2,4,'2023-04-24 16:00:00'),(26,2,2,5,'2023-04-25 16:00:00'),(27,2,2,6,'2023-04-26 16:00:00'),(28,2,2,7,'2023-04-27 16:00:00'),(29,2,1,1,'2023-04-28 08:00:00'),(30,2,1,2,'2023-04-28 09:00:00'),(31,2,1,3,'2023-04-28 10:00:00');
+INSERT INTO `bookings` VALUES (1,1,1,1,'2023-08-03 16:00:00'),(2,2,2,2,'2023-08-04 16:00:00'),(3,2,2,3,'2023-08-05 16:00:00'),(4,2,2,4,'2023-08-06 16:00:00'),(5,2,2,5,'2023-08-07 08:00:00'),(6,2,2,6,'2023-08-07 09:00:00'),(7,2,2,7,'2023-08-07 10:00:00'),(8,2,2,1,'2023-08-10 16:00:00'),(9,2,2,2,'2023-08-12 16:00:00'),(10,2,2,3,'2023-08-14 08:00:00'),(11,2,2,4,'2023-08-14 09:00:00'),(12,2,2,5,'2023-08-14 10:00:00'),(13,2,2,6,'2023-08-14 11:00:00'),(14,2,2,7,'2023-08-14 12:00:00'),(15,2,2,1,'2023-08-14 13:00:00'),(16,2,2,2,'2023-08-14 14:00:00'),(17,2,2,3,'2023-08-14 15:00:00'),(18,2,2,4,'2023-08-14 16:00:00'),(19,2,2,5,'2023-08-14 17:00:00'),(20,2,2,6,'2023-08-17 16:00:00'),(21,2,2,7,'2023-08-18 16:00:00'),(22,2,2,1,'2023-08-19 16:00:00'),(23,2,2,2,'2023-08-20 16:00:00'),(24,2,2,3,'2023-08-21 16:00:00'),(25,2,2,4,'2023-08-24 16:00:00'),(26,2,2,5,'2023-08-25 16:00:00'),(27,2,2,6,'2023-08-26 16:00:00'),(28,2,2,7,'2023-08-27 16:00:00'),(29,2,1,1,'2023-08-28 08:00:00'),(30,2,1,2,'2023-08-28 09:00:00'),(31,2,1,3,'2023-08-28 10:00:00');
 /*!40000 ALTER TABLE `bookings` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -199,7 +199,7 @@ CREATE TABLE `logins` (
 
 LOCK TABLES `logins` WRITE;
 /*!40000 ALTER TABLE `logins` DISABLE KEYS */;
-INSERT INTO `logins` VALUES (1,'someadmin@server.com','password','someadmin','Admin',NULL),(2,'anotheradmin@server.com','password','anotheradmin','Admin',NULL),(3,'sometrainer@server.com','password','sometrainer','Trainer',NULL),(4,'anothertrainer@server.com','password','anothertrainer','Trainer',NULL),(5,'somemember@server.com','password','somemember','Member',NULL),(6,'anothermember@server.com','password','anothermember','Member',NULL),(7,'demomember@server.com','$2a$06$d0PUgEQ0leilUtImVVAGu.sFpXXAL5Q7W0FIyudpGxuzPWg7JYTEu','demomember','Member',NULL),(8,'demotrainer@server.com','$2a$06$EG5eqoiqdQd0wNlgRyKRVO7wwlO5z5knAofu1M300b6/ZyOJHEpRm','demotrainer','Trainer',NULL),(9,'demoadmin@server.com','$2a$06$CJ.HykOF/zi7X/xHv1lPx.bLeS0moyffJixlH9iplPEmp6eJasQaW','demoadmin','Admin',NULL);
+INSERT INTO `logins` VALUES (1,'someadmin@server.com','password','someadmin','Admin',NULL),(2,'anotheradmin@server.com','password','anotheradmin','Admin',NULL),(3,'sometrainer@server.com','password','sometrainer','Trainer',NULL),(4,'anothertrainer@server.com','password','anothertrainer','Trainer',NULL),(5,'somemember@server.com','password','somemember','Member',NULL),(6,'anothermember@server.com','password','anothermember','Member',NULL),(7,'demomember@server.com','$2a$06$d0PUgEQ0leilUtImVVAGu.sFpXXAL5Q7W0FIyudpGxuzPWg7JYTEu','demomember','Member',NULL),(8,'demotrainer@server.com','$2a$06$EG5eqoiqdQd0wNlgRyKRVO7wwlO5z5knAofu1M300b6/ZyOJHEpRm','demotrainer','Trainer',NULL),(9,'demoadmin@server.com','$2a$06$CJ.HykOF/zi7X/xHv1lPx.bLeS0moyffJixlH9iplPEmp6eJasQaW','demoadmin','Admin','52b65184-1ddb-48ae-90bc-c29326f60fcf');
 /*!40000 ALTER TABLE `logins` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -282,4 +282,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2023-07-24 21:36:48
+-- Dump completed on 2023-08-03 19:02:53
