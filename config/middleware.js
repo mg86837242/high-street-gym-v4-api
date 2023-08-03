@@ -29,7 +29,7 @@ export default function (app) {
   //  enabled (e.g. GET /activities) to observe => Solution: change `trust proxy` setting =>
   //  https://gist.github.com/nikmartin/5902176) => https://expressjs.com/en/guide/behind-proxies.html
   //  => https://stackoverflow.com/questions/23413401
-  app.set('trust proxy', '127.0.0.1');
+  app.enable('trust proxy');
   app.use(
     session({
       // store: new RedisStore({ client: redisClient }),
