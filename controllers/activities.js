@@ -18,117 +18,129 @@ const activityController = new Router();
 // TODO In future projects, instead of writing bloated controllers, controllers will be split into (1) route, (2) data
 //  validation and (3) route handler
 // Read Activity
-activityController.get('/', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
-  try {
-    const result = await emptyObjSchema.spa(req.body);
-    if (!result.success) {
-      return res.status(400).json({
-        status: 400,
-        message: JSON.stringify(result.error.flatten()),
+activityController.get(
+  '/',
+  // permit('Admin', 'Trainer', 'Member'),
+  async (req, res) => {
+    try {
+      const result = await emptyObjSchema.spa(req.body);
+      if (!result.success) {
+        return res.status(400).json({
+          status: 400,
+          message: JSON.stringify(result.error.flatten()),
+        });
+      }
+
+      const [activityResults] = await getAllActivities();
+
+      return res.status(200).json({
+        status: 200,
+        message: 'Activity records successfully retrieved',
+        activities: activityResults,
+      });
+    } catch (error) {
+      console.error(error);
+      return res.status(500).json({
+        status: 500,
+        message: 'Database or server error',
       });
     }
+  },
+);
 
-    const [activityResults] = await getAllActivities();
+activityController.get(
+  '/:id',
+  // permit('Admin', 'Trainer', 'Member'),
+  async (req, res) => {
+    try {
+      const result = await idSchema.spa(req.params.id);
+      if (!result.success) {
+        return res.status(400).json({
+          status: 400,
+          message: JSON.stringify(result.error.flatten()),
+        });
+      }
+      const id = result.data;
 
-    return res.status(200).json({
-      status: 200,
-      message: 'Activity records successfully retrieved',
-      activities: activityResults,
-    });
-  } catch (error) {
-    console.error(error);
-    return res.status(500).json({
-      status: 500,
-      message: 'Database or server error',
-    });
-  }
-});
+      const [[firstActivityResult]] = await getActivitiesById(id);
 
-activityController.get('/:id', permit('Admin', 'Trainer', 'Member'), async (req, res) => {
-  try {
-    const result = await idSchema.spa(req.params.id);
-    if (!result.success) {
-      return res.status(400).json({
-        status: 400,
-        message: JSON.stringify(result.error.flatten()),
+      if (!firstActivityResult) {
+        return res.status(404).json({
+          status: 404,
+          message: 'No activities found with the ID provided',
+        });
+      }
+      return res.status(200).json({
+        status: 200,
+        message: 'Activity record successfully retrieved',
+        activity: firstActivityResult,
+      });
+    } catch (error) {
+      console.error(error);
+      return res.status(500).json({
+        status: 500,
+        message: 'Database or server error',
       });
     }
-    const id = result.data;
-
-    const [[firstActivityResult]] = await getActivitiesById(id);
-
-    if (!firstActivityResult) {
-      return res.status(404).json({
-        status: 404,
-        message: 'No activities found with the ID provided',
-      });
-    }
-    return res.status(200).json({
-      status: 200,
-      message: 'Activity record successfully retrieved',
-      activity: firstActivityResult,
-    });
-  } catch (error) {
-    console.error(error);
-    return res.status(500).json({
-      status: 500,
-      message: 'Database or server error',
-    });
-  }
-});
+  },
+);
 
 // Create Activity
-activityController.post('/', permit('Admin', 'Trainer'), async (req, res) => {
-  try {
-    const result = await activitySchema.spa(req.body);
-    if (!result.success) {
-      return res.status(400).json({
-        status: 400,
-        message: JSON.stringify(result.error.flatten()),
+activityController.post(
+  '/',
+  // permit('Admin', 'Trainer'),
+  async (req, res) => {
+    try {
+      const result = await activitySchema.spa(req.body);
+      if (!result.success) {
+        return res.status(400).json({
+          status: 400,
+          message: JSON.stringify(result.error.flatten()),
+        });
+      }
+      const {
+        name,
+        category,
+        description,
+        intensityLevel,
+        maxPeopleAllowed,
+        requirementOne,
+        requirementTwo,
+        durationMinutes,
+        price,
+      } = result.data;
+
+      const [{ insertId }] = await createActivity(
+        name,
+        category,
+        description,
+        intensityLevel,
+        maxPeopleAllowed,
+        requirementOne,
+        requirementTwo,
+        durationMinutes,
+        price,
+      );
+
+      return res.status(200).json({
+        status: 200,
+        message: 'Activity successfully created',
+        insertId,
+      });
+    } catch (error) {
+      console.error(error);
+      return res.status(500).json({
+        status: 500,
+        message: 'Database or server error',
       });
     }
-    const {
-      name,
-      category,
-      description,
-      intensityLevel,
-      maxPeopleAllowed,
-      requirementOne,
-      requirementTwo,
-      durationMinutes,
-      price,
-    } = result.data;
-
-    const [{ insertId }] = await createActivity(
-      name,
-      category,
-      description,
-      intensityLevel,
-      maxPeopleAllowed,
-      requirementOne,
-      requirementTwo,
-      durationMinutes,
-      price,
-    );
-
-    return res.status(200).json({
-      status: 200,
-      message: 'Activity successfully created',
-      insertId,
-    });
-  } catch (error) {
-    console.error(error);
-    return res.status(500).json({
-      status: 500,
-      message: 'Database or server error',
-    });
-  }
-});
+  },
+);
 
 activityController.post(
   '/upload/xml',
   upload.single('new-activity-xml'),
-  permit('Admin', 'Trainer'),
+  // permit('Admin', 'Trainer'),
   async (req, res) => {
     let conn = null;
     try {
@@ -276,21 +288,38 @@ activityController.post(
 );
 
 // Update Activity
-activityController.patch('/:id', permit('Admin', 'Trainer'), async (req, res) => {
-  try {
-    const result = await updateActivitySchema.spa({
-      params: req.params,
-      body: req.body,
-    });
-    if (!result.success) {
-      return res.status(400).json({
-        status: 400,
-        message: JSON.stringify(result.error.flatten()),
+activityController.patch(
+  '/:id',
+  // permit('Admin', 'Trainer'),
+  async (req, res) => {
+    try {
+      const result = await updateActivitySchema.spa({
+        params: req.params,
+        body: req.body,
       });
-    }
-    const {
-      params: { id },
-      body: {
+      if (!result.success) {
+        return res.status(400).json({
+          status: 400,
+          message: JSON.stringify(result.error.flatten()),
+        });
+      }
+      const {
+        params: { id },
+        body: {
+          name,
+          category,
+          description,
+          intensityLevel,
+          maxPeopleAllowed,
+          requirementOne,
+          requirementTwo,
+          durationMinutes,
+          price,
+        },
+      } = result.data;
+
+      const [{ affectedRows }] = await updateActivityById(
+        id,
         name,
         category,
         description,
@@ -300,72 +329,63 @@ activityController.patch('/:id', permit('Admin', 'Trainer'), async (req, res) =>
         requirementTwo,
         durationMinutes,
         price,
-      },
-    } = result.data;
+      );
 
-    const [{ affectedRows }] = await updateActivityById(
-      id,
-      name,
-      category,
-      description,
-      intensityLevel,
-      maxPeopleAllowed,
-      requirementOne,
-      requirementTwo,
-      durationMinutes,
-      price,
-    );
-
-    if (!affectedRows) {
-      return res.status(404).json({
-        status: 404,
-        message: 'No activities found with the ID provided',
+      if (!affectedRows) {
+        return res.status(404).json({
+          status: 404,
+          message: 'No activities found with the ID provided',
+        });
+      }
+      return res.status(200).json({
+        status: 200,
+        message: 'Activity successfully updated',
+      });
+    } catch (error) {
+      console.error(error);
+      return res.status(500).json({
+        status: 500,
+        message: 'Database or server error',
       });
     }
-    return res.status(200).json({
-      status: 200,
-      message: 'Activity successfully updated',
-    });
-  } catch (error) {
-    console.error(error);
-    return res.status(500).json({
-      status: 500,
-      message: 'Database or server error',
-    });
-  }
-});
+  },
+);
 
 // Delete Activity
-activityController.delete('/:id', permit('Admin', 'Trainer'), async (req, res) => {
-  try {
-    const result = await idSchema.spa(req.params.id);
-    if (!result.success) {
-      return res.status(400).json({
-        status: 400,
-        message: JSON.stringify(result.error.flatten()),
+activityController.delete(
+  '/:id',
+  // permit('Admin', 'Trainer'),
+  async (req, res) => {
+    try {
+      const result = await idSchema.spa(req.params.id);
+      if (!result.success) {
+        return res.status(400).json({
+          status: 400,
+          message: JSON.stringify(result.error.flatten()),
+        });
+      }
+      const id = result.data;
+
+      const [{ affectedRows }] = await deleteActivityById(id);
+
+      if (!affectedRows) {
+        return res.status(404).json({
+          status: 404,
+          message: 'No activities found with the ID provided',
+        });
+      }
+      return res.status(200).json({
+        status: 200,
+        message: 'Activity successfully deleted',
+      });
+    } catch (error) {
+      console.error(error);
+      return res.status(500).json({
+        status: 500,
+        message: 'Database or server error',
       });
     }
-    const id = result.data;
-
-    const [{ affectedRows }] = await deleteActivityById(id);
-
-    if (!affectedRows) {
-      return res.status(404).json({
-        status: 404,
-        message: 'No activities found with the ID provided',
-      });
-    }
-    return res.status(200).json({
-      status: 200,
-      message: 'Activity successfully deleted',
-    });
-  } catch (error) {
-    console.error(error);
-    return res.status(500).json({
-      status: 500,
-      message: 'Database or server error',
-    });
-  }
-});
+  },
+);
 
 export default activityController;

@@ -6,20 +6,20 @@ export default function permit(...permittedRoles) {
       console.log(`-- session obj when calling any endpoint with permit middleware:`);
       console.log(`🔵 [${new Date().toLocaleTimeString()}] Session ID: ${req?.session?.id}`);
       console.log(req?.session);
-      // if (!req?.session?.accessKey) {
-      //   return res.status(401).json({
-      //     status: 401,
-      //     message: 'Unauthorized request',
-      //   });
-      // }
-      // const { accessKey } = req.session;
-      // const [[{ role }]] = await getLoginsByAccessKey(accessKey);
-      // if (!permittedRoles.includes(role)) {
-      //   return res.status(403).json({
-      //     status: 403,
-      //     message: 'Insufficient privilege',
-      //   });
-      // }
+      if (!req?.session?.accessKey) {
+        return res.status(401).json({
+          status: 401,
+          message: 'Unauthorized request',
+        });
+      }
+      const { accessKey } = req.session;
+      const [[{ role }]] = await getLoginsByAccessKey(accessKey);
+      if (!permittedRoles.includes(role)) {
+        return res.status(403).json({
+          status: 403,
+          message: 'Insufficient privilege',
+        });
+      }
       return next();
     } catch (error) {
       console.error(error);
