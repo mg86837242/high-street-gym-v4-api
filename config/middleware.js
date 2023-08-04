@@ -19,9 +19,6 @@ export default function (app) {
   );
 
   // Express session middleware
-  // NB Bug: with Nginx reverse proxy and HTTPS, `accessKey` key added to the `req.session` obj after successful login
-  //  does not persist, print `req.session` obj in `permit` middleware and an endpoint that has `permit` middleware
-  //  enabled (e.g. GET /activities) to observe
   // const MysqlStore = mysqlSession(session);
   // const mysqlConfig = {
   //   host: constants.DB_HOST,
