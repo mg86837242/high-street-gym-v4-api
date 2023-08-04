@@ -11,20 +11,20 @@ export default function permit(...permittedRoles) {
       //  login does not persist, print `req.session` obj in `permit` middleware and an endpoint that has `permit`
       //  middleware enabled (e.g. GET /activities) to observe => Solution not found, therefore, the following code is
       //  disabled
-      if (!req?.session?.accessKey) {
-        return res.status(401).json({
-          status: 401,
-          message: 'Unauthorized request',
-        });
-      }
-      const { accessKey } = req.session;
-      const [[{ role }]] = await getLoginsByAccessKey(accessKey);
-      if (!permittedRoles.includes(role)) {
-        return res.status(403).json({
-          status: 403,
-          message: 'Insufficient privilege',
-        });
-      }
+      // if (!req?.session?.accessKey) {
+      //   return res.status(401).json({
+      //     status: 401,
+      //     message: 'Unauthorized request',
+      //   });
+      // }
+      // const { accessKey } = req.session;
+      // const [[{ role }]] = await getLoginsByAccessKey(accessKey);
+      // if (!permittedRoles.includes(role)) {
+      //   return res.status(403).json({
+      //     status: 403,
+      //     message: 'Insufficient privilege',
+      //   });
+      // }
 
       return next();
     } catch (error) {

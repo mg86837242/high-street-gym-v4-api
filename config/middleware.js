@@ -54,7 +54,7 @@ export default function (app) {
   // Built-in middleware – parsing middleware needs to be placed before defining any routes
   app.use(express.json());
 
-  // Middleware for prod env only
+  // Middleware specifically for prod env
   if (isProd) {
     app.use(compression());
     app.use(helmet());
@@ -95,5 +95,4 @@ export default function (app) {
 // ---- from each other. The simplest method is to simply set different names per app.
 // ---- https://stackoverflow.com/questions/56726972/express-session-the-difference-between-session-id-and-connect-sid:
 //    clarification about `name` option
-// -- https://stackoverflow.com/questions/68139729/express-session-dont-persist: potential solution & debugging strategy
-//    (source: google "express session lost after fetch")
+// -- https://stackoverflow.com/questions/68139729/express-session-dont-persist: potential solution
