@@ -43,7 +43,7 @@ export default function (app) {
       sameSite: 'lax',
     },
     proxy: isProd,
-    domain: 'highstreetgymdemo.space',
+    // domain: 'highstreetgymdemo.space',
     // store: new MysqlStore(mysqlConfig),
   };
 
