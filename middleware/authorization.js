@@ -10,7 +10,7 @@ export default function permit(...permittedRoles) {
       // NB Bug: with Nginx reverse proxy and HTTPS, `accessKey` key added to the `req.session` obj after successful
       //  login does not persist, print `req.session` obj in `permit` middleware and an endpoint that has `permit`
       //  middleware enabled (e.g. GET /activities) to observe => Solution not found, therefore, the following code is
-      // disabled
+      //  disabled
       // if (!req?.session?.accessKey) {
       //   return res.status(401).json({
       //     status: 401,
@@ -37,8 +37,8 @@ export default function permit(...permittedRoles) {
   };
 }
 
-// NB Bug: `Error [ERR_HTTP_HEADERS_SENT]: Cannot set headers after they are sent to the client` => https://
-//  stackoverflow.com/questions/7042340
+// NB Bug: `Error [ERR_HTTP_HEADERS_SENT]: Cannot set headers after they are sent to the client` =>
+//  https://stackoverflow.com/questions/7042340/error-cant-set-headers-after-they-are-sent-to-the-client
 
 // References:
 // -- https://gist.github.com/joshnuss/37ebaf958fe65a18d4ff: exemplar code snippet of Express.js role-based permissions
