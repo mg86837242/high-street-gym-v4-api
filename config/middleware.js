@@ -25,7 +25,7 @@ export default function (app) {
     port: 3306,
     user: constants.DB_USER,
     password: constants.DB_PASSWORD,
-    database: constants.DB_SCHEMA,
+    database: constants.SESSION_DB_SCHEMA,
   };
 
   const sessionConfig = {
