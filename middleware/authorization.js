@@ -8,7 +8,9 @@ export default function permit(...permittedRoles) {
       console.log(req?.session);
       // NB Bug: with Nginx reverse proxy and HTTPS, `accessKey` key added to the `req.session` obj after successful
       //  login does not persist, print `req.session` obj in `permit` middleware and an endpoint that has `permit`
-      //  middleware enabled (e.g. GET /activities) to observe => Solution not found
+      //  middleware enabled (e.g. GET /activities) to observe => Solution not found, therefore, the following code is
+      // disabled
+
       // if (!req?.session?.accessKey) {
       //   return res.status(401).json({
       //     status: 401,

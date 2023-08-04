@@ -40,7 +40,6 @@ export default function (app) {
       sameSite: 'lax',
     },
     proxy: isProd,
-    // domain: 'highstreetgymdemo.space',
     // store: new MysqlStore(mysqlConfig),
   };
 
@@ -62,7 +61,6 @@ export default function (app) {
 }
 
 // References:
-
 // -- https://expressjs.com/en/guide/using-middleware.html: classification of Express middleware
 // -- https://www.section.io/engineering-education/session-management-in-nodejs-using-expressjs-and-express-session/:
 //  Express session middleware tutorial, ignoring the `cookie-parser` part
