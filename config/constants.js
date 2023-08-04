@@ -22,6 +22,7 @@ const prodConfig = {
 const defaultConfig = {
   PORT: process.env.PORT || 3000,
   SESSION_SECRET: process.env.SESSION_SECRET || 'my session secret',
+  DB_SESSION_SCHEMA: process.env.DB_SESSION_SCHEMA,
 };
 
 function envConfig(env) {

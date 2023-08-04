@@ -1,6 +1,6 @@
 import express from 'express';
 import cors from 'cors';
-// import mysqlSession from 'express-mysql-session';
+import mysqlSession from 'express-mysql-session';
 import session from 'express-session';
 import compression from 'compression';
 import helmet from 'helmet';
@@ -19,14 +19,14 @@ export default function (app) {
   );
 
   // Express session middleware
-  // const MysqlStore = mysqlSession(session);
-  // const mysqlConfig = {
-  //   host: constants.DB_HOST,
-  //   user: constants.DB_USER,
-  //   password: constants.DB_PASSWORD,
-  //   database: constants.DB_SCHEMA,
-  //   port: 3306,
-  // };
+  const MysqlStore = mysqlSession(session);
+  const mysqlSessionConfig = {
+    host: constants.DB_HOST,
+    port: 3306,
+    user: constants.DB_USER,
+    password: constants.DB_PASSWORD,
+    database: constants.DB_SCHEMA,
+  };
 
   const sessionConfig = {
     name: 'highStreetGymSession',
@@ -34,17 +34,19 @@ export default function (app) {
     resave: false,
     saveUninitialized: false,
     cookie: {
-      secure: isProd,
+      secure: false,
       httpOnly: true,
       maxAge: 7 * 24 * 60 * 60 * 1_000,
       sameSite: 'lax',
     },
-    proxy: isProd,
-    // store: new MysqlStore(mysqlConfig),
+    proxy: false,
   };
 
   if (isProd) {
     app.enable('trust proxy');
+    sessionConfig.cookie.secure = true;
+    sessionConfig.proxy = true;
+    sessionConfig.store = new MysqlStore(mysqlSessionConfig);
   }
 
   app.use(session(sessionConfig));
@@ -64,6 +66,8 @@ export default function (app) {
 // -- https://expressjs.com/en/guide/using-middleware.html: classification of Express middleware
 // -- https://www.section.io/engineering-education/session-management-in-nodejs-using-expressjs-and-express-session/:
 //  Express session middleware tutorial, ignoring the `cookie-parser` part
+// -- https://stackoverflow.com/questions/56915748/express-session-is-not-persistent-on-nginx-reverse-proxy: exemplar of
+//  configuring application-wise middleware, esp. for `express-session` config
 // -- https://forum.freecodecamp.org/t/what-is-the-secret-key-in-express-session/354972: Express session secret working
 //  in tandem with environment variables
 // -- https://medium.com/the-node-js-collection/making-your-node-js-work-everywhere-with-environment-variables-2da8cdf6e786
@@ -88,6 +92,6 @@ export default function (app) {
 // -- https://stackoverflow.com/questions/56726972/express-session-the-difference-between-session-id-and-connect-sid:
 //  clarification about `name` option
 // -- https://gist.github.com/nikmartin/5902176: secure sessions with Node.js, Express.js, and NginX as an SSL proxy
-//  spec. for this line `app.enable('trust proxy')`, however, there's a better solution
-// -- https://expressjs.com/en/guide/behind-proxies.html: official guide for `trust proxy` setting
+//  esp. for this line `app.enable('trust proxy')`, however, there's a better solution
+// ---- https://expressjs.com/en/guide/behind-proxies.html: official guide for `trust proxy` setting
 // ---- https://stackoverflow.com/questions/23413401: example of `trust proxy` setting with IP Addresses type
