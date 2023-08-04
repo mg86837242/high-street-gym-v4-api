@@ -126,3 +126,7 @@ The technologies to be used for implementing this project is left to the discret
 - <!-- 404 Page -->Photo by Khaled Oukaci from [Pexels](https://www.pexels.com/photo/black-and-white-photo-of-a-backpacker-walking-in-the-desert-12563642/)
 - <!-- Under Construction Page -->Photo by <a href="https://unsplash.com/@d_mccullough?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Daniel McCullough</a> on <a href="https://unsplash.com/photos/-FPFq_trr2Y?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Unsplash</a>
 - <!-- Blog Example Image -->Photo by <a href="https://unsplash.com/@r3dmax?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Jonatan Pie</a> on <a href="https://unsplash.com/photos/xgTMSz6kegE?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Unsplash</a>
+
+## 5. Known Issue
+
+- [`express-session`](https://github.com/expressjs/session)'s `Session` object does not persist after deployed in production environment although it is working as intended in development environment; I have tried modifying fetch API and CORS options, tweaking `trust proxy` setting and `express-session` options, using session storage other than the default [`MemoryStore`](https://github.com/expressjs/session#store), changing Nginx configuration, allowing third-party cookie in the browser, etc., but none of them works, so in the end, I have to disabled the functionality of `./high-street-gym-v4-api/middleware/authorization.js` since it is relying on the key stored in `req.session`
