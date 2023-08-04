@@ -1,7 +1,6 @@
 import express from 'express';
 import cors from 'cors';
-// import RedisStore from 'connect-redis';
-// import { createClient } from 'redis';
+// import mysqlSession from 'express-mysql-session';
 import session from 'express-session';
 import compression from 'compression';
 import helmet from 'helmet';
@@ -13,43 +12,51 @@ export default function (app) {
   // Express CORS middleware – CORS allows to set which frontend URLs are allowed to access APIs
   app.use(
     cors({
-      origin: [`${constants.CORS_ORIGIN}`, /^https?:\/\/highstreetgymdemo\.space.*/],
+      origin: [`${constants.CORS_ORIGIN}`, /^https?:\/\/highstreetgymdemo\.space/],
       credentials: true,
       maxAge: 24 * 60 * 60 * 1_000,
     }),
   );
 
   // Express session middleware
-  // -- Redis client (to be implemented)
-  // let redisClient = createClient();
-  // redisClient.connect().catch(console.error);
-  // -- Session config
   // NB Bug: with Nginx reverse proxy and HTTPS, `accessKey` key added to the `req.session` obj after successful login
   //  does not persist, print `req.session` obj in `permit` middleware and an endpoint that has `permit` middleware
-  //  enabled (e.g. GET /activities) to observe => Solution: change `trust proxy` setting =>
-  //  https://gist.github.com/nikmartin/5902176) => https://expressjs.com/en/guide/behind-proxies.html
-  //  => https://stackoverflow.com/questions/23413401
-  app.enable('trust proxy');
-  app.use(
-    session({
-      // store: new RedisStore({ client: redisClient }),
-      name: 'highStreetGymSession',
-      secret: constants.SESSION_SECRET,
-      resave: false,
-      saveUninitialized: false,
-      cookie: {
-        secure: constants.SESSION_COOKIE_SECURE,
-        httpOnly: true,
-        maxAge: 7 * 24 * 60 * 60 * 1_000,
-        sameSite: 'lax',
-      },
-    }),
-  );
+  //  enabled (e.g. GET /activities) to observe
+  // const MysqlStore = mysqlSession(session);
+  // const mysqlConfig = {
+  //   host: constants.DB_HOST,
+  //   user: constants.DB_USER,
+  //   password: constants.DB_PASSWORD,
+  //   database: constants.DB_SCHEMA,
+  //   port: 3306,
+  // };
+
+  const sessionConfig = {
+    name: 'highStreetGymSession',
+    secret: constants.SESSION_SECRET,
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+      secure: isProd,
+      httpOnly: true,
+      maxAge: 7 * 24 * 60 * 60 * 1_000,
+      sameSite: 'lax',
+    },
+    proxy: isProd,
+    domain: 'highstreetgymdemo.space',
+    // store: new MysqlStore(mysqlConfig),
+  };
+
+  if (isProd) {
+    app.enable('trust proxy');
+  }
+
+  app.use(session(sessionConfig));
 
   // Built-in middleware – parsing middleware needs to be placed before defining any routes
   app.use(express.json());
 
-  // Middleware config spec. for prod env
+  // Middleware specifically for prod env
   if (isProd) {
     app.use(compression());
     app.use(helmet());
@@ -58,6 +65,7 @@ export default function (app) {
 }
 
 // References:
+
 // -- https://expressjs.com/en/guide/using-middleware.html: classification of Express middleware
 // -- https://www.section.io/engineering-education/session-management-in-nodejs-using-expressjs-and-express-session/:
 //  Express session middleware tutorial, ignoring the `cookie-parser` part
@@ -76,7 +84,7 @@ export default function (app) {
 // -- https://stackoverflow.com/questions/63351799/react-fetch-credentials-include-breaks-my-entire-request-and-i-get-an-error:
 //  different error message, same solution
 
-// References for configuring `express-session` in prod env:
+// References for configuring `express-session` in prod env with Nginx reverse proxy:
 // -- https://github.com/expressjs/session: official `express-session` docs, incl. options:
 // ---- Note if you have multiple apps running on the same hostname (this is just the name, i.e. localhost or 127.0.0.
 // ---- 1; different schemes and ports do not name a different hostname), then you need to separate the session cookies
