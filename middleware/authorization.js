@@ -3,9 +3,9 @@ import { getLoginsByAccessKey } from '../models/logins.js';
 export default function permit(...permittedRoles) {
   return async (req, res, next) => {
     try {
-      console.log(`-- session obj when calling any endpoint with permit middleware:`);
-      console.log(`🔵 [${new Date().toLocaleTimeString()}] Session ID: ${req?.session?.id}`);
-      console.log(req?.session);
+      // console.log(`-- session obj when calling any endpoint with permit middleware:`);
+      // console.log(`🔵 [${new Date().toLocaleTimeString()}] Session ID: ${req?.session?.id}`);
+      // console.log(req?.session);
 
       // NB Bug: with Nginx reverse proxy and HTTPS, `accessKey` key added to the `req.session` obj after successful
       //  login does not persist, print `req.session` obj in `permit` middleware and an endpoint that has `permit`
