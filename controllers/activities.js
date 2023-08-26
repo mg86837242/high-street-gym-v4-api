@@ -140,6 +140,13 @@ activityController.post(
           eNotation: false,
         },
       });
+
+      if (!parser.parse(xmlStr)?.activityList?.activity) {
+        return res.status(400).json({
+          status: 400,
+          message: 'Malformed XML file: data schema does not match',
+        });
+      }
       const {
         activityList: { activity: activities },
       } = parser.parse(xmlStr);
