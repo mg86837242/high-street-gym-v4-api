@@ -1,17 +1,18 @@
 import Router from 'express-promise-router';
 import { XMLParser } from 'fast-xml-parser'; // reason to use `fast-xml-parser` i/o `xml2js`: no need to (1) deep clone or `JSON.parse(JSON.stringify(parsedResult))` to clean up the `[Object null prototype]`, nor (2) tinker `explicitArray` option to explicitly tell the parser to not output the obj value as an array
+
 import pool from '../config/database.js';
-import { emptyObjSchema, idSchema } from '../schemas/params.js';
-import { activitySchema, updateActivitySchema } from '../schemas/activities.js';
-import {
-  getAllActivities,
-  getActivitiesById,
-  createActivity,
-  updateActivityById,
-  deleteActivityById,
-} from '../models/activities.js';
 import permit from '../middleware/authorization.js';
 import upload from '../middleware/multer.js';
+import {
+  createActivity,
+  deleteActivityById,
+  getActivitiesById,
+  getAllActivities,
+  updateActivityById,
+} from '../models/activities.js';
+import { activitySchema, updateActivitySchema } from '../schemas/activities.js';
+import { emptyObjSchema, idSchema } from '../schemas/params.js';
 
 const activityController = new Router();
 

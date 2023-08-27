@@ -1,4 +1,5 @@
 import express from 'express';
+
 import constants from './config/constants.js';
 import middlewareConfig from './config/middleware.js';
 import mountRoutes from './controllers/index.js';

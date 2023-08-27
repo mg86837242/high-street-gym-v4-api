@@ -1,9 +1,10 @@
-import express from 'express';
+import compression from 'compression';
 import cors from 'cors';
+import express from 'express';
 import mysqlSession from 'express-mysql-session';
 import session from 'express-session';
-import compression from 'compression';
 import helmet from 'helmet';
+
 import constants from './constants.js';
 
 const isProd = process.env.NODE_ENV === 'production';

@@ -1,13 +1,14 @@
-import Router from 'express-promise-router';
 import bcrypt from 'bcryptjs'; // reason to use `bcryptjs`: https://github.com/kelektiv/node.bcrypt.js/issues/705
+import Router from 'express-promise-router';
 import { v4 as uuid4 } from 'uuid';
+
+import permit from '../middleware/authorization.js';
+import { getAdminsByLoginId, getAdminsWithDetailsByLoginId } from '../models/admins.js';
+import { getLoginsByAccessKey, getLoginsByEmail, updateLoginAccessKeyById } from '../models/logins.js';
+import { getMembersByLoginId, getMembersWithDetailsByLoginId } from '../models/members.js';
+import { getTrainersByLoginId, getTrainersWithDetailsByLoginId } from '../models/trainers.js';
 import { uuidSchema } from '../schemas/params.js';
 import { loginSchema } from '../schemas/users.js';
-import { getLoginsByAccessKey, getLoginsByEmail, updateLoginAccessKeyById } from '../models/logins.js';
-import { getAdminsByLoginId, getAdminsWithDetailsByLoginId } from '../models/admins.js';
-import { getTrainersByLoginId, getTrainersWithDetailsByLoginId } from '../models/trainers.js';
-import { getMembersByLoginId, getMembersWithDetailsByLoginId } from '../models/members.js';
-import permit from '../middleware/authorization.js';
 
 const userController = new Router();
 

@@ -1,4 +1,5 @@
 import { z } from 'zod';
+
 import { idSchema } from './params.js';
 
 export const blogSchema = z.object({

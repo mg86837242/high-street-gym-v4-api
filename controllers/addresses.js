@@ -1,23 +1,24 @@
 import Router from 'express-promise-router';
-import { emptyObjSchema, idSchema } from '../schemas/params.js';
+
+import permit from '../middleware/authorization.js';
 import {
-  addressSchema,
-  updateAddressSchema,
-  updateAddressByAdminIdSchema,
-  updateAddressByTrainerIdSchema,
-  updateAddressByMemberIdSchema,
-} from '../schemas/addresses.js';
-import {
-  getAllAddresses,
-  getAddressesById,
   createAddress,
-  updateAddressById,
   deleteAddressById,
+  getAddressesById,
+  getAllAddresses,
+  updateAddressById,
 } from '../models/addresses.js';
 import { getAdminsAddressesIdById } from '../models/admins.js';
-import { getTrainersAddressesIdById } from '../models/trainers.js';
 import { getMembersAddressesIdById } from '../models/members.js';
-import permit from '../middleware/authorization.js';
+import { getTrainersAddressesIdById } from '../models/trainers.js';
+import {
+  addressSchema,
+  updateAddressByAdminIdSchema,
+  updateAddressByMemberIdSchema,
+  updateAddressByTrainerIdSchema,
+  updateAddressSchema,
+} from '../schemas/addresses.js';
+import { emptyObjSchema, idSchema } from '../schemas/params.js';
 
 const addressController = new Router();
 

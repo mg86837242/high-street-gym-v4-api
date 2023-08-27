@@ -1,22 +1,23 @@
+import bcrypt from 'bcryptjs'; // reason to use `bcryptjs`: https://github.com/kelektiv/node.bcrypt.js/issues/705
 import Router from 'express-promise-router';
 import { XMLParser } from 'fast-xml-parser';
-import bcrypt from 'bcryptjs'; // reason to use `bcryptjs`: https://github.com/kelektiv/node.bcrypt.js/issues/705
+
 import pool from '../config/database.js';
-import { emptyObjSchema, idSchema } from '../schemas/params.js';
-import {
-  signupSchema,
-  memberDetailedSchema,
-  updateMemberSchema,
-  updateMemberDetailedSchema,
-} from '../schemas/members.js';
+import permit from '../middleware/authorization.js';
+import upload from '../middleware/multer.js';
 import {
   getAllMembers,
   getAllMembersWithDetails,
   getMembersById,
   getMembersWithDetailsById,
 } from '../models/members.js';
-import permit from '../middleware/authorization.js';
-import upload from '../middleware/multer.js';
+import {
+  memberDetailedSchema,
+  signupSchema,
+  updateMemberDetailedSchema,
+  updateMemberSchema,
+} from '../schemas/members.js';
+import { emptyObjSchema, idSchema } from '../schemas/params.js';
 
 const memberController = new Router();
 

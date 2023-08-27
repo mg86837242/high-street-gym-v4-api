@@ -1,4 +1,5 @@
 import mysql from 'mysql2/promise';
+
 import constants from './constants.js';
 
 const pool = mysql.createPool({

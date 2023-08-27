@@ -1,5 +1,6 @@
 import { z } from 'zod';
-import { idSchema, dateSchema } from './params.js';
+
+import { dateSchema,idSchema } from './params.js';
 
 export const bookingSchema = z.object({
   memberId: idSchema,

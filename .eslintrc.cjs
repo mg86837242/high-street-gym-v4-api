@@ -1,39 +1,55 @@
 module.exports = {
   env: {
-    // @see: https://stackoverflow.com/questions/49250221/fetch-is-undefined-and-localstorage-is-undefined-on-using-eslint-config-ai
+    // @see https://stackoverflow.com/questions/49250221/fetch-is-undefined-and-localstorage-is-undefined-on-using-eslint-config-ai
     browser: true,
+    // @see https://github.com/eslint/eslint/issues/9812
+    es2020: true,
+    // @see https://stackoverflow.com/questions/50894000/eslint-process-is-not-defined
+    node: true,
   },
   parserOptions: {
-    // @see: https://stackoverflow.com/questions/61628947/eslint-optional-chaining-error-with-vscode
-    //  & https://eslint.org/docs/latest/use/configure/language-options#specifying-parser-options
+    // @see https://stackoverflow.com/questions/61628947/eslint-optional-chaining-error-with-vscode & https://eslint.org/docs/latest/use/configure/language-options#specifying-parser-options
     ecmaVersion: 'latest',
     sourceType: 'module',
     ecmaFeatures: {
       jsx: true,
     },
   },
-  // @see: https://prettier.io/docs/en/integrating-with-linters.html & https://react.dev/learn/editor-setup#linting
-  //  & https://www.npmjs.com/package/eslint-config-react-app & https://www.npmjs.com/package/eslint-plugin-react-hooks
-  extends: ['airbnb', 'prettier'],
-  plugins: [],
-  ignorePatterns: [
-    // Unused folders && files
-    '**/__*',
-    // Temporarily ignored
-  ],
+  // @see https://react.dev/learn/editor-setup#linting & 'plugin:react/jsx-runtime' for React 17+: https://github.com/jsx-eslint/eslint-plugin-react#configuration-legacy-eslintrc- & https://prettier.io/docs/en/integrating-with-linters.html
+  extends: ['eslint:recommended', 'prettier'],
+  ignorePatterns: ['dist', '.eslintrc.cjs', '**/__*'],
+  plugins: ['simple-import-sort'],
   rules: {
-    // @see: https://www.npmjs.com/package/eslint-plugin-react-hooks
-    // 'react-hooks/rules-of-hooks': 'error',
-    // 'react-hooks/exhaustive-deps': 'error',
-    // Band-aid solution to lack of resolver in the backend:
-    // @see: https://stackoverflow.com/questions/46208367/how-to-remove-eslint-error-no-unresolved-from-importing-react
-    // & https://stackoverflow.com/questions/67316153/facing-problem-while-importing-files-in-nodejs
-    'import/no-unresolved': ['warn', { caseSensitive: false }],
-    'import/extensions': [
-      'error',
-      {
-        js: 'ignorePackages',
-      },
-    ],
+    // `simple-import-sort`: https://dev.to/julioxavierr/sorting-your-imports-with-eslint-3ped
+    'simple-import-sort/imports': 'warn',
+    'simple-import-sort/exports': 'warn',
+    // Personal preference:
+    camelcase: ['error', { properties: 'always' }],
   },
+  overrides: [
+    {
+      files: ['*.js', '*.jsx', '*.ts', '*.tsx'],
+      rules: {
+        'simple-import-sort/imports': [
+          'error',
+          {
+            groups: [
+              // Packages `react` related packages come first.
+              ['^react', '^@?\\w'],
+              // Internal packages.
+              ['^(@|components)(/.*|$)'],
+              // Side effect imports.
+              ['^\\u0000'],
+              // Parent imports. Put `..` last.
+              ['^\\.\\.(?!/?$)', '^\\.\\./?$'],
+              // Other relative imports. Put same-folder imports and `.` last.
+              ['^\\./(?=.*/)(?!/?$)', '^\\.(?!/?$)', '^\\./?$'],
+              // Style imports.
+              ['^.+\\.?(css)$'],
+            ],
+          },
+        ],
+      },
+    },
+  ],
 };

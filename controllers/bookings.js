@@ -1,22 +1,23 @@
 import Router from 'express-promise-router';
-import { emptyObjSchema, idSchema, dateSchema } from '../schemas/params.js';
-import { bookingSchema, updateBookingSchema } from '../schemas/bookings.js';
+
+import permit from '../middleware/authorization.js';
+import { getAllActivities } from '../models/activities.js';
 import {
+  createBooking,
+  deleteBookingById,
   getAllBookings,
+  getBookingsById,
   getBookingsWithDetailsByDate,
   getBookingsWithDetailsById,
-  getBookingsById,
   getConflictBookingsByMemberTrainerAndDateTime,
-  getIdenticalBookings,
   getConflictBookingsByMemberTrainerAndDateTimeExceptCurr,
-  createBooking,
+  getIdenticalBookings,
   updateBookingById,
-  deleteBookingById,
 } from '../models/bookings.js';
 import { getAllMembers } from '../models/members.js';
 import { getAllTrainers } from '../models/trainers.js';
-import { getAllActivities } from '../models/activities.js';
-import permit from '../middleware/authorization.js';
+import { bookingSchema, updateBookingSchema } from '../schemas/bookings.js';
+import { dateSchema,emptyObjSchema, idSchema } from '../schemas/params.js';
 
 const bookingController = new Router();
 
