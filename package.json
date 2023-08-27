@@ -9,7 +9,8 @@
     "format": "prettier --write .",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
-    "lint:quiet": "eslint . --quiet"
+    "lint:quiet": "eslint . --quiet",
+    "pm2": "pm2 start ecosystem.yml --env production"
   },
   "author": "SY",
   "dependencies": {
